@@ -1,0 +1,93 @@
+import Phaser from 'phaser';
+import { LOOKS } from '../../data/looks';
+import { BUILDINGS, buildGround, PROPS, type PropKind } from '../../data/map';
+import { CHAR_DIRS, CHAR_FRAMES, CHAR_H, CHAR_W, paintCharacterSheet } from '../art/characters';
+import { drawText, ellipse, makeCanvas, outline, rect } from '../art/pixel';
+import { paintBuilding } from '../art/buildings';
+import { paintGround } from '../art/ground';
+import { paintProp, paintSignal, paintViaduct } from '../art/props';
+import { paintCow, paintTrain, paintVehicle } from '../art/vehicles';
+
+/** Paints every texture procedurally (no external assets), then starts the world. */
+export class BootScene extends Phaser.Scene {
+  constructor() {
+    super('boot');
+  }
+
+  private addCanvas(key: string, canvas: HTMLCanvasElement) {
+    if (this.textures.exists(key)) this.textures.remove(key);
+    return this.textures.addCanvas(key, canvas)!;
+  }
+
+  create() {
+    // Characters: 3 frames x 4 directions, plus walk animations.
+    for (const [id, look] of Object.entries(LOOKS)) {
+      const key = `char_${id}`;
+      const tex = this.addCanvas(key, paintCharacterSheet(look));
+      for (let row = 0; row < CHAR_DIRS.length; row++)
+        for (let f = 0; f < CHAR_FRAMES; f++) tex.add(row * CHAR_FRAMES + f, 0, f * CHAR_W, row * CHAR_H, CHAR_W, CHAR_H);
+      CHAR_DIRS.forEach((dir, row) => {
+        const animKey = `${id}_walk_${dir}`;
+        if (this.anims.exists(animKey)) return;
+        this.anims.create({
+          key: animKey,
+          frames: [1, 0, 2, 0].map((f) => ({ key, frame: row * CHAR_FRAMES + f })),
+          frameRate: 8,
+          repeat: -1,
+        });
+      });
+    }
+    // Vehicles
+    for (let v = 0; v < 8; v++) this.addCanvas(`veh_car_${v}`, paintVehicle('car', v));
+    for (let v = 0; v < 4; v++) this.addCanvas(`veh_auto_${v}`, paintVehicle('auto', v));
+    for (let v = 0; v < 2; v++) this.addCanvas(`veh_bus_${v}`, paintVehicle('bus', v));
+    for (let v = 0; v < 4; v++) this.addCanvas(`veh_scooter_${v}`, paintVehicle('scooter', v));
+    this.addCanvas('train', paintTrain());
+    this.addCanvas('cow', paintCow());
+    this.addCanvas('groundTex', paintGround(buildGround()));
+    // Buildings and props
+    for (const b of BUILDINGS) this.addCanvas(`bld_${b.id}`, paintBuilding(b));
+    const kinds = new Set<PropKind>(PROPS.map((p) => p.kind));
+    for (const k of ['cone', 'barrier'] as PropKind[]) kinds.add(k);
+    for (const k of kinds) if (k !== 'hoarding') this.addCanvas(`prop_${k}`, paintProp(k));
+    for (const p of PROPS) if (p.kind === 'hoarding') this.addCanvas(`prop_hoarding_${p.text}`, paintProp('hoarding', p.text));
+    for (const l of ['red', 'yellow', 'green'] as const) this.addCanvas(`signal_${l}`, paintSignal(l));
+    this.addCanvas('viaduct', paintViaduct());
+    this.addCanvas('platform', paintPlatform());
+    this.addCanvas('ball', paintBall());
+    this.addCanvas('marker', paintMarker());
+    this.scene.start('world');
+  }
+}
+
+function paintBall() {
+  const [c, ctx] = makeCanvas(6, 6);
+  ellipse(ctx, 3, 3, 2.2, 2.2, '#e03131');
+  rect(ctx, 2, 2, 1, 1, '#ffa8a8');
+  outline(ctx, 0, 0, 6, 6);
+  return c;
+}
+
+function paintMarker() {
+  const [c, ctx] = makeCanvas(14, 18);
+  rect(ctx, 3, 1, 8, 8, '#ffd43b');
+  rect(ctx, 4, 9, 6, 2, '#ffd43b');
+  rect(ctx, 5, 11, 4, 2, '#ffd43b');
+  rect(ctx, 6, 13, 2, 2, '#ffd43b');
+  rect(ctx, 5, 3, 4, 4, '#e8590c');
+  outline(ctx, 0, 0, 14, 18);
+  return c;
+}
+
+/** Station canopy that sits on the viaduct above a platform. */
+function paintPlatform() {
+  const [c, ctx] = makeCanvas(160, 34);
+  rect(ctx, 0, 4, 160, 26, '#cfc9d9');
+  rect(ctx, 0, 4, 160, 2, '#ece8f2');
+  for (let x = 4; x < 156; x += 12) rect(ctx, x, 7, 8, 20, '#7048e8');
+  rect(ctx, 0, 14, 160, 6, '#5f3dc4');
+  drawText(ctx, 'PURPLE LINE', 58, 15, '#f8f9fa');
+  rect(ctx, 0, 28, 160, 2, '#8a8494');
+  outline(ctx, 0, 0, 160, 34);
+  return c;
+}

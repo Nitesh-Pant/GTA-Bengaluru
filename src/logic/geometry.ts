@@ -1,0 +1,35 @@
+export interface Rect {
+  x: number;
+  y: number;
+  w: number;
+  h: number;
+}
+
+export interface Point {
+  x: number;
+  y: number;
+}
+
+export const dist = (ax: number, ay: number, bx: number, by: number) => Math.hypot(ax - bx, ay - by);
+
+export const pointInRect = (px: number, py: number, r: Rect) =>
+  px >= r.x && px < r.x + r.w && py >= r.y && py < r.y + r.h;
+
+export const rectsOverlap = (a: Rect, b: Rect) =>
+  a.x < b.x + b.w && a.x + a.w > b.x && a.y < b.y + b.h && a.y + a.h > b.y;
+
+export const clamp = (v: number, min: number, max: number) => Math.max(min, Math.min(max, v));
+
+/** Shortest signed angle from a to b, in radians. */
+export function angleDelta(a: number, b: number): number {
+  let d = (b - a) % (Math.PI * 2);
+  if (d > Math.PI) d -= Math.PI * 2;
+  if (d < -Math.PI) d += Math.PI * 2;
+  return d;
+}
+
+/** True if a box centred on (x, y) with the given half-extents hits any solid rect. */
+export function boxHitsSolids(x: number, y: number, halfW: number, halfH: number, solids: readonly Rect[]): boolean {
+  const box = { x: x - halfW, y: y - halfH, w: halfW * 2, h: halfH * 2 };
+  return solids.some((s) => rectsOverlap(box, s));
+}

@@ -1,0 +1,254 @@
+import type Phaser from 'phaser';
+import { CONVERSATIONS, type ConvNode, type ConvOption, type Conversation, type Effect } from '../../data/conversations';
+import { EXCHANGES, LINE_POOLS, type Exchange } from '../../data/dialogue';
+import { POIS } from '../../data/pois';
+import { bubbleDuration, DialogueDirector, type LineContext } from '../../logic/dialogueDirector';
+import { visibilityOf } from '../../logic/discovery';
+import { mulberry32, pick } from '../../logic/rng';
+import { uiStore } from '../../store/uiStore';
+import type { WorldScene } from '../scenes/WorldScene';
+import type { Npc } from './NpcSystem';
+
+const NEAR_RADIUS = 58;
+const GROUP_RADIUS = 150;
+
+interface Group {
+  id: string;
+  members: Npc[];
+  cooldownUntil: number;
+  endsAt: number;
+}
+
+interface QueuedLine {
+  at: number;
+  speaker: Npc;
+  text: string;
+  duration: number;
+}
+
+export class TalkSystem {
+  readonly director: DialogueDirector;
+  private rng = mulberry32(7);
+  private near = new Set<string>();
+  private groups = new Map<string, Group>();
+  private queue: QueuedLine[] = [];
+  private recentExchanges: string[] = [];
+  private tick = 0;
+  private convo: { npc: Npc; conv: Conversation; node: ConvNode } | null = null;
+
+  constructor(private scene: WorldScene) {
+    this.director = new DialogueDirector(LINE_POOLS, { rng: this.rng });
+    for (const n of scene.npcs.npcs) {
+      const b = n.def.behaviour;
+      if (b.type !== 'chat') continue;
+      const g = this.groups.get(b.group) ?? { id: b.group, members: [], cooldownUntil: 4000 + this.rng() * 8000, endsAt: 0 };
+      g.members.push(n);
+      this.groups.set(b.group, g);
+    }
+  }
+
+  private chatterMul() {
+    const c = this.scene.settings.chatter;
+    return c === 'low' ? { chance: 0.45, cooldown: 1.8 } : c === 'high' ? { chance: 1.4, cooldown: 0.65 } : { chance: 1, cooldown: 1 };
+  }
+
+  ctx(): LineContext {
+    const s = this.scene;
+    return { area: s.district.id, raining: s.weather.raining, mode: s.mode.kind === 'drive' ? 'drive' : 'walk' };
+  }
+
+  /** Speak a line from the given pools. Ambient lines obey all anti-spam gates. */
+  speak(npc: Npc, categories: readonly string[], now: number, ambient: boolean, cooldownMs = 18000): boolean {
+    const d = this.director;
+    if (ambient ? !d.canSpeakAmbient(npc.id, now) : !d.canSpeakReaction(npc.id, now)) return false;
+    const line = d.pick(npc.id, categories, this.ctx());
+    if (!line) return false;
+    const dur = bubbleDuration(line.text);
+    d.markSpoke(npc.id, now, dur, cooldownMs * this.chatterMul().cooldown, ambient);
+    this.scene.bubbles.say(() => ({ x: npc.x, y: npc.y - 22 }), npc.name, line.text, dur, now);
+    return true;
+  }
+
+  /** A driver (traffic car) says something from a pool. */
+  speakDriver(carId: string, anchor: () => { x: number; y: number } | null, categories: readonly string[], now: number) {
+    const d = this.director;
+    if (!d.canSpeakReaction(carId, now)) return;
+    const line = d.pick(carId, categories, this.ctx());
+    if (!line) return;
+    const dur = bubbleDuration(line.text);
+    d.markSpoke(carId, now, dur, 4000, false);
+    this.scene.bubbles.say(anchor, 'Driver', line.text, dur, now, 'driver');
+  }
+
+  say(npc: Npc, text: string, now: number, kind: 'npc' | 'event' = 'npc') {
+    const dur = bubbleDuration(text);
+    this.director.markSpoke(npc.id, now, dur, 8000, false);
+    this.scene.bubbles.say(() => ({ x: npc.x, y: npc.y - 22 }), npc.name, text, dur, now, kind);
+    return dur;
+  }
+
+  update(now: number, dt: number) {
+    // Scripted exchange lines
+    while (this.queue.length && this.queue[0].at <= now) {
+      const q = this.queue.shift()!;
+      if (q.speaker.state === 'talk') continue;
+      this.director.markSpoke(q.speaker.id, now, q.duration, 6000, false);
+      this.scene.bubbles.say(() => ({ x: q.speaker.x, y: q.speaker.y - 22 }), q.speaker.name, q.text, q.duration, now);
+    }
+    this.tick -= dt;
+    if (this.tick > 0) return;
+    this.tick = 0.25;
+    const s = this.scene;
+    if (s.locked || s.mode.kind === 'metro') return;
+    const p = s.playerFeet();
+    const walking = s.mode.kind === 'walk';
+
+    // Proximity: entering an NPC's space may prompt an ambient line; passing by does nothing.
+    for (const n of s.npcs.npcs) {
+      const inside = walking && Math.hypot(n.x - p.x, n.y - p.y) < NEAR_RADIUS;
+      if (inside && !this.near.has(n.id)) {
+        this.near.add(n.id);
+        if (n.def.behaviour.type !== 'chat' && this.rng() < this.chatterMul().chance) s.react({ type: 'player_near', actorId: n.id, x: n.x, y: n.y });
+      } else if (!inside && this.near.has(n.id)) {
+        this.near.delete(n.id);
+        s.react({ type: 'player_pass', actorId: n.id, x: n.x, y: n.y });
+      }
+    }
+
+    // Chat groups talk among themselves when the player is within earshot (or on screen, more rarely).
+    const view = s.cameras.main.worldView;
+    for (const g of this.groups.values()) {
+      if (now < g.endsAt || now < g.cooldownUntil) continue;
+      if (g.members.some((m) => m.state !== 'active')) continue;
+      const cx = g.members.reduce((a, m) => a + m.x, 0) / g.members.length;
+      const cy = g.members.reduce((a, m) => a + m.y, 0) / g.members.length;
+      const d = Math.hypot(cx - p.x, cy - p.y);
+      const audible = d < GROUP_RADIUS || (view.contains(cx, cy) && this.rng() < 0.15);
+      if (!audible) continue;
+      this.startExchange(g, now);
+    }
+  }
+
+  private startExchange(g: Group, now: number) {
+    const raining = this.scene.weather.raining;
+    const topics = new Set(g.members.flatMap((m) => m.def.topics ?? ['general']));
+    let options = EXCHANGES.filter((e) => topics.has(e.topic) && !this.recentExchanges.includes(e.id) && (e.topic !== 'rain' || raining));
+    if (raining) {
+      const rainy = options.filter((e) => e.topic === 'rain');
+      if (rainy.length && this.rng() < 0.6) options = rainy;
+    }
+    if (!options.length) options = EXCHANGES.filter((e) => e.topic === 'general');
+    const ex = pick(options, this.rng);
+    g.endsAt = this.playExchange(g.members, ex, now);
+    g.cooldownUntil = g.endsAt + (30000 + this.rng() * 25000) * this.chatterMul().cooldown;
+  }
+
+  /** Queue a two-person exchange; returns when it ends (scene clock). */
+  playExchange(members: Npc[], ex: Exchange, now: number) {
+    this.recentExchanges.push(ex.id);
+    if (this.recentExchanges.length > 8) this.recentExchanges.shift();
+    let at = Math.max(now, this.queueEnd(now)) + 200;
+    for (const l of ex.lines) {
+      const speaker = members[l.who % members.length];
+      const duration = bubbleDuration(l.text);
+      this.queue.push({ at, speaker, text: l.text, duration });
+      at += duration + 250;
+    }
+    return at;
+  }
+
+  private queueEnd(now: number) {
+    if (!this.queue.length) return now;
+    const last = this.queue[this.queue.length - 1];
+    return last.at + last.duration;
+  }
+
+  // ── Conversations (E)
+
+  open(npc: Npc) {
+    const conv = npc.def.conversation ? CONVERSATIONS[npc.def.conversation] : this.genericConversation(npc);
+    npc.state = 'talk';
+    npc.faceTowards(this.scene.playerFeet().x, this.scene.playerFeet().y);
+    (npc.sprite.body as Phaser.Physics.Arcade.Body).setVelocity(0, 0);
+    this.convo = { npc, conv, node: conv.nodes[conv.start] };
+    this.show();
+  }
+
+  private show() {
+    if (!this.convo) return;
+    const { npc, node } = this.convo;
+    this.apply(node.effects);
+    const options = (node.options ?? [{ label: 'Sari! (Leave)' }]).map((o) => o.label);
+    uiStore.set({
+      dialogue: { speaker: node.speaker === '' ? '' : (node.speaker ?? npc.name), role: npc.def.role, text: node.text, options },
+    });
+  }
+
+  choose(i: number) {
+    if (!this.convo) return;
+    const opt: ConvOption | undefined = (this.convo.node.options ?? [{ label: 'Leave' }])[i];
+    if (!opt) return;
+    this.apply(opt.effects);
+    if (opt.next && this.convo.conv.nodes[opt.next]) {
+      this.convo.node = this.convo.conv.nodes[opt.next];
+      this.show();
+    } else this.close();
+  }
+
+  close() {
+    if (this.convo) {
+      const npc = this.convo.npc;
+      npc.state = 'active';
+      npc.pauseUntil = this.scene.clock + 1200;
+      this.director.markSpoke(npc.id, this.scene.clock, 0, 15000, false);
+    }
+    this.convo = null;
+    uiStore.set({ dialogue: null });
+  }
+
+  get talkingTo() {
+    return this.convo?.npc ?? null;
+  }
+
+  private apply(effects?: Effect[]) {
+    for (const e of effects ?? []) {
+      const s = this.scene;
+      if (e.type === 'hint') s.hint(e.poi);
+      else if (e.type === 'destination') s.setDestination(e.poi);
+      else if (e.type === 'stat') {
+        s.stats[e.stat]++;
+        s.persist();
+      } else if (e.type === 'world') {
+        const p = s.playerFeet();
+        s.react({ type: 'food_visit', x: p.x, y: p.y });
+      }
+    }
+  }
+
+  /** NPCs without a written conversation still chat, and may point out something nearby. */
+  private genericConversation(npc: Npc): Conversation {
+    const line = this.director.pick(npc.id, npc.def.categories, this.ctx())?.text ?? 'Namaskara!';
+    const s = this.scene;
+    const state = { discovered: s.discovered, hinted: s.hinted };
+    const near = POIS.filter((p) => visibilityOf(state, p) !== 'known' && (!p.hidden || this.rng() < 0.35))
+      .map((p) => ({ p, d: Math.hypot(p.x - npc.x, p.y - npc.y) }))
+      .sort((a, b) => a.d - b.d)[0]?.p;
+    const tip: ConvNode = near
+      ? {
+          text: near.hidden
+            ? `Psst… ${near.name} gothaa? ${near.hint ?? ''}. Yaarigu helbedi!`
+            : `${near.name} nodidira? ${near.description}`,
+          effects: [{ type: 'hint', poi: near.id }],
+          options: [{ label: 'Thanks! (Leave)' }],
+        }
+      : { text: 'Neevu already ella nodbittidira! Local aagbittiri, guru.', options: [{ label: 'Haha, thanks!' }] };
+    return {
+      id: `generic_${npc.id}`,
+      start: 'a',
+      nodes: {
+        a: { text: line, options: [{ label: 'Illi yenu special ide?', next: 'tip' }, { label: 'Sari, bartini! (Leave)' }] },
+        tip,
+      },
+    };
+  }
+}
