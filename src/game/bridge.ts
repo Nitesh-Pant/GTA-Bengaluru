@@ -1,8 +1,16 @@
 import type { PlayerProfile } from '../logic/player';
 import type { Settings } from '../logic/save';
 
-/** Things the tour's "Show me" buttons can point at. */
-export type GuideKind = 'yulu' | 'car' | 'auto' | 'bus' | 'metro';
+/** Things "Show me" and Find a ride can point at ('yulu' covers every bike: Yulu and rental scooters). */
+export const GUIDE_KINDS = ['yulu', 'auto', 'bus', 'metro', 'car'] as const;
+export type GuideKind = (typeof GUIDE_KINDS)[number];
+
+export interface NearbyRide {
+  kind: GuideKind;
+  label: string;
+  /** World pixels from the player. */
+  distance: number;
+}
 
 export interface MinimapSnapshot {
   x: number;
@@ -40,6 +48,8 @@ export interface GameApi {
   cancelJob(id: string): void;
   /** Mark the nearest one of `kind` with a guide marker (cleared when you get there). */
   showNearest(kind: GuideKind): void;
+  /** The nearest of each kind, for the Find a ride panel. */
+  nearestRides(): NearbyRide[];
   /** Board a BMTC bus from the open stop to another stop. */
   takeBus(toStopId: string): void;
 }

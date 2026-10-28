@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { BUILDINGS, buildGround, buildSolids, G, groundAt, PLAYER_SPAWN } from '../src/data/map';
+import { BUILDINGS, buildGround, buildSolids, DISTRICTS, districtCentre, G, groundAt, PLAYER_SPAWN } from '../src/data/map';
 import { STATIONS } from '../src/data/metro';
 import { NPCS } from '../src/data/npcs';
 import { BUS_STOPS, HAIL_SPOTS } from '../src/data/transit';
@@ -38,8 +38,9 @@ describe('collision data', () => {
     // 12th Main and the Marathahalli lane cross the sidewalks of 100 Feet Road into the road.
     for (const [x, y] of [[19, 22.5], [19, 23.5], [109, 22.5], [109, 23.5]]) expect(boxHitsSolids(x * 16, y * 16, 7, 4, solids), `${x},${y}`).toBe(false);
   });
-  it('Yulu bikes are not parked on any NPC route or wander zone', () => {
-    for (const r of RIDEABLES.filter((v) => v.id.startsWith('yulu'))) {
+  it('rideable vehicles are not parked on any NPC route or wander zone', () => {
+    // The cousin's car has always sat on 12th Main where the kids play; everything else keeps clear.
+    for (const r of RIDEABLES.filter((v) => v.id !== 'hatchback')) {
       const x = r.x / 16;
       const y = r.y / 16;
       for (const n of NPCS) {
@@ -55,6 +56,13 @@ describe('collision data', () => {
             }
           });
       }
+    }
+  });
+  it('every area has something to ride within a short walk', () => {
+    for (const d of DISTRICTS) {
+      const c = districtCentre(d);
+      const nearest = Math.min(...RIDEABLES.map((r) => Math.hypot(r.x / 16 - c.x, r.y / 16 - c.y)));
+      expect(nearest, d.id).toBeLessThan(24);
     }
   });
   it('NPCs start outside walls', () => {

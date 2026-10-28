@@ -66,6 +66,7 @@ guided tour starts the first time; skip it or follow along.
 | `E` | Talk, order food, feed a dog, get in a vehicle, use a metro entrance or bus stop | Get out (only when slow and there is room) |
 | `Space` | – | Handbrake |
 | `H` | – | Horn (pedestrians react, dogs bark) |
+| `F` | Find a ride: nearest bike, auto, bus stop, metro or car, with an arrow to it | same |
 | `R` | Book a Rapido bike taxi | – |
 | `M` | City map: zoom, drag, search, mark places, ride there | same |
 | `J` | Journal: places, food book, achievements | same |
@@ -81,9 +82,14 @@ panel or menu is open it owns the keyboard and the player stands still.
 
 On-screen controls appear automatically on touch devices:
 
-- **Left pad:** drag to walk, or to steer while driving.
-- **E:** talk, use, get in. While driving it becomes **Exit**, with **Horn** and a hold-to-**Brake** next to it.
-- **Map**, **Journal** and **II** (pause) buttons.
+- **Left side:** touch anywhere in the lower left and the pad appears under your thumb. Drag to walk.
+- **Driving is point-to-steer:** drag the way you want to go on screen and the vehicle turns and drives
+  there. Push further to go faster; point back from a stop to reverse. On phones vehicles top out a
+  little slower, since less of the road ahead fits on screen, and the camera leads in the direction
+  you're driving.
+- **E:** talk, use, get in. While driving: a big hold-to-**Brake** under the right thumb, **Horn**
+  beside it, and a small **Get out** above, out of the thumb's way.
+- **Find ride** (yellow), **Map**, **Journal** and **II** (pause) buttons.
 - Every panel, dialogue option and list is tappable. Portrait and landscape both work.
 
 ### Side bar
@@ -92,6 +98,7 @@ Always on the left of the screen (icon-only on phones):
 
 | Button | What it does |
 | --- | --- |
+| **Find a ride** | Nearest bike, auto, bus stop, metro and car with walking time; pick one for an arrow to it (on phones this is the yellow **Find ride** button) |
 | **Character** | Change your name, boy/girl and outfit at any time |
 | **Morning → Afternoon** | Jump the time of day (morning, afternoon, evening, night) |
 | **Sound on / off** | Mute or unmute everything |
@@ -107,7 +114,7 @@ Always on the left of the screen (icon-only on phones):
    for her. People greet you by name, and address you as *akka / madam / didi* or *anna / saar / bhai*.
 2. **Guided tour.** Popups spotlight each part of the screen (area card, minimap, side bar) and explain
    how to get around. The *Getting around* page has **Show me** buttons that put a marker on the
-   nearest Yulu, bus stop, metro, auto or car. Bring it back any time with **Hints**, or **How to play**
+   nearest bike, bus stop, metro, auto or car (the same as **Find a ride**). Bring it back any time with **Hints**, or **How to play**
    in the pause menu.
 3. **You start on 100 Feet Road**, Indiranagar, at 8 AM, beside Hatti Kaapi and Manju's tea cart.
    Walk up to people and press `E`.
@@ -159,13 +166,16 @@ Green road-name boards stand on every main road, and the big map labels areas, r
 | How | Where | Notes |
 | --- | --- | --- |
 | **Walk** | Everywhere | `WASD` or the touch pad |
-| **Yulu e-bike** | 6 Yulu spots (metro, tech park, MG Road, Koramangala, BTM, KR Puram) | Walk up and press `E`. Slow and polite |
+| **Yulu e-bike** | 16 spots, at least one in every area | Walk up and press `E`. Slow and polite |
 | **Cousin's hatchback** | 12th Main, Indiranagar | "Full tank illa, adjust maadi" |
-| **Raju's auto** | KR Puram auto stand | Also how you earn auto fares |
-| **Rental scooter** | Tech park | Battery 64%, helmet optimistic |
+| **Autos** | Raju's (KR Puram auto stand), Manju's (Indiranagar), Shivanna's (MG Road), Venki's (Koramangala), Basavaraj's (BTM) | Borrow one and earn auto fares |
+| **Rental scooter** | Tech park and KR Puram | Battery 64%, helmet optimistic |
 | **Rapido bike taxi** | Anywhere on foot: `R`, the side bar, or **Ride** on a map search result | The captain picks you up from the nearest main road and drops you on the pavement near your destination. About a third of the time the first captain cancels ("Traffic jaasti, saar") |
 | **BMTC bus** | 7 stops: Indiranagar 100 Ft Rd, Marathahalli Bridge, Thippasandra, KR Puram, MG Road, Koramangala (Sony Signal), BTM (Udupi Garden) | Stand at the stop, press `E`, choose where. Miss it and "BMTC never waits" |
 | **Namma Metro** | Indiranagar, Halasuru and KR Puram on the elevated purple line | `E` at the entrance, pick a station, ride the viaduct. A recorded announcer calls the next station |
+
+Not sure where any of these are? **Find a ride** (`F`, or the yellow button on phones) lists the
+nearest of each with the walking time and puts an arrow on the screen edge pointing the way.
 
 Traffic vehicles (cars, autos, buses, scooters, the police car and the ambulance) can't be taken.
 
@@ -175,7 +185,7 @@ Traffic vehicles (cars, autos, buses, scooters, the police car and the ambulance
 
 ### Jobs (all optional)
 
-- **Auto fares.** Drive Raju's auto and people wave you down. Slow down beside them, drop them at the
+- **Auto fares.** Drive any of the autos and people wave you down. Slow down beside them, drop them at the
   marker and collect the meter, rounded down ("change illa"). Earnings show in the journal.
 - **Food delivery.** Ask a delivery rider (Imran in Thippasandra, or Mallesh outside Swiggy) for an
   order. Pick it up at a restaurant and drop it at an office, PG or landmark before the timer runs out.
@@ -353,7 +363,7 @@ dropped.
 | Tech questions | 20 |
 | Street events | 10 |
 | Metro stations / bus stops | 3 / 7 |
-| Rideable vehicles | 9 (car, auto, scooter, 6 Yulu) |
+| Rideable vehicles | 24 (1 car, 5 autos, 2 scooters, 16 Yulu) |
 | Traffic vehicles | 32 on 19 routes (including the police car and ambulance) |
 | Buildings | 82 |
 | Voice clips | 40 |
@@ -472,8 +482,8 @@ Most content is plain data, and tests catch broken references.
 | **A street event** | Add a definition in `src/data/events.ts` and a handler in `EventSystem` |
 
 `tests/data.test.ts` and `tests/collision.test.ts` check ids, references and conversation links. They
-also check that people, exits, stops and rideables aren't inside walls, and that lanes and Yulu spots
-stay clear.
+also check that people, exits, stops and rideables aren't inside walls, that lanes and parked rides
+stay off walking routes, and that every area has something to ride within a short walk.
 
 ---
 

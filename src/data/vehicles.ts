@@ -36,17 +36,61 @@ export const PARKED: Array<{ type: TrafficType; variant: number; x: number; y: n
   { type: 'scooter', variant: 1, x: 77.5, y: 79.2, heading: -Math.PI / 2 },
 ];
 
-/** Only these vehicles can be driven. No stealing traffic. */
+const auto = (id: string, name: string, x: number, y: number, heading: number, note: string): RideableDef => ({
+  id,
+  name,
+  type: 'auto',
+  variant: 3,
+  x: t(x),
+  y: t(y),
+  heading,
+  params: AUTO,
+  halfLen: 10,
+  halfWidth: 7,
+  note,
+});
+
+const scooter = (id: string, x: number, y: number, heading: number): RideableDef => ({
+  id,
+  name: 'Rental Scooter',
+  type: 'scooter',
+  variant: 3,
+  x: t(x),
+  y: t(y),
+  heading,
+  params: SCOOTER,
+  halfLen: 7,
+  halfWidth: 4,
+  note: 'A shared rental scooter. Battery: 64%. Helmet: optimistic.',
+});
+
+const UP = -Math.PI / 2;
+
+/** Only these vehicles can be driven. No stealing traffic. Every area has at least one within a short walk. */
 export const RIDEABLES: RideableDef[] = [
   { id: 'hatchback', name: "Cousin's Hatchback", type: 'car', variant: 6, x: t(19), y: t(30), heading: -Math.PI / 2, params: CAR, halfLen: 14, halfWidth: 7, note: 'Your cousin left the keys with you. "Full tank illa, adjust maadi."' },
-  { id: 'rajuauto', name: "Raju's Auto", type: 'auto', variant: 3, x: t(104.5), y: t(81.5), heading: 0, params: AUTO, halfLen: 10, halfWidth: 7, note: 'Raju anna is on his lunch break. "Ondu round ashte, scratch maadbedi!"' },
+  auto('rajuauto', "Raju's Auto", 104.5, 81.5, 0, 'Raju anna is on his lunch break. "Ondu round ashte, scratch maadbedi!"'),
+  auto('auto_indira', "Manju's Auto", 38.5, 22.9, 0, 'Manju anna is having chai. "Meter haaki, cheating maadbedi. Keys ille ide."'),
+  auto('auto_mg', "Shivanna's Auto", 38.9, 112, UP, 'Shivanna is watching cricket on his phone. "Take it, take it. Last over nodbeku."'),
+  auto('auto_kora', "Venki's Auto", 86.9, 120, UP, 'Venki is stuck in a phone call with his landlord. He waves you in.'),
+  auto('auto_btm', "Basavaraj's Auto", 92.9, 120, UP, 'Basavaraj is napping in the shade. You leave a note: "Borrowed. Will return. Promise."'),
   ...[
-    { id: 'yulu_metro', x: 31, y: 63 },
-    { id: 'yulu_tech', x: 69, y: 16.9 },
-    { id: 'yulu_mg', x: 37, y: 103.5 },
-    { id: 'yulu_kora', x: 57, y: 124.3 },
-    { id: 'yulu_btm', x: 106, y: 112.9 },
-    { id: 'yulu_hub', x: 118, y: 80 },
+    { id: 'yulu_metro', x: 31, y: 63, heading: 0 },
+    { id: 'yulu_tech', x: 69, y: 16.9, heading: 0 },
+    { id: 'yulu_mg', x: 37, y: 103.5, heading: 0 },
+    { id: 'yulu_kora', x: 57, y: 124.3, heading: 0 },
+    { id: 'yulu_btm', x: 106, y: 112.9, heading: 0 },
+    { id: 'yulu_hub', x: 118, y: 80, heading: 0 },
+    { id: 'yulu_indira', x: 38.9, y: 29, heading: UP },
+    { id: 'yulu_bagmane', x: 86.9, y: 7, heading: UP },
+    { id: 'yulu_marath', x: 92.9, y: 32, heading: UP },
+    { id: 'yulu_ulsoor', x: 77, y: 56.9, heading: 0 },
+    { id: 'yulu_thippa', x: 44.9, y: 78, heading: UP },
+    { id: 'yulu_stadium', x: 38.9, y: 129, heading: UP },
+    { id: 'yulu_cubbon', x: 11, y: 116, heading: 0 },
+    { id: 'yulu_vidhana', x: 22, y: 162.9, heading: 0 },
+    { id: 'yulu_basava', x: 66, y: 162.9, heading: 0 },
+    { id: 'yulu_lalbagh', x: 108, y: 162.9, heading: 0 },
   ].map(
     (y): RideableDef => ({
       id: y.id,
@@ -55,12 +99,13 @@ export const RIDEABLES: RideableDef[] = [
       variant: YULU_VARIANT,
       x: t(y.x),
       y: t(y.y),
-      heading: 0,
+      heading: y.heading,
       params: YULU,
       halfLen: 7,
       halfWidth: 4,
       note: 'QR scanned, Yulu unlocked. Battery 78%. Top speed: very polite. Park it anywhere, everyone does.',
     }),
   ),
-  { id: 'scooter', name: 'Rental Scooter', type: 'scooter', variant: 3, x: t(62), y: t(13.4), heading: 0, params: SCOOTER, halfLen: 7, halfWidth: 4, note: 'A shared rental scooter. Battery: 64%. Helmet: optimistic.' },
+  scooter('scooter', 62, 13.4, 0),
+  scooter('scooter_krpuram', 108, 62.9, 0),
 ];

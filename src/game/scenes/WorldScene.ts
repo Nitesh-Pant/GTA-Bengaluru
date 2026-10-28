@@ -9,7 +9,7 @@ import { PARKED } from '../../data/vehicles';
 import { newlyUnlocked } from '../../logic/achievements';
 import { addressOf, type PlayerProfile } from '../../logic/player';
 import { addHint, checkDiscoveries } from '../../logic/discovery';
-import { boxHitsSolids, dist, type Rect } from '../../logic/geometry';
+import { boxHitsSolids, closest, dist, type Rect } from '../../logic/geometry';
 import { darkness } from '../../logic/dayClock';
 import { CHAR_DIRS, CHAR_FRAMES } from '../art/characters';
 import { pickInteraction, type InteractionCandidate } from '../../logic/interaction';
@@ -21,7 +21,7 @@ import { loadGameSave } from '../../session';
 import type { PlayerMode } from '../../logic/vehicleState';
 import { inputLocked, uiStore } from '../../store/uiStore';
 import { audio } from '../audio';
-import { bridge, type GuideKind } from '../bridge';
+import { bridge, GUIDE_KINDS, type GuideKind } from '../bridge';
 import { PLAYER_BODY, t, WALK_SPEED, WORLD_H, WORLD_W } from '../constants';
 import { isTouchDevice, touch } from '../touch';
 import { DECAL_PROPS, propKey } from '../art/props';
@@ -296,6 +296,9 @@ export class WorldScene extends Phaser.Scene {
     kb.on('keydown-E', () => this.interact());
     kb.on('keydown-H', () => this.honk());
     kb.on('keydown-R', () => this.ride.open());
+    kb.on('keydown-F', () => {
+      if (!this.locked && !this.travelling) uiStore.set({ panel: 'find' });
+    });
     // Release keys when the window loses focus so the player never keeps walking on their own.
     const blur = () => kb.resetKeys();
     window.addEventListener('blur', blur);
@@ -317,11 +320,18 @@ export class WorldScene extends Phaser.Scene {
     // Use the shorter side (width counts a bit more) so phones in portrait still see the street.
     const h = Math.min(this.scale.height, this.scale.width * 0.75);
     this.baseZoom = Phaser.Math.Clamp(Math.floor(h / 260), 2, 5);
+    // Phones see less road ahead at the same zoom, so vehicles top out slower there.
+    const view = Math.min(this.scale.width, this.scale.height) / this.driveZoom;
+    this.vehicles.speedScale = Phaser.Math.Clamp(view / 300, 0.6, 1);
     this.setZoomForMode(animate);
   }
 
+  private get driveZoom() {
+    return Math.max(2, this.baseZoom - 1);
+  }
+
   setZoomForMode(animate = true) {
-    const z = this.mode.kind === 'drive' ? Math.max(2, this.baseZoom - 1) : this.baseZoom;
+    const z = this.mode.kind === 'drive' ? this.driveZoom : this.baseZoom;
     if (animate) this.cameras.main.zoomTo(z, 450, 'Sine.easeInOut');
     else this.cameras.main.setZoom(z);
   }
@@ -376,6 +386,11 @@ export class WorldScene extends Phaser.Scene {
       },
       takeBus: (id) => this.buses.take(id),
       showNearest: (kind) => this.showNearest(kind),
+      nearestRides: () =>
+        GUIDE_KINDS.flatMap((kind) => {
+          const n = this.nearestOf(kind);
+          return n ? [{ kind, label: n.item.label, distance: n.distance }] : [];
+        }),
     };
   }
 
@@ -539,21 +554,25 @@ export class WorldScene extends Phaser.Scene {
     this.persist();
   }
 
-  /** The tour's "Show me": mark the nearest Yulu, bus stop, metro entrance, or the auto / car to borrow. */
-  private showNearest(kind: GuideKind) {
+  /** The closest bike, auto, bus stop… to the player, with its distance in world px. */
+  private nearestOf(kind: GuideKind) {
     const p = this.playerFeet();
+    const vehicleType = { yulu: 'scooter', auto: 'auto', car: 'car' } as const;
     const spots: Array<{ x: number; y: number; label: string }> =
       kind === 'bus'
         ? BUS_STOPS.map((b) => ({ x: t(b.x), y: t(b.y), label: `Bus stop: ${b.name}` }))
         : kind === 'metro'
           ? STATIONS.map((st) => ({ x: st.entrance.x, y: st.entrance.y, label: `${st.name} Metro` }))
-          : this.vehicles.list
-              .filter((v) => !v.occupied && (kind === 'yulu' ? v.def.id.startsWith('yulu') : v.def.id === (kind === 'auto' ? 'rajuauto' : 'hatchback')))
-              .map((v) => ({ x: v.sprite.x, y: v.sprite.y, label: v.def.name }));
-    const best = spots.sort((a, b) => Math.hypot(a.x - p.x, a.y - p.y) - Math.hypot(b.x - p.x, b.y - p.y))[0];
+          : this.vehicles.list.filter((v) => !v.occupied && v.def.type === vehicleType[kind]).map((v) => ({ x: v.sprite.x, y: v.sprite.y, label: v.def.name }));
+    return closest(spots, p);
+  }
+
+  /** "Show me" / Find a ride: mark the nearest one; the marker clears when you get there. */
+  private showNearest(kind: GuideKind) {
+    const best = this.nearestOf(kind);
     if (!best) return;
-    this.guides.set('tour', best);
-    uiStore.toast({ kind: 'hint', title: `Marked: ${best.label}`, body: 'Follow the arrow on the screen edge. The marker clears when you get there.' }, 3600);
+    this.guides.set('tour', best.item);
+    uiStore.toast({ kind: 'hint', title: `Marked: ${best.item.label}`, body: 'Follow the arrow on the screen edge. The marker clears when you get there.' }, 3600);
   }
 
   /** Count something the player did (a ride, a fare, a biscuit…) and save. */
@@ -651,7 +670,7 @@ export class WorldScene extends Phaser.Scene {
     this.npcs.update(dt, now);
     this.traffic.update(dt, now);
     const car = this.vehicles.driving();
-    const steer = car && (touch.stick.x || touch.stick.y) ? stickDrive(touch.stick, car, car.def.params) : input;
+    const steer = car && (touch.stick.x || touch.stick.y) ? stickDrive(touch.stick, car, this.vehicles.paramsFor(car)) : input;
     this.vehicles.update(dt, now, steer, this.locked, this.keys.space.isDown || touch.brake);
     this.talk.update(now, dt);
     this.dayNight.update(dt);

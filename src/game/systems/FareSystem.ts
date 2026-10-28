@@ -13,7 +13,7 @@ const PASSENGER_LOOKS = ['techie_m', 'techie_f', 'aunty', 'uncle', 'student_f', 
 const NAMES = ['Meena', 'Prakash', 'Sowmya', 'Arif', 'Deepak', 'Lata', 'Joseph', 'Nandini', 'Rahul', 'Farzana'];
 const ASKS = ['"Meter haaki, anna!"', '"Bega hogi, flight ide!"', '"Left-u, right-u, straight-u. Naanu helthini."', '"Short route gothu alva?"', '"Swalpa slow, nanna coffee chellutte!"'];
 
-/** Driving Raju's auto: people wave you down; slow down beside them, drop them off, collect the meter. */
+/** Driving any auto: people wave you down; slow down beside them, drop them off, collect the meter. */
 export class FareSystem {
   private rng = mulberry32(97);
   private job: { stage: 'pickup' | 'carry'; name: string; spot: { x: number; y: number }; to: PoiDef; sprite: Phaser.GameObjects.Image | null } | null = null;

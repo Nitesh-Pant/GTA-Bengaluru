@@ -15,6 +15,7 @@ import { PauseMenu } from './ui/PauseMenu';
 import { CharacterPanel } from './ui/CharacterSetup';
 import { QuickBar } from './ui/QuickBar';
 import { RidePanel } from './ui/RidePanel';
+import { FindPanel } from './ui/FindPanel';
 import { BusPanel } from './ui/BusPanel';
 import { Tour } from './ui/Tour';
 import { TouchControls } from './ui/TouchControls';
@@ -77,6 +78,7 @@ export function App() {
       <PauseMenu />
       <QuickBar />
       <RidePanel />
+      <FindPanel />
       <BusPanel />
       <Tour />
       <CharacterPanel />

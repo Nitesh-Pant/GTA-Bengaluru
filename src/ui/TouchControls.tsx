@@ -113,13 +113,19 @@ export function TouchControls() {
   };
   return (
     <div className="touch" aria-label="Touch controls">
-      <div className="touch-menu">
-        <button className="touch-small" onClick={() => open('map')}>Map</button>
-        <button className="touch-small" onClick={() => open('journal')}>Journal</button>
-        <button className="touch-small" onClick={pause} aria-label="Pause">
-          II
-        </button>
-      </div>
+      {/* Hidden while a panel is open: panels have their own close buttons, and these would sit on top of them. */}
+      {!locked && (
+        <div className="touch-menu">
+          <button className="touch-small touch-find" onClick={() => uiStore.set({ panel: 'find' })}>
+            Find ride
+          </button>
+          <button className="touch-small" onClick={() => open('map')}>Map</button>
+          <button className="touch-small" onClick={() => open('journal')}>Journal</button>
+          <button className="touch-small" onClick={pause} aria-label="Pause">
+            II
+          </button>
+        </div>
+      )}
       {!locked && mode !== 'metro' && mode !== 'ride' && (
         <>
           <Joystick />

@@ -3,7 +3,7 @@ import { nextPeriod, periodLabel } from '../logic/dayClock';
 import { inputLocked, uiStore, useUi } from '../store/uiStore';
 
 
-/** Always-visible side buttons: change character, step the time of day, book a bike taxi. */
+/** Always-visible side buttons: find a ride, change character, step the time of day, book a bike taxi. */
 export function QuickBar() {
   const ready = useUi((s) => s.ready);
   const period = useUi((s) => s.clock?.period ?? 'morning');
@@ -17,6 +17,10 @@ export function QuickBar() {
   const now = periodLabel(period);
   return (
     <div className="quickbar" aria-label="Quick actions">
+      <button className="quick quick-find" onClick={() => uiStore.set({ panel: 'find' })} title="Find the nearest bike, auto, bus stop or metro (F)" aria-label="Find a ride">
+        <span className="quick-icon">F</span>
+        <span className="quick-label">Find a ride</span>
+      </button>
       <button className="quick" onClick={() => uiStore.set({ panel: 'character' })} title="Change your name, look and outfit" aria-label="Change character">
         <span className="quick-icon">☺</span>
         <span className="quick-label">Character</span>

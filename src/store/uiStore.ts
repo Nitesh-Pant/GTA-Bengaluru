@@ -31,7 +31,7 @@ export interface Job {
   cancellable?: boolean;
 }
 
-export type Panel = null | 'pause' | 'journal' | 'map' | 'ride' | 'character' | 'bus' | 'tour';
+export type Panel = null | 'pause' | 'journal' | 'map' | 'ride' | 'character' | 'bus' | 'tour' | 'find';
 
 export interface UiState {
   phase: 'menu' | 'playing';

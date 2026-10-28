@@ -65,17 +65,22 @@ function steps(name: string, touch: boolean): Step[] {
     {
       title: 'Quick buttons',
       target: '.quickbar',
-      body: <>Change your character, switch the time of day (morning to night), mute the sound, book a Rapido, and open these hints again.</>,
+      body: (
+        <>
+          <b>Find a ride</b> shows the nearest bike, auto, bus stop and metro with an arrow to it{touch ? '' : <> (or press <kbd>F</kbd>)</>}. The
+          others change your character, switch the time of day, mute the sound, book a Rapido and open these hints again.
+        </>
+      ),
     },
     {
       title: 'Getting around',
       body: (
         <ul className="tour-list">
           <li>
-            <b>Yulu e-bike</b>: blue bikes parked at Yulu spots. Walk up and press {press('E', 'E')}.
+            <b>Bikes</b>: blue Yulu e-bikes and rental scooters in every area. Walk up and press {press('E', 'E')}.
           </li>
           <li>
-            <b>Cousin's car</b> on 12th Main and <b>Raju's auto</b> at the KR Puram auto stand.
+            <b>Autos</b> parked around the city (borrow one and pick up fares) and your <b>cousin's car</b> on 12th Main.
           </li>
           <li>
             <b>Rapido bike taxi</b>: press {press('R', 'Ride')} and pick a place. The first captain may cancel!
@@ -89,10 +94,10 @@ function steps(name: string, touch: boolean): Step[] {
         </ul>
       ),
       showMe: [
-        { kind: 'yulu', label: 'Nearest Yulu' },
+        { kind: 'yulu', label: 'Nearest bike' },
         { kind: 'bus', label: 'Nearest bus stop' },
         { kind: 'metro', label: 'Nearest metro' },
-        { kind: 'auto', label: "Raju's auto" },
+        { kind: 'auto', label: 'Nearest auto' },
         { kind: 'car', label: "Cousin's car" },
       ],
     },
@@ -101,7 +106,7 @@ function steps(name: string, touch: boolean): Step[] {
       body: (
         <ul className="tour-list">
           <li>
-            <b>Auto fares</b>: drive Raju's auto, slow down beside people who wave, drop them at the marker, collect the meter.
+            <b>Auto fares</b>: drive any auto, slow down beside people who wave, drop them at the marker, collect the meter.
           </li>
           <li>
             <b>Food delivery</b>: ask a delivery rider (Imran, or Mallesh outside Swiggy) for an order and beat the timer.

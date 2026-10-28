@@ -2,7 +2,7 @@ import Phaser from 'phaser';
 import { PROPS } from '../../data/map';
 import { RIDEABLES, type RideableDef } from '../../data/vehicles';
 import { boxHitsSolids } from '../../logic/geometry';
-import { stepDrive, type DirInput } from '../../logic/movement';
+import { stepDrive, type DirInput, type DriveParams } from '../../logic/movement';
 import { enterVehicle, exitVehicle, type RideableInfo } from '../../logic/vehicleState';
 import { uiStore } from '../../store/uiStore';
 import { audio } from '../audio';
@@ -48,6 +48,8 @@ export class VehicleSystem {
   readonly group: Phaser.Physics.Arcade.Group;
   private bumpCd = 0;
   private hornCd = 0;
+  /** 1 on big screens; lower on phones, where less road is visible ahead. Set by WorldScene with the zoom. */
+  speedScale = 1;
 
   constructor(private scene: WorldScene) {
     this.group = scene.physics.add.group();
@@ -61,6 +63,13 @@ export class VehicleSystem {
 
   byId(id: string) {
     return this.list.find((v) => v.def.id === id);
+  }
+
+  /** Driving params for this screen: small screens get a lower top speed (never below a brisk 100). */
+  paramsFor(v: Rideable): DriveParams {
+    const p = v.def.params;
+    if (this.speedScale >= 1) return p;
+    return { ...p, maxSpeed: Math.max(Math.min(p.maxSpeed, 100), p.maxSpeed * this.speedScale) };
   }
 
   driving(): Rideable | null {
@@ -131,7 +140,8 @@ export class VehicleSystem {
     if (!v) return;
     const body = v.sprite.body as Phaser.Physics.Arcade.Body;
     const none: DirInput = { up: false, down: false, left: false, right: false };
-    const next = stepDrive({ speed: v.speed, heading: v.heading }, locked ? none : input, v.def.params, dt, locked || handbrake);
+    const params = this.paramsFor(v);
+    const next = stepDrive({ speed: v.speed, heading: v.heading }, locked ? none : input, params, dt, locked || handbrake);
     // Scraping a wall bleeds speed instead of stopping dead.
     if (!body.blocked.none && Math.abs(next.speed) > 30) {
       next.speed *= 0.6;
@@ -148,11 +158,11 @@ export class VehicleSystem {
     // The camera leads the vehicle so the road ahead is on screen (most needed on small phones).
     const cam = this.scene.cameras.main;
     // Each axis leads by a share of the view along it, so a tall phone sees far up and down the road.
-    const lead = (v.speed / v.def.params.maxSpeed) * 0.3;
+    const lead = (v.speed / params.maxSpeed) * 0.3;
     const ease = Math.min(1, dt * 3);
     cam.followOffset.x += (-Math.cos(v.heading) * lead * (cam.width / cam.zoom) - cam.followOffset.x) * ease;
     cam.followOffset.y += (-Math.sin(v.heading) * lead * (cam.height / cam.zoom) - cam.followOffset.y) * ease;
-    audio.engine(Math.min(1, Math.abs(v.speed) / v.def.params.maxSpeed), v.def.type);
+    audio.engine(Math.min(1, Math.abs(v.speed) / params.maxSpeed), v.def.type);
     // Potholes: a proper Bengaluru welcome.
     if (Math.abs(v.speed) > 60 && now > this.bumpCd) {
       for (const p of POTHOLES)

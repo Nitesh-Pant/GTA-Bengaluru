@@ -1025,6 +1025,11 @@ kbd {
   background: rgba(47, 158, 68, 0.9);
   border-color: #51cf66;
 }
+.touch-find {
+  background: rgba(252, 196, 25, 0.92);
+  border-color: #fff3bf;
+  color: #1c1726;
+}
 .touch-hint {
   top: 26%;
   bottom: auto;
@@ -1057,14 +1062,16 @@ kbd {
     width: 56px;
     height: 84px;
   }
+  /* Under the area card, leaving the top bar to the quick buttons. */
   .touch-menu {
     flex-direction: row;
     bottom: auto;
-    top: 12px;
-    right: 210px;
+    top: 104px;
+    left: 12px;
+    right: auto;
   }
   .touch-hint {
-    top: 96px;
+    top: 148px;
     left: 12px;
     transform: none;
     width: min(360px, calc(50vw - 24px));
@@ -1151,6 +1158,10 @@ kbd {
   .quick-label {
     display: none;
   }
+  /* Phones get a labelled Find ride button beside Map instead. */
+  .quick-find {
+    display: none;
+  }
   .quick-icon {
     width: 24px;
     height: 24px;
@@ -1161,7 +1172,7 @@ kbd {
   .quickbar {
     top: 12px;
     left: auto;
-    right: 380px;
+    right: 210px;
     flex-direction: row;
   }
   /* Landscape phones: messages sit low in the gap between the stick and the pedals, off the road ahead. */
