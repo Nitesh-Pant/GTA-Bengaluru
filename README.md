@@ -69,7 +69,7 @@ guided tour starts the first time; skip it or follow along.
 | `F` | Find: nearest bike, auto, bus stop, metro, car or job, with a route to it | same |
 | `R` | Book a Rapido bike taxi | – |
 | `M` | City map: zoom, drag, search, mark places, ride there | same |
-| `J` | Journal: places, food book, achievements | same |
+| `J` | Journal: places, food book, achievements (switch on **Show Journal** in the pause menu first) | same |
 | `Esc` | Pause and settings, or close whatever is open | same |
 | `?` / `F1` | Show or hide the controls hint | same |
 | `1`–`9`, `↑ ↓` + `Enter`, mouse | Pick dialogue options and destinations | same |
@@ -89,8 +89,10 @@ On-screen controls appear automatically on touch devices:
   you're driving.
 - **E:** talk, use, get in. While driving: a big hold-to-**Brake** under the right thumb, **Horn**
   beside it, and a small **Get out** above, out of the thumb's way.
-- **Find** and **Ride** (yellow; Ride books a Rapido and shows on foot), **Map**, **Journal** and **II**
-  (pause) buttons.
+- **Find** and **Rapido** (yellow; Rapido shows on foot), **Map**, **II** (pause), and **Journal** if
+  it's switched on in the pause menu.
+- **City map** (Map or `M`): full screen on phones, sized to the screen in portrait or landscape, with
+  big zoom buttons on the side, pinch to zoom, and tap a place to mark it.
 - Every panel, dialogue option and list is tappable. Portrait and landscape both work.
 
 ### Side bar
@@ -104,7 +106,7 @@ Always on the left of the screen (icon-only on phones):
 | **Morning → Afternoon** | Jump the time of day (morning, afternoon, evening, night) |
 | **Sound on / off** | Mute or unmute everything |
 | **Hints** | Replay the guided tour |
-| **Ride** | Book a Rapido (when on foot) |
+| **Rapido** | Book a Rapido (when on foot) |
 
 ---
 
@@ -158,16 +160,28 @@ not real distances (the real Nandi Hills is 60 km away).
 | **Vidhana Soudha** | The granite legislature with *"Government Work is God's Work"*, floodlit at night |
 | **Basavanagudi** | Dodda Basavana Gudi (Bull Temple), a groundnut seller, and a **Ganesha pandal** with a dhol, lights and prasada |
 | **Lalbagh** | The Glass House, flower beds and morning walkers |
+| **Silk Board Junction** | Hosur Road crossing the Outer Ring Road just outside the city: a signal with a cruelly short green, a queue that never quite clears, an unfinished metro flyover with the span over the junction missing, a signal hawker, a stuck commuter and a traffic cop |
+| **Kempegowda Airport** | At the end of NH 44: a glass terminal, a cab driver with "fixed rates", an NRI uncle, a delayed techie, a parked plane on the apron and a plane taking off over the vineyards every minute or so. A secret plane-spotting gap in the fence |
 | **Devanahalli Highway** | NH 44 past the toll plaza (and its groundnut seller), the all-night Highway Dhaba, vineyards, eucalyptus-lined roads and a village shop |
-| **Nandi Hills** | Forest slopes, granite boulders and a hairpin road up to the summit: Hill Top Cafe, Yoga Nandeeshwara Temple, Tipu's Drop, Sunrise Point, bikers, a photographer, a corn seller and a techie who came for the sunrise and saw only fog. A secret boulder view, if a biker tells you where |
+| **Nandi Hills** | Forest slopes, granite boulders and a hairpin road up to the summit: Hill Top Cafe, Yoga Nandeeshwara Temple, Tipu's Drop, Sunrise Point, bikers, a photographer, a corn seller and a techie who came for the sunrise and saw only fog. Bonnet macaques that snatch any food you just bought (Hanuman tax). Masala corn, Hill-top Maggi, and aloo paratha at the dhaba on the way. A secret boulder view, if a biker tells you where |
 
 ### Nandi Hills mornings
 
 From 4 AM the hill fills with fog, thicker the higher you climb. Reach **Sunrise Point** between about
 5:30 and 7:00 and the summit sits above the clouds while the sun comes up (the *Sunrise Chaser*
 achievement). Got there at the wrong hour? Press `E` at Sunrise Point to sit with a chai and wait: the
-clock moves to 5:25 the next morning. Get there by driving out along NH 44 and up the hairpins, or
-book a Rapido to the Nandi Hills gate; rental scooters wait at the gate, the dhaba and the summit.
+clock moves to 5:25 the next morning. Get there by driving out along NH 44 and up the hairpins, the
+**KSRTC Nandi Hills Express** from any bus stop, or a Rapido to the Nandi Hills gate; rental scooters
+wait at the gate, the dhaba and the summit.
+
+### Festivals by season
+
+The city keeps a two-week festival calendar (in game days): **Ugadi** on the day you arrive, then
+**Bengaluru Karaga**, two **monsoon** days (rain rolls in), **Ganesha Chaturthi**, **Kannada
+Rajyotsava** (red and yellow flags), **Deepavali** (diyas on every building after dark and crackers
+over the city), **Kadlekai Parishe** (groundnut stalls by Bull Temple) and **Sankranti**, with ordinary
+days between. Each hangs bunting across the main roads, shows a chip on the area card, greets you in
+the morning and gets people talking. Jumping the clock from night to morning moves on a day.
 
 Green road-name boards stand on every main road, and the big map labels areas, roads and lakes.
 
@@ -182,8 +196,9 @@ Green road-name boards stand on every main road, and the big map labels areas, r
 | **Cousin's hatchback** | 12th Main, Indiranagar | "Full tank illa, adjust maadi" |
 | **Autos** | Raju's (KR Puram auto stand), Manju's (Indiranagar), Shivanna's (MG Road), Venki's (Koramangala), Basavaraj's (BTM) | Borrow one and earn auto fares |
 | **Rental scooter** | Tech park and KR Puram | Battery 64%, helmet optimistic |
-| **Rapido bike taxi** | Anywhere on foot: `R`, the side bar, or **Ride** on a map search result | The captain picks you up from the nearest main road and drops you on the pavement near your destination. About a third of the time the first captain cancels ("Traffic jaasti, saar") |
-| **BMTC bus** | 7 stops: Indiranagar 100 Ft Rd, Marathahalli Bridge, Thippasandra, KR Puram, MG Road, Koramangala (Sony Signal), BTM (Udupi Garden) | Stand at the stop, press `E`, choose where. Miss it and "BMTC never waits" |
+| **Rapido bike taxi** | Anywhere on foot: `R`, the side bar, or **Rapido** on a map search result | The captain picks you up from the nearest main road and drops you on the pavement near your destination. About a third of the time the first captain cancels ("Traffic jaasti, saar") |
+| **BMTC bus** | 7 city stops: Indiranagar 100 Ft Rd, Marathahalli Bridge, Thippasandra, KR Puram, MG Road, Koramangala (Sony Signal), BTM (Udupi Garden) | Stand at the stop, press `E`, choose where. Miss it and "BMTC never waits" |
+| **KSRTC / Vayu Vajra** | Nandi Hills Gate and Kempegowda Airport stops | Trips out of town use the KSRTC Nandi Hills Express or the BMTC Vayu Vajra airport bus, from any stop |
 | **Namma Metro** | Indiranagar, Halasuru and KR Puram on the elevated purple line | `E` at the entrance, pick a station, ride the viaduct. A recorded announcer calls the next station |
 
 Not sure where any of these are? **Find** (`F`, or the yellow button on phones) lists the
@@ -206,11 +221,16 @@ Anyone with a job wears a bouncing yellow **!** (the minimap shows them too), an
 you can borrow. Walk up to one and a card pitches the job with a button to start it (**Not now** keeps
 that giver quiet for a couple of minutes). **Find** also lists the nearest job of each kind.
 
-- **Auto fares.** Drive any of the autos and people wave you down. Slow down beside them, drop them at the
+- **Auto fares.** Borrow any auto and choose **Earn fares** (or **Just drive** to cruise without
+  passengers). People wave you down. Slow down beside them, drop them at the
   marker and collect the meter, rounded down ("change illa"). Earnings show in the journal.
 - **Food delivery.** Ask a delivery rider (Imran in Thippasandra, Mallesh outside Swiggy, Salman at
   Marathahalli or Imtiyaz in BTM) for an order. Pick it up at a restaurant and drop it at an office, PG or landmark before the timer runs out.
   Any way of travelling counts. The ✕ on the HUD chip hands the order back.
+- **Traffic police.** Constables at 100 Feet Road × CMH Road, Marathahalli, MG Road and Silk Board
+  whistle you over for jumping a red, speeding, or riding a rental scooter without a helmet. Pay the
+  challan, try *"Swalpa adjust maadi, sir…"* (sometimes it works, sometimes it costs ₹200 more), or
+  plead you're new to Bengaluru (always works the first time).
 - **Tech questions.** The recruiter at the tech park's walk-in drive, the Amazon intern, and most
   techies, founders and job candidates will quiz you (20 questions).
 
@@ -352,10 +372,11 @@ any time from the side bar, the pause menu, or **Change character & continue** o
 
 The pause menu (`Esc` or **II**) has:
 
-- Resume, Journal, Map and How to play
+- Resume, Map, How to play (and Journal, once switched on)
 - Character and time of day
 - Mute all sound, plus sliders for master, sound effects, city ambience, voices and music
-- Street chatter (low, normal, high), destination markers, route dots to markers (off by default),
+- Street chatter (low, normal, high), destination markers, **Show Journal** (off by default), route
+  dots to markers (on by default),
   word meanings for Kannada and Hindi (on by default), screen shake
 - Save and quit to the title, and Reset progress (with confirmation)
 
@@ -387,17 +408,18 @@ dropped.
 | Content | Count |
 | --- | --- |
 | Areas | 14 |
-| Places to discover | 71 (6 secret) |
-| People | 159 |
-| Dialogue lines / exchanges / conversations | 477 / 62 / 39 |
-| Dishes | 21 |
-| Achievements | 30 |
+| Places to discover | 74 (7 secret) |
+| People | 170 |
+| Dialogue lines / exchanges / conversations | 535 / 62 / 45 |
+| Dishes | 24 |
+| Achievements | 36 |
+| Festivals | 8 on a two-week calendar |
 | Tech questions | 20 |
 | Street events | 10 |
-| Metro stations / bus stops | 3 / 7 |
-| Rideable vehicles | 27 (1 car, 5 autos, 5 scooters, 16 Yulu) |
-| Traffic vehicles | 36 on 19 routes (including the police car and ambulance) |
-| Buildings | 92 |
+| Metro stations / bus stops | 3 / 9 (plus KSRTC to Nandi Hills and Vayu Vajra to the airport) |
+| Rideable vehicles | 28 (1 car, 5 autos, 5 scooters, 17 Yulu) |
+| Traffic vehicles | 48 on 23 routes (including the police car and ambulance) |
+| Buildings | 93 |
 | Voice clips | 40 |
 
 Everything visual is painted in code at startup: there are no image files besides the app icons.
