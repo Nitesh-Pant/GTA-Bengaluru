@@ -2,6 +2,7 @@ import type Phaser from 'phaser';
 import { JOB_GIVERS, JOB_INFO, type JobKind } from '../../data/jobs';
 import { closest, type Point } from '../../logic/geometry';
 import { canEnter } from '../../logic/vehicleState';
+import { FARE_CHOICE } from './FareSystem';
 import { inputLocked, uiStore, type JobOffer } from '../../store/uiStore';
 import { audio } from '../audio';
 import type { WorldScene } from '../scenes/WorldScene';
@@ -89,18 +90,23 @@ export class JobSystem {
           })
         : undefined;
     if (!near) {
-      if (current) uiStore.set({ jobOffer: null });
+      if (current && current.id !== FARE_CHOICE) uiStore.set({ jobOffer: null });
       return;
     }
     if (current?.id === near.id) return;
     const info = JOB_INFO[near.kind];
-    const offer: JobOffer = { id: near.id, kind: near.kind, title: info.name, who: near.who, body: info.pitch, cta: info.cta };
+    const offer: JobOffer = { id: near.id, kind: near.kind, title: info.name, who: near.who, body: info.pitch, cta: info.cta, alt: near.kind === 'fares' ? 'Just drive' : undefined };
     uiStore.set({ jobOffer: offer });
     audio.chime('hint');
   }
 
-  accept(id: string) {
+  /** Start the offered job; `alt` is the card's second choice (for autos, "Just drive"). */
+  accept(id: string, alt = false) {
     const s = this.scene;
+    if (id === FARE_CHOICE) {
+      s.fares.setDuty(alt ? 'drive' : 'earn');
+      return;
+    }
     const b = this.beacons.find((x) => x.id === id);
     uiStore.set({ jobOffer: null });
     if (!b) return;
@@ -112,12 +118,19 @@ export class JobSystem {
     } else {
       const v = s.vehicles.byId(id);
       const f = s.playerFeet();
-      if (v && canEnter(s.mode, v.info(), f.x, f.y)) s.vehicles.enter(v);
+      if (v && canEnter(s.mode, v.info(), f.x, f.y)) {
+        s.fares.preset = alt ? 'drive' : 'earn';
+        s.vehicles.enter(v);
+      }
       else if (v) uiStore.toast({ kind: 'hint', title: 'Walk up to the auto', body: 'Then press E to get in.' }, 2600);
     }
   }
 
   snooze(id: string) {
+    if (id === FARE_CHOICE) {
+      this.scene.fares.setDuty('drive');
+      return;
+    }
     this.snoozed.set(id, this.scene.clock + SNOOZE);
     uiStore.set({ jobOffer: null });
   }

@@ -5,6 +5,7 @@ import { useUi } from '../store/uiStore';
 /** Pops up when you walk up to someone with a job (or a borrowable auto): what it is, and one tap to start. */
 export function JobOffer() {
   const offer = useUi((s) => s.jobOffer);
+  const driving = useUi((s) => s.mode === 'drive');
   if (!offer) return null;
   return (
     <div className="job-offer panel" role="dialog" aria-label={`Job: ${offer.title}`}>
@@ -22,13 +23,20 @@ export function JobOffer() {
         <button className="btn btn-primary" onClick={() => bridge.api?.acceptJob(offer.id)}>
           {offer.cta}
         </button>
-        <button className="btn" onClick={() => bridge.api?.snoozeJob(offer.id)}>
-          Not now
-        </button>
+        {offer.alt && (
+          <button className="btn" onClick={() => bridge.api?.acceptJob(offer.id, true)}>
+            {offer.alt}
+          </button>
+        )}
+        {!(offer.alt && driving) && (
+          <button className="btn" onClick={() => bridge.api?.snoozeJob(offer.id)}>
+            Not now
+          </button>
+        )}
       </div>
-      {!isTouchDevice() && (
+      {!isTouchDevice() && !driving && (
         <div className="muted job-offer-keys">
-          or press <kbd>E</kbd> to {offer.kind === 'fares' ? 'get in' : 'talk'}
+          or press <kbd>E</kbd> to {offer.kind === 'fares' ? 'get in and choose' : 'talk'}
         </div>
       )}
     </div>

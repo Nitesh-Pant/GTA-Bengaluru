@@ -61,7 +61,7 @@ export interface GameApi {
   /** Mark the nearest giver of this job. */
   showJob(kind: JobKind): void;
   /** Start the job pitched by uiStore.jobOffer, or quieten that giver for a while. */
-  acceptJob(id: string): void;
+  acceptJob(id: string, alt?: boolean): void;
   snoozeJob(id: string): void;
   /** Board a BMTC bus from the open stop to another stop. */
   takeBus(toStopId: string): void;

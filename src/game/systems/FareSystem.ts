@@ -9,6 +9,9 @@ import { audio } from '../audio';
 import { t, TILE } from '../constants';
 import type { WorldScene } from '../scenes/WorldScene';
 
+/** The "earn fares or just drive?" card shown when you get into an auto. */
+export const FARE_CHOICE = 'fares:choice';
+const CHOICE = FARE_CHOICE;
 const PASSENGER_LOOKS = ['techie_m', 'techie_f', 'aunty', 'uncle', 'student_f', 'commuter', 'commuter_f', 'student'];
 const NAMES = ['Meena', 'Prakash', 'Sowmya', 'Arif', 'Deepak', 'Lata', 'Joseph', 'Nandini', 'Rahul', 'Farzana'];
 const ASKS = ['"Meter haaki, anna!"', '"Bega hogi, flight ide!"', '"Left-u, right-u, straight-u. Naanu helthini."', '"Short route gothu alva?"', '"Swalpa slow, nanna coffee chellutte!"'];
@@ -19,6 +22,10 @@ export class FareSystem {
   private job: { stage: 'pickup' | 'carry'; name: string; spot: { x: number; y: number }; to: PoiDef; sprite: Phaser.GameObjects.Image | null } | null = null;
   private nextAt = 0;
   private wasAuto = false;
+  /** Picking up passengers in this auto ('ask' until you choose). */
+  private duty: 'ask' | 'earn' | 'drive' = 'ask';
+  /** Chosen on the auto's job card before getting in. */
+  preset: 'earn' | 'drive' | null = null;
 
   constructor(private scene: WorldScene) {}
 
@@ -33,11 +40,18 @@ export class FareSystem {
     if (!!v !== this.wasAuto) {
       this.wasAuto = !!v;
       if (v) {
-        this.nextAt = now + 4000;
-        uiStore.toast({ kind: 'hint', title: 'Auto mode', body: 'People will wave you down. Slow down beside them to pick up, then drop them at the marker.' }, 5200);
-      } else if (this.job) this.abandon();
+        if (this.preset) this.setDuty(this.preset, now);
+        else {
+          this.duty = 'ask';
+          uiStore.set({ jobOffer: { id: CHOICE, kind: 'fares', title: 'Auto fares', who: v.def.name, body: 'Pick up people who wave you down and earn the meter, or just drive around.', cta: 'Earn fares', alt: 'Just drive' } });
+        }
+        this.preset = null;
+      } else {
+        if (this.job) this.abandon();
+        if (uiStore.get().jobOffer?.id === CHOICE) uiStore.set({ jobOffer: null });
+      }
     }
-    if (!v) return;
+    if (!v || this.duty !== 'earn') return;
     if (!this.job) {
       if (now >= this.nextAt) this.hail();
       return;
@@ -63,6 +77,16 @@ export class FareSystem {
       this.nextAt = now + 5000;
       s.bump('fares');
     }
+  }
+
+  /** Earn fares (passengers start waving) or just drive. */
+  setDuty(duty: 'earn' | 'drive', now = this.scene.clock) {
+    this.duty = duty;
+    if (uiStore.get().jobOffer?.id === CHOICE) uiStore.set({ jobOffer: null });
+    if (duty === 'earn') {
+      this.nextAt = now + 3000;
+      uiStore.toast({ kind: 'hint', title: 'On duty', body: 'People will wave you down. Slow down beside them to pick up, then drop them at the marker.' }, 5200);
+    } else if (this.job) this.abandon();
   }
 
   private hail() {

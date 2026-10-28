@@ -10,8 +10,8 @@ export const JOB_INFO: Record<JobKind, { name: string; pitch: string; cta: strin
   },
   fares: {
     name: 'Auto fares',
-    pitch: 'Borrow the auto. People wave you down: pick them up, drop them at the marker, collect the meter.',
-    cta: 'Drive the auto',
+    pitch: 'Borrow the auto. Earn fares (people wave you down: pick them up, drop them at the marker, collect the meter), or just drive around.',
+    cta: 'Earn fares',
     find: 'pick up passengers, earn the meter',
   },
   quiz: {

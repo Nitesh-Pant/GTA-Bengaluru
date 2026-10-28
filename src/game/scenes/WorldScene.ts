@@ -413,7 +413,7 @@ export class WorldScene extends Phaser.Scene {
       },
       takeBus: (id) => this.buses.take(id),
       showNearest: (kind) => this.showNearest(kind),
-      acceptJob: (id) => this.jobs.accept(id),
+      acceptJob: (id, alt) => this.jobs.accept(id, alt),
       snoozeJob: (id) => this.jobs.snooze(id),
       nearestJobs: () => this.jobs.nearest().map(({ kind, label, distance }) => ({ kind, label, distance })),
       showJob: (kind) => {

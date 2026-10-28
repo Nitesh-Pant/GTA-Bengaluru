@@ -42,6 +42,8 @@ export interface JobOffer {
   who: string;
   body: string;
   cta: string;
+  /** A second way to say yes (autos: "Just drive"). */
+  alt?: string;
 }
 
 export type Panel = null | 'pause' | 'journal' | 'map' | 'ride' | 'character' | 'bus' | 'tour' | 'find';
