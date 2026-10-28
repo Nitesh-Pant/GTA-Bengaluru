@@ -1,6 +1,8 @@
-# GTA-Bengaluru
+# GTE-Bengaluru
 
-### *Swalpa Adjust Maadi*
+### **G**aadi · **T**hindi · **E**njoy — *Swalpa Adjust Maadi*
+
+**Play now: [gte-bengaluru.pages.dev](https://gte-bengaluru.pages.dev)** (free, in the browser, on desktop or phone)
 
 A top-down, 16-bit-style open-world game set in Bengaluru. Walk 100 Feet Road with a filter coffee,
 get stuck at Marathahalli Junction behind Gowri the cow, ride the purple line, book a Rapido (and get
@@ -42,7 +44,7 @@ first visit.
 
 ## Play it
 
-Requires **Node 20 or newer**.
+The live game is at **https://gte-bengaluru.pages.dev**. To run it locally you need **Node 20 or newer**:
 
 ```bash
 npm install
@@ -496,6 +498,25 @@ npm run preview    # check the production build locally
 The service worker caches the app for offline play; change `CACHE` in `public/sw.js` when you want
 every player to drop old cached files.
 
+### Live site (Cloudflare Pages)
+
+The game is hosted for free on Cloudflare Pages as the project `gte-bengaluru`. Every push to `main`
+runs [`.github/workflows/deploy.yml`](.github/workflows/deploy.yml): it installs, typechecks, lints,
+runs the unit tests, builds, and uploads `dist/` to Cloudflare. If any check fails, nothing is
+deployed and the live site stays as it was. Pull requests run the same checks without deploying.
+You can also start a deploy by hand from the repo's **Actions** tab (*Deploy* → *Run workflow*).
+
+It needs one repository secret, `CLOUDFLARE_API_TOKEN` (a Cloudflare API token with the
+*Account › Cloudflare Pages › Edit* permission), under **Settings → Secrets and variables → Actions**.
+
+To deploy by hand without GitHub, run Wrangler from a folder **outside** the project (inside it,
+Wrangler tries to rewrite the Vite config):
+
+```bash
+npm run build
+DIST="$PWD/dist" && cd .. && npx wrangler@4 pages deploy "$DIST" --project-name gte-bengaluru --branch main
+```
+
 ---
 
 ## Names, places and credits
@@ -504,7 +525,7 @@ every player to drop old cached files.
   real Bengaluru names, but the layout is simplified and not to scale, and which company sits where is
   not accurate. People, conversations and events are fictional. No business, organisation or team named
   in the game is affiliated with it or endorses it.
-- **Not affiliated with Rockstar Games.** GTA-Bengaluru is a fan-made, non-commercial project with no
+- **Not affiliated with Rockstar Games.** GTE-Bengaluru (Gaadi, Thindi, Enjoy) is a fan-made, non-commercial project with no
   connection to Rockstar Games or the *Grand Theft Auto* series.
 - **Voices** recorded and generated for the project by Nitesh.
 - **Fonts:** [Pixelify Sans](https://fonts.google.com/specimen/Pixelify+Sans) and

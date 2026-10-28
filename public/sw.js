@@ -1,6 +1,6 @@
 // Offline support: cache the app as it loads, serve from cache when the network is gone.
 // Pages go network-first (so updates arrive); hashed assets, audio and icons go cache-first.
-const CACHE = 'swalpa-v2';
+const CACHE = 'swalpa-v3';
 const SHELL = ['./', './index.html', './manifest.webmanifest', './icons/icon-192.png', './icons/icon-512.png'];
 
 self.addEventListener('install', (e) => {

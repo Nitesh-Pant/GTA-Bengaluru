@@ -104,7 +104,8 @@ export function MainMenu() {
       <StreetScene />
       <div className="menu-card panel">
         <h1>
-          GTA-BENGALURU
+          GTE-BENGALURU
+          <span className="menu-gte">Gaadi · Thindi · Enjoy</span>
           <span>Swalpa Adjust Maadi</span>
         </h1>
         <p className="menu-tag">A top-down wander through traffic, darshinis, metro rides and street gossip. No missions. Just the city.</p>

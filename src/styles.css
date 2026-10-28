@@ -738,6 +738,14 @@ kbd {
   color: #fff;
   text-shadow: 2px 2px 0 var(--metro);
 }
+.menu-card h1 .menu-gte {
+  margin-top: 6px;
+  font-family: var(--font);
+  font-size: clamp(12px, 2vw, 16px);
+  letter-spacing: 0.08em;
+  color: var(--saffron);
+  text-shadow: 1px 1px 0 var(--chilli);
+}
 .menu-tag {
   margin: 4px 0 16px;
   color: #e6ddf5;

@@ -1,0 +1,41 @@
+# Checks every push and pull request; pushes to main also go live on Cloudflare Pages
+# (https://gte-bengaluru.pages.dev). Needs the repo secret CLOUDFLARE_API_TOKEN.
+name: Deploy
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+# One deploy at a time; a newer push replaces a queued one.
+concurrency:
+  group: deploy-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run lint
+      - run: npm test
+      - run: npm run build # also typechecks
+
+      - name: Deploy to Cloudflare Pages
+        if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
+        # Run Wrangler outside the checkout: inside it, Wrangler tries to rewrite the Vite config.
+        working-directory: ${{ runner.temp }}
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: 49573cbf53ead85b0653cf91e688d1c2
+          COMMIT_MESSAGE: ${{ github.event.head_commit.message || 'Manual deploy' }}
+        run: >
+          npx --yes wrangler@4 pages deploy "$GITHUB_WORKSPACE/dist"
+          --project-name gte-bengaluru --branch main
+          --commit-hash "$GITHUB_SHA" --commit-message "${COMMIT_MESSAGE%%$'\n'*}"
