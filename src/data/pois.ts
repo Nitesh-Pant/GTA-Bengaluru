@@ -79,6 +79,17 @@ export const POIS: PoiDef[] = [
   { id: 'pglane', name: 'BTM PG Lane', district: 'btm', kind: 'landmark', x: t(106), y: t(106.6), radius: 56, description: 'Gents PG, Ladies PG, Comfort PG. Gates close at 10:30, the Andhra mess never does.' },
   { id: 'andhramess', name: 'Andhra Mess', district: 'btm', kind: 'food', x: t(115), y: t(106.6), radius: 30, description: 'Unlimited rice, gunpowder podi and a pickle that files a complaint against your tongue.' },
   { id: 'btmlake', name: 'BTM Lake', district: 'btm', kind: 'park', x: t(111), y: t(127.6), radius: 50, description: 'Evening walkers, PG residents on phone calls home, and ducks with strong opinions.' },
+  // Devanahalli Highway (NH 44)
+  { id: 'tollplaza', name: 'Devanahalli Toll Plaza', district: 'highway', kind: 'landmark', x: t(137.5), y: t(57), radius: 56, description: 'FASTag beeps, the boom lifts, and a man sells groundnuts to every car in the queue.' },
+  { id: 'dhaba', name: 'Highway Dhaba', district: 'highway', kind: 'food', x: t(157), y: t(74), radius: 48, description: 'Plastic chairs, steel plates and the strongest chai between Bengaluru and the airport. Open all night for the sunrise crowd.' },
+  // Nandi Hills
+  { id: 'nandigate', name: 'Nandi Hills Gate', district: 'nandi', kind: 'landmark', x: t(149), y: t(55), radius: 44, description: 'The forest department gate. Ticket, plastic check, and a monkey watching your snacks very closely.' },
+  { id: 'hairpins', name: 'Hairpin Bends', district: 'nandi', kind: 'landmark', x: t(164), y: t(47), radius: 64, description: 'The road folds back on itself again and again. Bikers lean into every bend; buses take three attempts.' },
+  { id: 'hilltop', name: 'Hill Top Cafe', district: 'nandi', kind: 'food', x: t(154), y: t(33.5), radius: 40, description: 'Hot maggi, masala chai and a view of the fog. On a good day, a view of the view.' },
+  { id: 'nanditemple', name: 'Yoga Nandeeshwara Temple', district: 'nandi', kind: 'landmark', x: t(167), y: t(33.5), radius: 44, description: 'An old stone temple on the summit, bells ringing into the clouds.' },
+  { id: 'tipusdrop', name: "Tipu's Drop", district: 'nandi', kind: 'landmark', x: t(158), y: t(28.4), radius: 44, description: 'A sheer granite drop on the north face, railed off these days. The whole plain spreads out below.' },
+  { id: 'sunrisepoint', name: 'Sunrise Point', district: 'nandi', kind: 'park', x: t(173.5), y: t(31.5), radius: 40, description: 'Everyone comes here before six with a shawl and a flask. Some days the sun, some days only fog. Both get photographed.' },
+  { id: 'secretboulder', name: 'Secret Boulder View', district: 'nandi', kind: 'hidden', hidden: true, x: t(185), y: t(40), radius: 36, description: 'A flat boulder past the second hairpin with the whole valley to yourself.', hint: 'Past Hairpin 2, keep going east' },
 ];
 
 export const POI_IDS = new Set(POIS.map((p) => p.id));

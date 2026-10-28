@@ -23,6 +23,8 @@ export const ACHIEVEMENTS: AchievementDef[] = [
   { id: 'honk_50', title: 'Horn OK Please', description: 'Honk 50 times. Bengaluru approves.', done: (p) => p.stats.honks >= 50 },
   { id: 'cow', title: 'Right of Way', description: 'Say hello to Gowri the cow.', done: (p) => p.stats.cow >= 1 },
   { id: 'cricket', title: 'Sakkath Fielding', description: 'Throw the cricket ball back to the kids.', done: (p) => p.stats.throws >= 1 },
+  { id: 'nandi_top', title: 'Above the Clouds', description: 'Reach the top of Nandi Hills.', done: (p) => p.discovered.includes('sunrisepoint') || p.discovered.includes('tipusdrop') },
+  { id: 'nandi_sunrise', title: 'Sunrise Chaser', description: 'Watch the sunrise from Nandi Hills.', done: (p) => p.stats.sunrises >= 1 },
   { id: 'dog_friend', title: 'Biscuit Friend', description: 'Give a street dog a biscuit.', done: (p) => p.stats.dogsFed >= 1 },
   { id: 'fare_1', title: 'Meter Haaki', description: 'Drop off your first auto passenger.', done: (p) => p.stats.fares >= 1 },
   { id: 'fare_5', title: 'Auto Anna', description: 'Drop off 5 auto passengers.', done: (p) => p.stats.fares >= 5 },

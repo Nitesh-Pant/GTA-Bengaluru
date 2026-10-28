@@ -124,21 +124,22 @@ Always on the left of the screen (icon-only on phones):
 
 ## The city
 
-The map is 128 × 168 tiles (16 px each), a simplified east-and-central Bengaluru. Real place names,
-not real distances.
+The map is 192 × 168 tiles (16 px each): the city in the first 128 columns, a simplified
+east-and-central Bengaluru, and the countryside with **Nandi Hills** to its east. Real place names,
+not real distances (the real Nandi Hills is 60 km away).
 
 ```
-             cols 0-39           40-43    44-87                 88-91    92-127
- rows 0-15    Indiranagar shops  CMH Rd   Bagmane Tech Park     Old      Marathahalli shops
- rows 18-21   ═══════════════════════════ 100 Feet Road ═══════ Airport ═══════════════════
- rows 24-55   Indiranagar homes  │        Ulsoor Lake           Road     Mall + market
- rows 58-61   ════════════════════ Outer Ring Road + metro viaduct ═══════════════════════
- rows 64-95   Thippasandra food street + maidan                 │        KR Puram hub
- rows 96-105  MG Road shops      │        Koramangala startups  │        BTM PG lane
- rows 108-111 ═══════ MG Road / 80 Feet Road / 16th Main Road ═════════════════════════════
- rows 114-143 Cubbon Park + Chinnaswamy   Koramangala offices   │        PGs + BTM Lake
- rows 144-161 Vidhana Soudha              Bull Temple + pandal  │        Lalbagh
- rows 164-167 ═══════ Ambedkar Veedhi / Bull Temple Road / Lalbagh Road ═══════════════════
+             cols 0-39           40-43    44-87                 88-91    92-127            │ 128-191
+ rows 0-15    Indiranagar shops  CMH Rd   Bagmane Tech Park     Old      Marathahalli shops │ fields
+ rows 18-21   ═══════════════════════════ 100 Feet Road ═══════ Airport ═══════════════════ │ ═ Old Madras Rd ═
+ rows 24-55   Indiranagar homes  │        Ulsoor Lake           Road     Mall + market      │ NANDI HILLS
+ rows 58-61   ════════════════════ Outer Ring Road + metro viaduct ════════════════════════ │ ═ NH 44, toll ══
+ rows 64-95   Thippasandra food street + maidan                 │        KR Puram hub       │ dhaba, vineyards
+ rows 96-105  MG Road shops      │        Koramangala startups  │        BTM PG lane        │ fields
+ rows 108-111 ═══════ MG Road / 80 Feet Road / 16th Main Road ════════════════════════════ │ ═ Hosur Road ═══
+ rows 114-143 Cubbon Park + Chinnaswamy   Koramangala offices   │        PGs + BTM Lake     │ village
+ rows 144-161 Vidhana Soudha              Bull Temple + pandal  │        Lalbagh            │ fields
+ rows 164-167 ═══════ Ambedkar Veedhi / Bull Temple Road / Lalbagh Road ══════════════════ │ ═ Kanakapura Rd ═
 ```
 
 | Area | Highlights |
@@ -157,6 +158,16 @@ not real distances.
 | **Vidhana Soudha** | The granite legislature with *"Government Work is God's Work"*, floodlit at night |
 | **Basavanagudi** | Dodda Basavana Gudi (Bull Temple), a groundnut seller, and a **Ganesha pandal** with a dhol, lights and prasada |
 | **Lalbagh** | The Glass House, flower beds and morning walkers |
+| **Devanahalli Highway** | NH 44 past the toll plaza (and its groundnut seller), the all-night Highway Dhaba, vineyards, eucalyptus-lined roads and a village shop |
+| **Nandi Hills** | Forest slopes, granite boulders and a hairpin road up to the summit: Hill Top Cafe, Yoga Nandeeshwara Temple, Tipu's Drop, Sunrise Point, bikers, a photographer, a corn seller and a techie who came for the sunrise and saw only fog. A secret boulder view, if a biker tells you where |
+
+### Nandi Hills mornings
+
+From 4 AM the hill fills with fog, thicker the higher you climb. Reach **Sunrise Point** between about
+5:30 and 7:00 and the summit sits above the clouds while the sun comes up (the *Sunrise Chaser*
+achievement). Got there at the wrong hour? Press `E` at Sunrise Point to sit with a chai and wait: the
+clock moves to 5:25 the next morning. Get there by driving out along NH 44 and up the hairpins, or
+book a Rapido to the Nandi Hills gate; rental scooters wait at the gate, the dhaba and the summit.
 
 Green road-name boards stand on every main road, and the big map labels areas, roads and lakes.
 
@@ -376,17 +387,17 @@ dropped.
 | Content | Count |
 | --- | --- |
 | Areas | 14 |
-| Places to discover | 62 (5 secret) |
-| People | 146 |
-| Dialogue lines / exchanges / conversations | 437 / 59 / 38 |
+| Places to discover | 71 (6 secret) |
+| People | 159 |
+| Dialogue lines / exchanges / conversations | 477 / 62 / 39 |
 | Dishes | 21 |
-| Achievements | 28 |
+| Achievements | 30 |
 | Tech questions | 20 |
 | Street events | 10 |
 | Metro stations / bus stops | 3 / 7 |
-| Rideable vehicles | 24 (1 car, 5 autos, 2 scooters, 16 Yulu) |
-| Traffic vehicles | 32 on 19 routes (including the police car and ambulance) |
-| Buildings | 82 |
+| Rideable vehicles | 27 (1 car, 5 autos, 5 scooters, 16 Yulu) |
+| Traffic vehicles | 36 on 19 routes (including the police car and ambulance) |
+| Buildings | 92 |
 | Voice clips | 40 |
 
 Everything visual is painted in code at startup: there are no image files besides the app icons.

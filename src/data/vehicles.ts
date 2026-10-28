@@ -108,4 +108,7 @@ export const RIDEABLES: RideableDef[] = [
   ),
   scooter('scooter', 62, 13.4, 0),
   scooter('scooter_krpuram', 108, 62.9, 0),
+  scooter('scooter_nandigate', 145.5, 56.9, 0),
+  scooter('scooter_dhaba', 166, 74, 0),
+  scooter('scooter_summit', 156, 35.4, 0),
 ];

@@ -299,6 +299,63 @@ const RAW: Record<string, Raw[]> = {
     'I read an entire book this month. All of it at Silk Board.',
   ],
 
+  hills: [
+    'Sunrise nodakke bandvi, fog nodtha iddivi. Paravagilla.',
+    'Bhai, 4 baje uthe sirf is view ke liye. Worth it.',
+    'Honestly, the drive up was the best part.',
+    'Ee chali nodi! Bengaluru alli ee thara chali illa.',
+    'Yaar, network nahi hai. Finally, peace.',
+    'Monkey nanna chips thogondu hoythu! Ayyo.',
+    ['Fog nodi, ella white! Moodalli nimmadi.', { time: ['morning'] }],
+    ['Sunrise is in ten minutes. Phone ready, guys!', { time: ['morning'] }],
+    ['Itni dhoop mein bhi hawa thandi hai yahan.', { time: ['day'] }],
+    ['Sunset bhi sakkath ide illi, nodi!', { time: ['evening'] }],
+  ],
+  biker: [
+    'Weekend ride! Hairpins alli lean maadodhu sakkath feeling.',
+    'Bhai, 5 baje nikle, 6 baje top pe. Perfect.',
+    'Riding gear without riding skills, that is most of us.',
+    'Helmet haaki, guru. Hairpins are not a joke.',
+    'Next weekend Coorg? Same group, same chai stop.',
+    ['Morning chill alli bike ride, best therapy.', { time: ['morning'] }],
+  ],
+  tollman: [
+    'FASTag recharge maadi saar, line hold aagthide.',
+    'Bhai, FASTag balance zero hai. Cash wali line mein jao.',
+    'Every car: "Nandi Hills ge yeshtu dooradallide?" Twenty minutes, saar.',
+    'Toll paid, receipt thogoli. Happy journey!',
+    ['Five in the morning and already a queue of bikers.', { time: ['morning'] }],
+  ],
+  dhaba: [
+    'Paaji, garma garam paratha, makhan ke saath!',
+    'Highway ka sabse best chai yahin milta hai.',
+    'Truck wale, bikers, techies, sab yahin rukte hain.',
+    'Nandi Hills se aaye? Bhook lagi hogi, baitho!',
+    'Two plate paratha, one chai, extra butter. Standard order.',
+  ],
+  hills_vendor: [
+    'Bisi bisi jola! Nimbe, uppu, khara haaki kodthini.',
+    'Ondu chai, ondu jola, chali hogutte!',
+    'Corn twenty rupees, chai ten. Sunrise free.',
+    'Masala corn, madam? Fresh, bisi bisi!',
+  ],
+  forest_guard: [
+    'Plastic olage beda, saar. Forest area.',
+    'Monkeys ge food kodbedi, please. Avu habit maadkothave.',
+    'Gate six ge open aagutte. Neevu bega bandre wait maadbeku.',
+    'Hairpins alli slow aagi hogi. Speed beda.',
+  ],
+  photographer: [
+    'Golden hour! Ondu nimisha, ee shot important.',
+    'The fog is actually great for photos. Moody.',
+    'Bhai, frame se hato please, sunrise aa raha hai.',
+  ],
+  priest: [
+    'Yoga Nandeeshwara swamy ashirvaada maadli.',
+    'Ee devasthana thumba haleyadu. Shanti ide illi.',
+    'Prasada thogoli, magu.',
+  ],
+
   // ── Reactions
   bump: [
     'Ayyo! Nodkondu nadi, anna!',
@@ -565,7 +622,7 @@ export const LINE_POOLS: LinePools = Object.fromEntries(
 /** Two-person exchanges NPCs have with each other. `who` 0/1 = first/second participant. */
 export interface Exchange {
   id: string;
-  topic: 'techie' | 'traffic' | 'food' | 'gossip' | 'park' | 'cricket' | 'metro' | 'rain' | 'general' | 'fight' | 'pub' | 'pg' | 'startup' | 'construction';
+  topic: 'techie' | 'traffic' | 'food' | 'gossip' | 'park' | 'cricket' | 'metro' | 'rain' | 'general' | 'fight' | 'pub' | 'pg' | 'startup' | 'construction' | 'hills';
   lines: Array<{ who: 0 | 1; text: string }>;
 }
 
@@ -634,5 +691,8 @@ export const EXCHANGES: Exchange[] = [
   ex('cab_wait', 'traffic', 'Cab driver ne bola "two minutes".', 'Kitni der hui?', 'Twenty minutes.', 'Bengaluru minutes, bhai. Different timezone.'),
   ex('hike_english', 'techie', 'Did you get the appraisal mail?', 'Yes. "Meets expectations."', 'And the hike?', 'Also meets expectations. Very low expectations.'),
   ex('metro_english', 'metro', 'Is this train going to Whitefield?', 'Yes, and it is faster than any cab.', 'Then why is everyone still in cabs?', 'Habit. And the last-mile auto.'),
+  ex('sunrise_selfie', 'hills', 'Selfie lo, sun aa raha hai!', 'Sun kahan hai? Sirf fog dikh raha hai.', 'Fog ke saath bhi aesthetic hai.', 'Okay, caption: "Above the clouds". Technically true.'),
+  ex('hairpin_count', 'hills', 'Ninety hairpins ante, nijana?', 'Naanu forty count maadide, aamele vomit feeling.', 'Return alli count maadona.', 'Return alli nidde maadona.'),
+  ex('cold_morning', 'hills', 'It is so cold! Bengaluru mein bhi sweater?', 'Nandi Hills is not Bengaluru. Nandi Hills is a mood.', 'Chai lena hai.', 'Two chai, one corn. That is the rule up here.'),
   ex('kannada', 'general', 'Kannada class join aagidini!', 'Super! Yenu kalthidya?', '"Swalpa adjust maadi."', 'Ashte saaku, ninge citizenship sigutte.'),
 ];

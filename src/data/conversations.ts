@@ -586,6 +586,25 @@ export const CONVERSATIONS: Record<string, Conversation> = {
       rent: { text: 'Twelve thousand, food included. Food andre dal included. Electricity separate, AC andre separate-separate.', options: [{ label: 'Bengaluru rates…' }] },
     },
   },
+  biker: {
+    id: 'biker',
+    start: 'a',
+    nodes: {
+      a: {
+        text: 'Hey {name}! Bike alli bandra? Hairpins sakkath alva? Sunrise ge bandre, best spot gothu nange.',
+        options: [{ label: 'Best spot? Tell me!', next: 'spot' }, { label: 'How do I catch the sunrise?', next: 'sunrise' }, BYE],
+      },
+      spot: {
+        text: 'Hairpin 2 dati east kade hogi. Ondu flat boulder ide, crowd illa, full valley view. Secret, okay?',
+        effects: [{ type: 'hint', poi: 'secretboulder' }],
+        options: [{ label: 'Set it as my destination', effects: [{ type: 'destination', poi: 'secretboulder' }] }, { label: 'Thanks, Rohan!' }],
+      },
+      sunrise: {
+        text: 'Sunrise Point ge hogi before six. Late aadre? Bench mele kootkoli, chai kudi, wait maadi. Sun barutte, guaranteed. Fog kooda guaranteed, swalpa.',
+        options: [{ label: 'Got it, thanks!' }],
+      },
+    },
+  },
   recruiter: {
     id: 'recruiter',
     start: 'a',

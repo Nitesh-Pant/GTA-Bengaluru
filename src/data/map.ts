@@ -1,4 +1,4 @@
-import { MAP_H, MAP_W, TILE } from '../game/constants';
+import { CITY_W, MAP_H, MAP_W, TILE } from '../game/constants';
 import type { Rect } from '../logic/geometry';
 import { VEHICLE_SIZE } from './roads';
 import { PARKED } from './vehicles';
@@ -32,6 +32,12 @@ export const G = {
   Plaza: 7,
   FoodLane: 8,
   Garden: 9,
+  /** Wooded hill slopes. */
+  Forest: 10,
+  /** Rocky upper slopes and the summit's granite. */
+  Rock: 11,
+  /** Sheer rock face (Tipu's Drop): solid. */
+  Cliff: 12,
 } as const;
 export type GroundKind = (typeof G)[keyof typeof G];
 
@@ -49,6 +55,7 @@ export function buildGround(): Uint8Array {
       for (let i = Math.floor(cx - rx); i <= Math.ceil(cx + rx); i++) {
         const dx = (i + 0.5 - cx) / rx;
         const dy = (j + 0.5 - cy) / ry;
+        if (i < 0 || j < 0 || i >= MAP_W || j >= MAP_H) continue;
         if (dx * dx + dy * dy <= 1 && (only === undefined || g[j * MAP_W + i] === only)) g[j * MAP_W + i] = k;
       }
   };
@@ -106,22 +113,57 @@ export function buildGround(): Uint8Array {
   fill(96, 160, 30, 2, G.Garden);
   fill(118, 146, 8, 12, G.Garden);
   // Sidewalks along the main roads
-  fill(0, 16, MAP_W, 2, G.Sidewalk);
-  fill(0, 22, MAP_W, 2, G.Sidewalk);
-  fill(0, 56, MAP_W, 2, G.Sidewalk);
-  fill(0, 62, MAP_W, 2, G.Sidewalk);
-  fill(0, 106, MAP_W, 2, G.Sidewalk);
-  fill(0, 112, MAP_W, 2, G.Sidewalk);
-  fill(0, 162, MAP_W, 2, G.Sidewalk);
+  for (const y of [16, 22, 56, 62, 106, 112, 162]) fill(0, y, CITY_W, 2, G.Sidewalk);
   for (const x of [38, 44, 86, 92]) fill(x, 0, 2, MAP_H, G.Sidewalk);
-  // Main roads
-  fill(0, 18, MAP_W, 4, G.Road);
-  fill(0, 58, MAP_W, 4, G.Road);
-  fill(0, 108, MAP_W, 4, G.Road);
-  fill(0, 164, MAP_W, 4, G.Road);
+  buildCountryside(fill, ellipse);
+  // Main roads: the four east-west roads run on out of the city (the Outer Ring Road becomes NH 44).
+  for (const y of [18, 58, 108, 164]) fill(0, y, MAP_W, 4, G.Road);
   fill(40, 0, 4, MAP_H, G.Road);
   fill(88, 0, 4, MAP_H, G.Road);
+  // The Nandi Hills road climbs from NH 44 to the summit in hairpin bends.
+  for (const [x, y, w, h] of NANDI_ROAD) fill(x, y, w, h, G.Lane);
   return g;
+}
+
+/** Hill road segments (tiles): up from NH 44, four hairpins, into the summit plateau. */
+export const NANDI_ROAD: ReadonlyArray<readonly [number, number, number, number]> = [
+  [148, 46, 2, 12],
+  [148, 46, 33, 2],
+  [179, 40, 2, 8],
+  [152, 40, 29, 2],
+  [152, 33, 2, 9],
+];
+
+/** Where the summit is (tiles): the plateau's centre. */
+export const NANDI_SUMMIT = { x: 161, y: 31 };
+
+/**
+ * East of the city: farmland and eucalyptus either side of the rural roads, and between 100 Feet
+ * Road and NH 44 the Nandi Hills massif: forest slopes, a rocky upper band, a granite summit
+ * plateau, and Tipu's Drop, the sheer north face. Simplified and much closer than the real 60 km.
+ */
+function buildCountryside(
+  fill: (x: number, y: number, w: number, h: number, k: GroundKind) => void,
+  ellipse: (cx: number, cy: number, rx: number, ry: number, k: GroundKind, only?: GroundKind) => void,
+) {
+  const X = CITY_W;
+  const W = MAP_W - CITY_W;
+  fill(X, 0, W, MAP_H, G.Grass);
+  // Dirt shoulders instead of footpaths once you leave the city.
+  for (const y of [16, 22, 56, 62, 106, 112, 162]) fill(X, y, W, 2, G.Dirt);
+  // Dhaba yard, village squares and furrowed fields.
+  fill(150, 72, 14, 4, G.Pave);
+  fill(X + 8, 114, 12, 6, G.Pave);
+  for (let y = 80; y < 102; y += 3) fill(134, y, 52, 1, G.Dirt);
+  // The hill: forest, then rock, then the summit plateau.
+  ellipse(161, 39, 31, 16, G.Forest, G.Grass);
+  ellipse(161, 35, 22, 10.5, G.Rock, G.Forest);
+  ellipse(161, 31, 13, 5.5, G.Grass, G.Rock);
+  fill(150, 29, 22, 5, G.Plaza);
+  // Tipu's Drop: the sheer north face, with a viewing ledge along its top.
+  fill(140, 24, 42, 2, G.Cliff);
+  ellipse(161, 25, 18, 2.2, G.Cliff);
+  fill(150, 27, 22, 1, G.Plaza);
 }
 
 export type BuildingStyle =
@@ -256,6 +298,17 @@ export const BUILDINGS: BuildingDef[] = [
   { id: 'bulltemple', x: 47, y: 151, w: 10, h: 10, style: 'temple', sign: 'DODDA BASAVANA GUDI', wall: '#f4ecd8', roof: '#e8590c' },
   { id: 'pandal', x: 62, y: 152, w: 14, h: 9, style: 'pandal', sign: 'SRI VINAYAKA SEVA SAMITHI', wall: '#ffd43b', roof: '#e64980' },
   { id: 'glasshouse', x: 100, y: 148, w: 16, h: 11, style: 'glasshouse', sign: 'LALBAGH GLASS HOUSE', wall: '#d0ebff', roof: '#a5d8ff' },
+  // ── East of the city: NH 44, villages and Nandi Hills
+  { id: 'toll_n', x: 135, y: 53, w: 5, h: 3, style: 'kiosk', sign: 'TOLL', wall: '#fff3bf', roof: '#1971c2' },
+  { id: 'toll_s', x: 135, y: 64, w: 5, h: 3, style: 'kiosk', sign: 'TOLL', wall: '#fff3bf', roof: '#1971c2' },
+  { id: 'dhaba', x: 152, y: 65, w: 10, h: 7, style: 'darshini', sign: 'HIGHWAY DHABA', wall: '#ffe8cc', roof: '#a0553a', awning: '#e03131', floors: 1 },
+  { id: 'farmhouse1', x: 140, y: 70, w: 6, h: 5, style: 'house', wall: '#f4e1c1', roof: '#b4563e', floors: 1 },
+  { id: 'farmhouse2', x: 172, y: 70, w: 6, h: 5, style: 'house', wall: '#e3f0d0', roof: '#9a4f3b', floors: 1 },
+  { id: 'village1', x: 136, y: 115, w: 6, h: 5, style: 'house', wall: '#f8e9a1', roof: '#a14a3a', floors: 1 },
+  { id: 'village2', x: 150, y: 115, w: 6, h: 5, style: 'house', wall: '#d0ebff', roof: '#94523e', floors: 1 },
+  { id: 'village_shop', x: 160, y: 115, w: 7, h: 5, style: 'shop', sign: 'SRI DEVI STORES', wall: '#fff4e6', roof: '#8a8d91', awning: '#2b8a3e', floors: 1 },
+  { id: 'hilltop_cafe', x: 151, y: 29, w: 6, h: 4, style: 'cafe', sign: 'HILL TOP CAFE', wall: '#f8f0e3', roof: '#7d6b5d', awning: '#e67700', floors: 1 },
+  { id: 'nandi_temple', x: 163, y: 28, w: 8, h: 5, style: 'temple', sign: 'YOGA NANDEESHWARA', wall: '#efe6d2', roof: '#c2410c' },
 ];
 
 export type PropKind =
@@ -287,7 +340,10 @@ export type PropKind =
   | 'roadSign'
   | 'lakeSign'
   | 'sandPile'
-  | 'bricks';
+  | 'bricks'
+  | 'boulder'
+  | 'railing'
+  | 'eucalyptus';
 
 export interface PropDef {
   kind: PropKind;
@@ -325,6 +381,9 @@ export const PROP_SOLID: Partial<Record<PropKind, { w: number; h: number }>> = {
   lakeSign: { w: 76, h: 3 },
   sandPile: { w: 18, h: 6 },
   bricks: { w: 14, h: 5 },
+  boulder: { w: 20, h: 8 },
+  railing: { w: 32, h: 3 },
+  eucalyptus: { w: 4, h: 4 },
 };
 
 const row = (kind: PropKind, y: number, xs: number[]): PropDef[] => xs.map((x) => ({ kind, x, y }));
@@ -561,7 +620,51 @@ export const PROPS: PropDef[] = [
   ...[28, 106].map((x): PropDef => ({ kind: 'busStop', x, y: 23.95 })),
   { kind: 'busStop', x: 28, y: 63.95 },
   ...[20, 66, 116].map((x): PropDef => ({ kind: 'busStop', x, y: 113.95 })),
+  ...countrysideProps(),
 ];
+
+/** Signs, the cliff railing, roadside eucalyptus, vineyards, and the hill's forest and boulders. */
+function countrysideProps(): PropDef[] {
+  const out: PropDef[] = [
+    { kind: 'roadSign', x: 131, y: 57.85, text: 'NH 44 AIRPORT' },
+    { kind: 'roadSign', x: 146, y: 57.85, text: 'NANDI HILLS' },
+    { kind: 'hoarding', x: 142, y: 63.6, text: 'FASTAG LANE' },
+    { kind: 'roadSign', x: 131, y: 17.85, text: 'OLD MADRAS ROAD' },
+    { kind: 'roadSign', x: 131, y: 107.85, text: 'HOSUR ROAD' },
+    { kind: 'roadSign', x: 131, y: 163.85, text: 'KANAKAPURA ROAD' },
+    { kind: 'roadSign', x: 158, y: 28.6, text: "TIPU'S DROP" },
+    { kind: 'roadSign', x: 173.5, y: 30.5, text: 'SUNRISE POINT' },
+    { kind: 'roadSign', x: 154.5, y: 45.8, text: 'HAIRPIN 1' },
+    { kind: 'roadSign', x: 177, y: 39.8, text: 'HAIRPIN 2' },
+    { kind: 'counter', x: 157, y: 73.2 },
+    ...row('table', 74.8, [153, 156, 160]),
+    ...row('bench', 33.9, [158, 160.5, 173]),
+    { kind: 'chaiCart', x: 159.5, y: 35.5 },
+    { kind: 'coconutCart', x: 133.5, y: 56.6 },
+  ];
+  for (let x = 150; x < 175; x += 2) out.push({ kind: 'railing', x: x + 1, y: 27.3 });
+  // Eucalyptus lines the roads out of town.
+  for (let x = 133; x < MAP_W; x += 6) {
+    for (const y of [15.3, 106.4, 114.6, 162.6, 64.7]) {
+      if (y === 64.7 && x > 130 && x < 168) continue; // toll and dhaba
+      out.push({ kind: 'eucalyptus', x, y });
+    }
+  }
+  // Vineyard rows south of the highway.
+  for (let y = 81.6; y < 101; y += 6) for (let x = 137; x < 186; x += 4) out.push({ kind: 'bush', x, y });
+  // The hill: trees in the forest band, boulders on the rock, clear of the road and its verges.
+  const g = buildGround();
+  const near = (x: number, y: number, d: number) => NANDI_ROAD.some(([rx, ry, rw, rh]) => x > rx - d && x < rx + rw + d && y > ry - d && y < ry + rh + d);
+  for (let y = 24; y < 56; y += 2.3)
+    for (let x = 131; x < MAP_W - 1; x += 2.4) {
+      const k = g[Math.floor(y) * MAP_W + Math.floor(x)];
+      const r = Math.abs(Math.sin(x * 12.9898 + y * 78.233) * 43758.5453) % 1;
+      if (near(x, y, 2) || y > 54.5) continue;
+      if (k === G.Forest && r < 0.62) out.push({ kind: r < 0.12 ? 'treeRed' : 'tree', x, y });
+      else if (k === G.Rock && r < 0.3) out.push({ kind: r < 0.08 ? 'bush' : 'boulder', x, y });
+    }
+  return out;
+}
 
 /** Road and lake names drawn on the big map, in tiles. `vertical` labels run along north-south roads. */
 export const STREET_LABELS: Array<{ name: string; x: number; y: number; vertical?: boolean }> = [
@@ -586,6 +689,13 @@ export const STREET_LABELS: Array<{ name: string; x: number; y: number; vertical
   { name: 'Ambedkar Veedhi', x: 20, y: 166 },
   { name: 'Bull Temple Road', x: 66, y: 166 },
   { name: 'Lalbagh Road', x: 110, y: 166 },
+  { name: 'Old Madras Road', x: 160, y: 20 },
+  { name: 'NH 44 · Airport Road', x: 140, y: 60 },
+  { name: 'NH 44 · Airport Road', x: 178, y: 60 },
+  { name: 'Hosur Road', x: 160, y: 110 },
+  { name: 'Kanakapura Road', x: 160, y: 166 },
+  { name: 'Nandi Hills Road', x: 164, y: 47 },
+  { name: "Tipu's Drop", x: 161, y: 25 },
 ];
 
 /** Districts used for the area label, events and dialogue context. First match wins. */
@@ -621,6 +731,8 @@ export const DISTRICTS: District[] = [
   { id: 'vidhana', name: 'Vidhana Soudha', short: 'Vidhana Soudha', tagline: "Government work is God's work", rects: [{ x: 0, y: 144, w: 44, h: 24 }] },
   { id: 'basavanagudi', name: 'Basavanagudi', tagline: 'Bull Temple, pandals and kadlekai', rects: [{ x: 44, y: 144, w: 44, h: 24 }] },
   { id: 'lalbagh', name: 'Lalbagh', tagline: 'Glass House and flower beds', rects: [{ x: 88, y: 144, w: 40, h: 24 }] },
+  { id: 'nandi', name: 'Nandi Hills', tagline: 'Sunrise, fog and hairpin bends', rects: [{ x: 130, y: 23, w: 62, h: 33 }] },
+  { id: 'highway', name: 'Devanahalli Highway', short: 'Highway', tagline: 'Tolls, dhabas and the open road', rects: [{ x: CITY_W, y: 0, w: MAP_W - CITY_W, h: MAP_H }] },
 ];
 
 /** Middle of a district's main area, in tiles. */
@@ -674,11 +786,11 @@ export function buildSolids(ground: Uint8Array = buildGround()): Rect[] {
     const hh = horizontal ? halfWidth : halfLen;
     solids.push({ x: v.x * TILE - hw, y: v.y * TILE - hh, w: hw * 2, h: hh * 2 });
   }
-  // Water, merged per row to keep the list short.
+  // Water and cliff faces, merged per row to keep the list short.
   for (let j = 0; j < MAP_H; j++) {
     let start = -1;
     for (let i = 0; i <= MAP_W; i++) {
-      const w = i < MAP_W && ground[j * MAP_W + i] === G.Water;
+      const w = i < MAP_W && (ground[j * MAP_W + i] === G.Water || ground[j * MAP_W + i] === G.Cliff);
       if (w && start < 0) start = i;
       if (!w && start >= 0) {
         solids.push({ x: start * TILE, y: j * TILE, w: (i - start) * TILE, h: TILE });

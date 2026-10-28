@@ -8,6 +8,7 @@ import { METRO_TRACK, ROAD_GRID } from '../../data/roads';
 import { guideRoute, pointsAlong } from '../../logic/bikeRide';
 import { JOB_INFO } from '../../data/jobs';
 import { JobSystem } from '../systems/JobSystem';
+import { NandiSystem } from '../systems/NandiSystem';
 import { PARKED } from '../../data/vehicles';
 import { newlyUnlocked } from '../../logic/achievements';
 import { addressOf, type PlayerProfile } from '../../logic/player';
@@ -93,6 +94,7 @@ export class WorldScene extends Phaser.Scene {
   match!: MatchSystem;
   deliveries!: DeliverySystem;
   jobs!: JobSystem;
+  nandi!: NandiSystem;
   reactions = new ReactionEngine(mulberry32(1234));
   /** Scene clock in ms; stops while paused so every cooldown pauses with it. */
   clock = 0;
@@ -165,6 +167,7 @@ export class WorldScene extends Phaser.Scene {
     this.match = new MatchSystem(this);
     this.deliveries = new DeliverySystem(this);
     this.jobs = new JobSystem(this);
+    this.nandi = new NandiSystem(this);
     this.traffic.addObstacle({ id: 'cow', kind: 'static', x: COW.x, y: COW.y, radius: 9, squeeze: true });
 
     this.setupColliders();
@@ -239,11 +242,12 @@ export class WorldScene extends Phaser.Scene {
 
     // Elevated metro viaduct with station canopies.
     const vy = METRO_TRACK[0].y;
-    this.add.rectangle(WORLD_W / 2, vy + 14, WORLD_W, 6, 0x14101e, 0.18).setDepth(-40);
+    const vw = METRO_TRACK[1].x;
+    this.add.rectangle(vw / 2, vy + 14, vw, 6, 0x14101e, 0.18).setDepth(-40);
     this.viaduct = this.add.container(0, 0).setDepth(8000);
-    this.viaduct.add(this.add.tileSprite(0, vy - 11, WORLD_W, 22, 'viaduct').setOrigin(0));
+    this.viaduct.add(this.add.tileSprite(0, vy - 11, vw, 22, 'viaduct').setOrigin(0));
     for (const st of STATIONS) this.viaduct.add(this.add.image(st.platform.x, vy, 'platform').setOrigin(0.5, 0.55));
-    for (let x = 48; x < WORLD_W; x += 160) this.add.rectangle(x, vy + 2, 6, 6, 0x8f8a83).setDepth(vy + 2);
+    for (let x = 48; x < vw; x += 160) this.add.rectangle(x, vy + 2, 6, 6, 0x8f8a83).setDepth(vy + 2);
 
     // Pedal boats drifting around Ulsoor Lake.
     for (let i = 0; i < 3; i++) {
@@ -546,6 +550,7 @@ export class WorldScene extends Phaser.Scene {
     ...STATIONS.map((st): InteractionCandidate => ({ id: `metro:${st.id}`, kind: 'metro', x: st.entrance.x, y: st.entrance.y, radius: 30, label: `${st.name} Metro` })),
     ...BUS_STOPS.map((b): InteractionCandidate => ({ id: `bus:${b.id}`, kind: 'metro', x: t(b.x), y: t(b.y), radius: 30, label: `BMTC bus stop · ${b.name}` })),
     { id: 'cow', kind: 'object', x: COW.x, y: COW.y, radius: 32, label: 'Say hello to Gowri' },
+    { id: 'sunrise', kind: 'object', x: poiById('sunrisepoint')!.x, y: poiById('sunrisepoint')!.y, radius: 34, label: 'Wait for the sunrise' },
   ];
 
   /** What E could do from here. Only things already within reach are listed, so this stays cheap every frame. */
@@ -649,6 +654,7 @@ export class WorldScene extends Phaser.Scene {
         },
       });
     } else if (c.id === 'ball') this.worldEvents.throwBall();
+    else if (c.id === 'sunrise') this.nandi.waitForSunrise();
     else if (kind === 'dog') this.animals.feed(id);
     else if (kind === 'cow') {
       this.bump('cow');
@@ -710,6 +716,7 @@ export class WorldScene extends Phaser.Scene {
     this.animals.update(dt, now);
     this.fares.update(now);
     this.match.update(now);
+    this.nandi.update(now);
     this.deliveries.update(now);
     this.jobs.update(now);
     this.weather.update(dt, now);
@@ -763,7 +770,7 @@ export class WorldScene extends Phaser.Scene {
       const poi = poiById(id)!;
       return dist(poi.x, poi.y, x, y) < t(tiles);
     };
-    const leafy = d.id === 'park' || d.id === 'cubbon' || near('btmlake', 18);
+    const leafy = d.id === 'park' || d.id === 'cubbon' || d.id === 'nandi' || near('btmlake', 18);
     audio.setNature({ birds: (leafy || d.id === 'lalbagh') && !night, crickets: night, bell: near('temple', 14) || near('bulltemple', 12), festival: near('pandal', 16) });
     if (d.id !== this.district?.id) {
       this.district = d;

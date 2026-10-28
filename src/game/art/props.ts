@@ -198,6 +198,36 @@ export function paintProp(kind: PropKind, text?: string): HTMLCanvasElement {
             rect(c, 1 + col * 5 - (row % 2) * 2 + 2, 2 + row * 3, 4, 1, '#cf6f53');
           }
       });
+    case 'boulder':
+      return draw(24, 16, (c) => {
+        ellipse(c, 12, 13, 11, 3, 'rgba(0,0,0,0.22)');
+        ellipse(c, 12, 9, 10, 6.5, '#8f877c');
+        ellipse(c, 10, 7, 7, 4.5, '#a8a094');
+        ellipse(c, 8, 5, 3, 1.6, '#c4bdb1');
+        rect(c, 14, 9, 5, 1, '#6f685f');
+        px(c, 5, 11, '#6b8f4e');
+        px(c, 6, 11, '#6b8f4e');
+      });
+    case 'railing':
+      // Iron safety railing along the cliff edge.
+      return draw(32, 10, (c) => {
+        for (let x = 1; x < 32; x += 6) rect(c, x, 2, 2, 8, '#495057');
+        rect(c, 0, 2, 32, 2, '#868e96');
+        rect(c, 0, 6, 32, 1, '#868e96');
+        rect(c, 0, 2, 32, 1, '#adb5bd');
+      });
+    case 'eucalyptus':
+      // Tall, thin roadside eucalyptus: pale trunk, narrow crown.
+      return draw(18, 46, (c) => {
+        ellipse(c, 9, 43, 6, 2, 'rgba(0,0,0,0.22)');
+        rect(c, 8, 16, 3, 28, '#d8cfc0');
+        rect(c, 8, 16, 1, 28, '#efe7d8');
+        rect(c, 10, 24, 1, 6, '#a39886');
+        ellipse(c, 9, 12, 6, 11, '#4f7f4a');
+        ellipse(c, 8, 9, 4, 7, '#6a9c5f');
+        px(c, 6, 6, '#86b37a');
+        px(c, 11, 14, '#3d6638');
+      });
     case 'katte':
       return draw(40, 22, (c) => {
         rect(c, 2, 4, 36, 14, '#a8a29a');

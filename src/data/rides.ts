@@ -14,10 +14,16 @@ export interface RideDest {
 /** Bike-taxi captains. One of them always cancels. */
 export const CAPTAINS = ['Ramesh', 'Suresh', 'Imran', 'Manjunath', 'Kiran', 'Anil', 'Shabbir', 'Lokesh', 'Prakash'];
 
+/** Areas whose middle isn't by a road: the captain drops you here instead (tiles). */
+const DROP_AT: Record<string, { x: number; y: number }> = {
+  nandi: { x: 149, y: 55.5 },
+  highway: { x: 157, y: 75 },
+};
+
 /** Where a bike taxi can take you: every district, plus your marked destination first if you have one. */
 export function rideDestinations(markedPoi: string | null): RideDest[] {
   const out: RideDest[] = DISTRICTS.map((d) => {
-    const c = districtCentre(d);
+    const c = DROP_AT[d.id] ?? districtCentre(d);
     return { id: `d:${d.id}`, name: d.name, note: d.tagline, x: c.x * TILE, y: c.y * TILE };
   });
   const poi = markedPoi ? poiById(markedPoi) : null;

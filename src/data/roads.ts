@@ -1,4 +1,4 @@
-import { TILE, WORLD_H, WORLD_W } from '../game/constants';
+import { CITY_W, TILE, WORLD_H, WORLD_W } from '../game/constants';
 import type { RoadGrid } from '../logic/bikeRide';
 import type { JunctionBox, Route } from '../logic/traffic';
 
@@ -120,6 +120,11 @@ export const TRAFFIC: TrafficSpawn[] = [
   { id: 't28', type: 'car', variant: 1, route: 'h4_east', at: 0.3 },
   { id: 't29', type: 'auto', variant: 0, route: 'h4_west', at: 0.55 },
   { id: 't30', type: 'bus', variant: 0, route: 'h4_east', at: 0.8 },
+  // The east-west roads run on to NH 44 and the villages, so a few more keep the city as busy as before.
+  { id: 't31', type: 'car', variant: 3, route: 'h1_east', at: 0.05 },
+  { id: 't32', type: 'bus', variant: 0, route: 'h2_west', at: 0.65 },
+  { id: 't33', type: 'car', variant: 6, route: 'h2_east', at: 0.85 },
+  { id: 't34', type: 'auto', variant: 1, route: 'h3_west', at: 0.1 },
   // Emergency vehicles: a police patrol and an ambulance (car variants 8 and 9, see art/vehicles.ts)
   { id: 'police1', type: 'car', variant: 8, route: 'loop_cw', at: 0.65 },
   { id: 'ambulance1', type: 'car', variant: 9, route: 'h2_east', at: 0.1 },
@@ -133,8 +138,8 @@ export const VEHICLE_SIZE: Record<TrafficType, { halfLen: number; halfWidth: num
   scooter: { halfLen: 7, halfWidth: 4, maxSpeed: 100 },
 };
 
-/** Viaduct for the metro, running above the Outer Ring Road median. */
+/** Viaduct for the metro, running above the Outer Ring Road median as far as the city goes. */
 export const METRO_TRACK = [
   { x: 0, y: 60 * TILE },
-  { x: WORLD_W, y: 60 * TILE },
+  { x: CITY_W * TILE, y: 60 * TILE },
 ];

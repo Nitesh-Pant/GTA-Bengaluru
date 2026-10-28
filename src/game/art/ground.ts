@@ -1,7 +1,7 @@
 import { BUILDINGS, CROSSINGS, G } from '../../data/map';
 import { JUNCTIONS } from '../../data/roads';
 import { MAP_H, MAP_W, TILE } from '../constants';
-import { hash, makeCanvas, rect, shade } from './pixel';
+import { ellipse, hash, makeCanvas, rect, shade } from './pixel';
 
 const BASE: Record<number, string> = {
   [G.Pave]: '#b9b2a3',
@@ -14,6 +14,9 @@ const BASE: Record<number, string> = {
   [G.Plaza]: '#cfc8b8',
   [G.FoodLane]: '#b8644a',
   [G.Garden]: '#4f9a3e',
+  [G.Forest]: '#3f7a34',
+  [G.Rock]: '#8a8278',
+  [G.Cliff]: '#6c6258',
 };
 
 /** Minimap colours per ground kind. */
@@ -28,6 +31,9 @@ export const MINIMAP_COLOURS: Record<number, string> = {
   [G.Plaza]: '#b0a998',
   [G.FoodLane]: '#a65a43',
   [G.Garden]: '#3f7f31',
+  [G.Forest]: '#2f6526',
+  [G.Rock]: '#7a7268',
+  [G.Cliff]: '#4e463e',
 };
 
 function paintTile(ctx: CanvasRenderingContext2D, kind: number, tx: number, ty: number, at: (x: number, y: number) => number) {
@@ -96,6 +102,44 @@ function paintTile(ctx: CanvasRenderingContext2D, kind: number, tx: number, ty: 
     }
     case G.Dirt: {
       for (let i = 0; i < 14; i++) rect(ctx, x0 + Math.floor(n(i, 1) * 16), y0 + Math.floor(n(i, 2) * 16), 1, 1, shade(base, n(i, 3) > 0.5 ? 0.12 : -0.15));
+      break;
+    }
+    case G.Forest: {
+      // Leaf litter and undergrowth; darker where the slope falls away (the uphill edge catches light).
+      for (let i = 0; i < 26; i++) {
+        const x = Math.floor(n(i, 1) * 16);
+        const y = Math.floor(n(i, 2) * 16);
+        rect(ctx, x0 + x, y0 + y, 1, 2, shade(base, n(i, 3) > 0.6 ? 0.12 : n(i, 3) > 0.3 ? -0.18 : -0.3));
+      }
+      if (hash(tx, ty, 21) > 0.85) rect(ctx, x0 + Math.floor(n(0, 5) * 12), y0 + Math.floor(n(0, 6) * 12), 3, 2, '#7a5a35');
+      if (at(tx, ty - 1) !== G.Forest && at(tx, ty - 1) !== G.Lane) rect(ctx, x0, y0, 16, 2, shade(base, -0.25));
+      break;
+    }
+    case G.Rock: {
+      // Weathered granite sheet: a pale slab with a lit top edge and a shadowed foot, cracks, moss and scrub.
+      if (hash(tx, ty, 30) > 0.45) {
+        // A rounded hump of rock: shadow at its foot, pale face, a lit crown.
+        const cx = x0 + 4 + Math.floor(n(0, 4) * 8);
+        const cy = y0 + 4 + Math.floor(n(1, 4) * 7);
+        const rx = 3 + Math.floor(n(2, 4) * 4);
+        const ry = 2 + Math.floor(n(3, 4) * 3);
+        ellipse(ctx, cx, cy + 1, rx, ry, shade(base, -0.22));
+        ellipse(ctx, cx, cy, rx, ry, shade(base, 0.12));
+        ellipse(ctx, cx - 1, cy - 1, Math.max(1, rx - 2), Math.max(1, ry - 1), shade(base, 0.24));
+      }
+      for (let i = 0; i < 10; i++) rect(ctx, x0 + Math.floor(n(i, 1) * 15), y0 + Math.floor(n(i, 2) * 15), 1, 1, shade(base, n(i, 3) > 0.5 ? 0.18 : -0.2));
+      if (hash(tx, ty, 31) > 0.5) rect(ctx, x0 + Math.floor(n(0, 7) * 9), y0 + Math.floor(n(0, 8) * 14), 7, 1, shade(base, -0.35));
+      if (hash(tx, ty, 32) > 0.6) rect(ctx, x0 + Math.floor(n(1, 7) * 12), y0 + Math.floor(n(1, 8) * 12), 3, 2, '#5f8a45');
+      if (hash(tx, ty, 33) > 0.82) rect(ctx, x0 + Math.floor(n(2, 7) * 12), y0 + Math.floor(n(2, 8) * 12), 2, 3, '#3f6b33');
+      if (at(tx, ty - 1) === G.Forest) rect(ctx, x0, y0, 16, 2, shade(base, 0.22));
+      if (at(tx, ty + 1) === G.Forest) rect(ctx, x0, y0 + 14, 16, 2, shade(base, -0.3));
+      break;
+    }
+    case G.Cliff: {
+      // A sheer face: vertical strata, deep shadow towards the bottom.
+      for (let x = 0; x < 16; x += 3) rect(ctx, x0 + x + Math.floor(n(x, 1) * 2), y0, 1, 16, shade(base, -0.2));
+      rect(ctx, x0, y0 + 12, 16, 4, shade(base, -0.3));
+      if (at(tx, ty - 1) !== G.Cliff) rect(ctx, x0, y0, 16, 2, shade(base, 0.3));
       break;
     }
     case G.Water: {
