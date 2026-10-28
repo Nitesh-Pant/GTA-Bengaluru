@@ -145,7 +145,7 @@ export function MapPanel() {
                     <b>{h.name}</b> <span className="muted">· {h.note}</span>
                   </button>
                   <button className="btn" disabled={mode !== 'walk'} title={mode === 'walk' ? 'Book a Rapido there' : 'Get out of the vehicle first'} onClick={() => rideTo(h)}>
-                    Ride
+                    Rapido
                   </button>
                 </li>
               ))}

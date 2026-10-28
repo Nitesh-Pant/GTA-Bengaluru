@@ -40,9 +40,11 @@ export function PauseMenu() {
           <button className="btn btn-primary" onClick={resume} autoFocus>
             Resume <kbd>Esc</kbd>
           </button>
-          <button className="btn" onClick={() => open('journal')}>
-            Journal <kbd>J</kbd>
-          </button>
+          {settings.showJournal && (
+            <button className="btn" onClick={() => open('journal')}>
+              Journal <kbd>J</kbd>
+            </button>
+          )}
           <button className="btn" onClick={() => open('map')}>
             Map <kbd>M</kbd>
           </button>
@@ -92,6 +94,10 @@ export function PauseMenu() {
           <input type="checkbox" checked={settings.showMarkers} onChange={(e) => set({ showMarkers: e.target.checked })} />
         </label>
         <label className="setting">
+          <span>Show Journal (places, food book, achievements)</span>
+          <input type="checkbox" checked={settings.showJournal} onChange={(e) => set({ showJournal: e.target.checked })} />
+        </label>
+        <label className="setting">
           <span>Route dots to markers</span>
           <input type="checkbox" checked={settings.showRoute} onChange={(e) => set({ showRoute: e.target.checked })} />
         </label>
@@ -109,7 +115,14 @@ export function PauseMenu() {
           <li><kbd>E</kbd> talk, enter/exit a vehicle, use a metro entrance</li>
           <li><kbd>Space</kbd> handbrake · <kbd>H</kbd> horn (driving)</li>
           <li><kbd>1</kbd>-<kbd>9</kbd>, <kbd>↑↓</kbd> + <kbd>Enter</kbd>, or mouse to pick options</li>
-          <li><kbd>J</kbd> journal · <kbd>M</kbd> map · <kbd>?</kbd> controls hint · <kbd>Esc</kbd> pause / close</li>
+          <li>
+            {settings.showJournal && (
+              <>
+                <kbd>J</kbd> journal ·{' '}
+              </>
+            )}
+            <kbd>F</kbd> find · <kbd>M</kbd> map · <kbd>?</kbd> controls hint · <kbd>Esc</kbd> pause / close
+          </li>
         </ul>
         <div className="pause-foot">
           <button className="btn" onClick={() => quitToMenu(false)}>

@@ -156,7 +156,7 @@ export function MainMenu() {
         <div className="menu-controls">
           <span><kbd>WASD</kbd> move</span>
           <span><kbd>E</kbd> interact</span>
-          <span><kbd>J</kbd> journal</span>
+          <span><kbd>F</kbd> find</span>
           <span><kbd>M</kbd> map</span>
           <span><kbd>Esc</kbd> pause</span>
         </div>

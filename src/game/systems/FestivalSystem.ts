@@ -22,14 +22,20 @@ export class FestivalSystem {
   private diyas: Phaser.GameObjects.Image[] = [];
   private nextCracker = 0;
   private rainChecked = false;
+  /** On the first load the greeting waits, so the welcome message is read first. */
+  private greetAt = -1;
 
   constructor(private scene: WorldScene) {}
 
   update(now: number) {
     const s = this.scene;
-    if (s.dayNight.day !== this.day) this.begin(s.dayNight.day);
+    if (s.dayNight.day !== this.day) this.begin(s.dayNight.day, now);
     const f = this.current;
     if (!f) return;
+    if (this.greetAt >= 0 && now >= this.greetAt) {
+      this.greetAt = -1;
+      uiStore.toast({ kind: 'hint', title: `Today: ${f.name}`, body: f.greeting }, 6500);
+    }
     const dark = darkness(s.dayNight.minutes);
     if (f.lights) {
       const a = dark * 0.9;
@@ -46,7 +52,7 @@ export class FestivalSystem {
   }
 
   /** A new day: take down yesterday's decorations and put up today's. */
-  private begin(day: number) {
+  private begin(day: number, now: number) {
     const s = this.scene;
     const first = this.day < 0;
     this.day = day;
@@ -61,7 +67,7 @@ export class FestivalSystem {
     if (f.colours.length) this.bunting(f.colours);
     if (f.lights) this.lightDiyas();
     if (f.fair) this.groundnutFair();
-    if (!first || s.dayNight.minutes < 12 * 60) uiStore.toast({ kind: 'hint', title: `Today: ${f.name}`, body: f.greeting }, 6500);
+    this.greetAt = first ? now + 7000 : now;
     // Count festival days you live through (not the same day again after a reload).
     if (!first || (day === 0 && s.stats.festivals === 0)) s.bump('festivals');
   }

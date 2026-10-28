@@ -207,7 +207,7 @@ export class WorldScene extends Phaser.Scene {
     uiStore.toast(
       this.discovered.length
         ? { kind: 'info', title: `Welcome back, ${who}!`, body: 'Bengaluru missed you. Traffic did not.' }
-        : { kind: 'info', title: `Namaskara, ${who}!`, body: 'Bengaluru ge swagatha. No missions: wander, eat, talk. J opens your journal.' },
+        : { kind: 'info', title: `Namaskara, ${who}!`, body: 'Bengaluru ge swagatha. No missions: wander, eat, talk. Find shows rides and jobs nearby.' },
       5200,
     );
     // First time in the city: the guided tour (also on the Hints button).
@@ -508,7 +508,7 @@ export class WorldScene extends Phaser.Scene {
     this.hinted = res.state.hinted;
     const poi = poiById(id);
     uiStore.set({ hinted: this.hinted });
-    uiStore.toast({ kind: 'hint', title: `New tip: ${poi?.name ?? id}`, body: 'Marked with a ? on your map. Press J to set it as a destination.' });
+    uiStore.toast({ kind: 'hint', title: `New tip: ${poi?.name ?? id}`, body: 'Marked with a ? on your map. Tap it there to set it as a destination.' });
     audio.chime('hint');
     this.persist();
   }

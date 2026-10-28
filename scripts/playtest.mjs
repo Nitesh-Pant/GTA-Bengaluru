@@ -223,7 +223,16 @@ await page.waitForTimeout(200);
 check('resume', !(await ui()).pause);
 await page.keyboard.press('j');
 await page.waitForTimeout(200);
-check('journal opens', (await ui()).journal);
+check('journal hidden by default', !(await ui()).journal);
+// Switch it on the way a player would: pause menu checkbox, then resume.
+await page.keyboard.press('Escape');
+await page.waitForTimeout(200);
+await page.getByLabel(/Show Journal/).check();
+await page.keyboard.press('Escape');
+await page.waitForTimeout(200);
+await page.keyboard.press('j');
+await page.waitForTimeout(200);
+check('journal opens once switched on', (await ui()).journal);
 await page.screenshot({ path: `${OUT}/20-journal.png` });
 await page.keyboard.press('j');
 await page.keyboard.press('m');

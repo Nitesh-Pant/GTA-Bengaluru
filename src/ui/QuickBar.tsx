@@ -40,9 +40,9 @@ export function QuickBar() {
         <span className="quick-label">Hints</span>
       </button>
       {mode === 'walk' && (
-        <button className="quick quick-ride" onClick={() => bridge.api?.openRide()} title="Book a Rapido bike taxi (R)" aria-label="Ride">
+        <button className="quick quick-ride" onClick={() => bridge.api?.openRide()} title="Book a Rapido bike taxi (R)" aria-label="Rapido">
           <span className="quick-icon">R</span>
-          <span className="quick-label">Ride</span>
+          <span className="quick-label">Rapido</span>
         </button>
       )}
     </div>

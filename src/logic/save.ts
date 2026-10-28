@@ -20,6 +20,8 @@ export interface Settings {
   showRoute: boolean;
   /** Meanings of Kannada and Hindi words under speech. */
   glosses: boolean;
+  /** The Journal (places, food book, achievements): hidden unless switched on. */
+  showJournal: boolean;
   screenShake: boolean;
 }
 
@@ -94,8 +96,9 @@ export const DEFAULT_SETTINGS: Settings = {
   muted: false,
   chatter: 'normal',
   showMarkers: true,
-  showRoute: false,
+  showRoute: true,
   glosses: true,
+  showJournal: false,
   screenShake: true,
 };
 
@@ -157,6 +160,7 @@ export function sanitize(raw: unknown, validPoiIds: ReadonlySet<string>, valid: 
       showMarkers: typeof s.showMarkers === 'boolean' ? s.showMarkers : DEFAULT_SETTINGS.showMarkers,
       showRoute: typeof s.showRoute === 'boolean' ? s.showRoute : DEFAULT_SETTINGS.showRoute,
       glosses: typeof s.glosses === 'boolean' ? s.glosses : DEFAULT_SETTINGS.glosses,
+      showJournal: typeof s.showJournal === 'boolean' ? s.showJournal : DEFAULT_SETTINGS.showJournal,
       screenShake: typeof s.screenShake === 'boolean' ? s.screenShake : DEFAULT_SETTINGS.screenShake,
     };
   }

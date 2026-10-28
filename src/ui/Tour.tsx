@@ -83,7 +83,7 @@ function steps(name: string, touch: boolean): Step[] {
             <b>Autos</b> parked around the city (borrow one and pick up fares) and your <b>cousin's car</b> on 12th Main.
           </li>
           <li>
-            <b>Rapido bike taxi</b>: press {press('R', 'Ride')} and pick a place. The first captain may cancel!
+            <b>Rapido bike taxi</b>: press {press('R', 'Rapido')} and pick a place. The first captain may cancel!
           </li>
           <li>
             <b>BMTC bus</b>: stand at a bus stop, press {press('E', 'E')} and choose a stop.
@@ -122,11 +122,11 @@ function steps(name: string, touch: boolean): Step[] {
       ),
     },
     {
-      title: 'Journal and settings',
+      title: 'Settings',
       body: (
         <>
-          {press('J', 'Journal')} opens your journal: places found (and secret tips), the food book and achievements. {press('Esc', 'II')} pauses:
-          volume, mute, character, time of day, and save &amp; quit. Progress saves by itself.
+          {press('Esc', 'II')} pauses: volume, mute, character, time of day, word meanings, and save &amp; quit. Switch on <b>Show Journal</b>{' '}
+          there to keep a journal of places found, the food book and achievements. Progress saves by itself.
         </>
       ),
     },

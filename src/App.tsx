@@ -47,7 +47,7 @@ function useGlobalKeys() {
         return;
       }
       if (s.dialogue || s.metro || s.narration || s.panel === 'pause' || e.repeat) return;
-      if (k === 'j') uiStore.set({ panel: s.panel === 'journal' ? null : 'journal' });
+      if (k === 'j' && s.settings.showJournal) uiStore.set({ panel: s.panel === 'journal' ? null : 'journal' });
       if (k === 'm') uiStore.set({ panel: s.panel === 'map' ? null : 'map' });
     };
     window.addEventListener('keydown', onKey);
