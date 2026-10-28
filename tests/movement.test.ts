@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { facingFrom, stepDrive, stickDrive, walkVelocity, type DriveParams } from '../src/logic/movement';
+import { facingFrom, scaledForScreen, stepDrive, stickDrive, walkVelocity, type DriveParams } from '../src/logic/movement';
 
 const none = { up: false, down: false, left: false, right: false };
 const P: DriveParams = { maxSpeed: 200, reverseSpeed: 70, accel: 150, brake: 340, drag: 90, turnRate: 2.8 };
@@ -83,5 +83,22 @@ describe('touch driving (point-to-steer)', () => {
     const first = stickDrive({ x: -1, y: 0.1 }, { speed: 180, heading: 0 }, P);
     expect(first.down).toBe(true);
     expect(first.left || first.right).toBe(true);
+  });
+});
+
+describe('driving on small screens', () => {
+  it('leaves big screens alone', () => {
+    expect(scaledForScreen(P, 1)).toBe(P);
+  });
+  it('is calmer on a phone: lower top speed, softer acceleration', () => {
+    const phone = scaledForScreen(P, 0.57); // a typical phone in portrait
+    expect(phone.maxSpeed).toBeCloseTo(114, 0);
+    expect(phone.accel).toBeLessThan(P.accel);
+    expect(phone.turnRate).toBe(P.turnRate);
+  });
+  it('never crawls: slow vehicles keep a usable top speed', () => {
+    const yulu = { ...P, maxSpeed: 120 };
+    expect(scaledForScreen(yulu, 0.5).maxSpeed).toBe(85);
+    expect(scaledForScreen({ ...P, maxSpeed: 70 }, 0.5).maxSpeed).toBe(70);
   });
 });

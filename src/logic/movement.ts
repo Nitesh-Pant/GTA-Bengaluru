@@ -106,3 +106,13 @@ export function stickDrive(stick: { x: number; y: number }, s: DriveState, p: Dr
   else if (s.speed < p.maxSpeed * push) out.up = true;
   return out;
 }
+
+/**
+ * Driving tuned for the screen: `scale` is 1 on big screens and smaller on phones, where less road
+ * fits ahead. Top speed scales down (never below a calm 85, or the vehicle's own top speed if lower)
+ * and acceleration softens a little, so phone driving feels controlled.
+ */
+export function scaledForScreen(p: DriveParams, scale: number): DriveParams {
+  if (scale >= 1) return p;
+  return { ...p, maxSpeed: Math.max(Math.min(p.maxSpeed, 85), p.maxSpeed * scale), accel: p.accel * (0.6 + 0.4 * scale) };
+}

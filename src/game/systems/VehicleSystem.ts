@@ -2,7 +2,7 @@ import Phaser from 'phaser';
 import { PROPS } from '../../data/map';
 import { RIDEABLES, type RideableDef } from '../../data/vehicles';
 import { boxHitsSolids } from '../../logic/geometry';
-import { stepDrive, type DirInput, type DriveParams } from '../../logic/movement';
+import { scaledForScreen, stepDrive, type DirInput, type DriveParams } from '../../logic/movement';
 import { enterVehicle, exitVehicle, type RideableInfo } from '../../logic/vehicleState';
 import { uiStore } from '../../store/uiStore';
 import { audio } from '../audio';
@@ -67,9 +67,7 @@ export class VehicleSystem {
 
   /** Driving params for this screen: small screens get a lower top speed (never below a brisk 100). */
   paramsFor(v: Rideable): DriveParams {
-    const p = v.def.params;
-    if (this.speedScale >= 1) return p;
-    return { ...p, maxSpeed: Math.max(Math.min(p.maxSpeed, 100), p.maxSpeed * this.speedScale) };
+    return scaledForScreen(v.def.params, this.speedScale);
   }
 
   driving(): Rideable | null {

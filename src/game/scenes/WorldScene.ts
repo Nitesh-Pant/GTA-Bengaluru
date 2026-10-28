@@ -339,7 +339,7 @@ export class WorldScene extends Phaser.Scene {
     this.baseZoom = Phaser.Math.Clamp(Math.floor(h / 260), 2, 5);
     // Phones see less road ahead at the same zoom, so vehicles top out slower there.
     const view = Math.min(this.scale.width, this.scale.height) / this.driveZoom;
-    this.vehicles.speedScale = Phaser.Math.Clamp(view / 300, 0.6, 1);
+    this.vehicles.speedScale = Phaser.Math.Clamp(view / 340, 0.5, 1);
     this.setZoomForMode(animate);
   }
 
