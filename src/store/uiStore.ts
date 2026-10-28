@@ -14,6 +14,8 @@ export interface DialogueView {
   speaker: string;
   role: string;
   text: string;
+  /** What the Kannada / Hindi words in `text` mean, if "Word meanings" is on. */
+  gloss?: string;
   options: string[];
 }
 

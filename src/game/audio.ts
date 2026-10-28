@@ -340,29 +340,107 @@ class AudioEngine {
 
   private echo!: DelayNode;
 
-  /** Slow melody notes in raga Mohanam (Sa Ri2 Ga3 Pa Dha2, two octaves). */
+  /**
+   * Soothing background tune that phone speakers can carry (the drone alone sits too low for them):
+   * soft chords (D, Bm, G, A, two bars each) under a santoor-like melody in raga Mohanam
+   * (Sa Ri Ga Pa Dha), with a barely-there shaker. Scheduled on the audio clock so the beat stays
+   * steady; the Music slider sets the level.
+   */
   private startNotes() {
     const c = this.ctx!;
-    const SA = 146.83;
-    const ratios = [1, 9 / 8, 5 / 4, 3 / 2, 5 / 3, 2, 9 / 4, 5 / 2];
-    let last = 0;
-    this.every(1800, 2600, () => {
-      if (!this.musicOn) return;
-      // Wander by small steps so it sounds like a melody, not random beeps.
-      last = Math.max(0, Math.min(ratios.length - 1, last + Math.floor(Math.random() * 5) - 2));
-      const t = c.currentTime;
-      const o = c.createOscillator();
-      o.type = 'triangle';
-      o.frequency.value = SA * 2 * ratios[last];
+    const ROOT = 293.66; // D4
+    const hz = (semi: number) => ROOT * 2 ** (semi / 12);
+    const STEP = 60 / 70 / 2; // eighth notes at 70 bpm
+    const CHORD_STEPS = 16; // two bars
+    const CHORDS = [
+      [-12, 4, 7, 11, 14],
+      [-15, -3, 4, 7, 12],
+      [-19, -3, 0, 4, 9],
+      [-17, -5, -1, 2, 7],
+    ];
+    const SCALE = [0, 2, 4, 7, 9, 12, 14, 16, 19, 21];
+    const soften = c.createBiquadFilter();
+    soften.type = 'lowpass';
+    soften.frequency.value = 1400;
+    soften.connect(this.music);
+    const hiss = c.createBuffer(1, Math.floor(c.sampleRate * 0.1), c.sampleRate);
+    const h = hiss.getChannelData(0);
+    for (let i = 0; i < h.length; i++) h[i] = Math.random() * 2 - 1;
+
+    const pad = (semis: number[], t: number, dur: number) => {
+      semis.forEach((n, i) => {
+        const level = i === 0 ? 0.03 : 0.011;
+        const g = c.createGain();
+        g.gain.setValueAtTime(0, t);
+        g.gain.linearRampToValueAtTime(level, t + 1.2);
+        g.gain.setValueAtTime(level, t + dur - 1.2);
+        g.gain.linearRampToValueAtTime(0, t + dur + 0.4);
+        g.connect(soften);
+        for (const [type, detune] of [['triangle', -4], ['sine', 5]] as const) {
+          const o = c.createOscillator();
+          o.type = type;
+          o.frequency.value = hz(n);
+          o.detune.value = detune;
+          o.connect(g);
+          o.start(t);
+          o.stop(t + dur + 0.5);
+        }
+      });
+    };
+    const pluck = (semi: number, t: number) => {
       const g = c.createGain();
       g.gain.setValueAtTime(0, t);
-      g.gain.linearRampToValueAtTime(0.07, t + 0.08);
-      g.gain.exponentialRampToValueAtTime(0.0005, t + 2.6);
-      o.connect(g);
+      g.gain.linearRampToValueAtTime(0.06, t + 0.01);
+      g.gain.exponentialRampToValueAtTime(0.0005, t + 1.4);
       g.connect(this.music);
       g.connect(this.echo);
-      o.start(t);
-      o.stop(t + 2.7);
+      for (const [type, mult, vol] of [['triangle', 1, 1], ['sine', 2, 0.3]] as const) {
+        const o = c.createOscillator();
+        o.type = type;
+        o.frequency.value = hz(semi) * mult;
+        const v = c.createGain();
+        v.gain.value = vol;
+        o.connect(v).connect(g);
+        o.start(t);
+        o.stop(t + 1.5);
+      }
+    };
+    const shaker = (t: number) => {
+      const src = c.createBufferSource();
+      src.buffer = hiss;
+      const hp = c.createBiquadFilter();
+      hp.type = 'highpass';
+      hp.frequency.value = 7000;
+      const g = c.createGain();
+      g.gain.setValueAtTime(0.006, t);
+      g.gain.exponentialRampToValueAtTime(0.0001, t + 0.07);
+      src.connect(hp).connect(g).connect(this.music);
+      src.start(t);
+    };
+
+    let next = 0;
+    let step = 0;
+    let note = 2;
+    this.every(90, 0, () => {
+      if (!this.musicOn) {
+        next = 0;
+        return;
+      }
+      const now = c.currentTime;
+      if (next < now) next = now + 0.05; // after a pause, pick up from now rather than catching up
+      while (next < now + 0.25) {
+        const inChord = step % CHORD_STEPS;
+        if (inChord === 0) pad(CHORDS[Math.floor(step / CHORD_STEPS) % CHORDS.length], next, CHORD_STEPS * STEP);
+        // Melody: mostly on the beat, wandering by small steps; the last half-bar of each chord breathes.
+        const onBeat = step % 2 === 0;
+        if (inChord < 12 && Math.random() < (onBeat ? 0.5 : 0.18)) {
+          note = Math.max(0, Math.min(SCALE.length - 1, note + Math.floor(Math.random() * 5) - 2 + (note > 7 ? -1 : note < 2 ? 1 : 0)));
+          pluck(SCALE[note], next);
+        }
+        if (!onBeat) shaker(next);
+        next += STEP;
+        step++;
+      }
     });
   }
 

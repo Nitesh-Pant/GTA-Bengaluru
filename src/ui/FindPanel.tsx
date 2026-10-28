@@ -35,7 +35,7 @@ export function FindPanel() {
       logo="F"
       logoClass="ride-logo"
       title="Find rides and jobs"
-      subtitle="Pick one and red dots show the way"
+      subtitle="Pick one and an arrow beside you shows the way"
       items={items}
       verb="show the way"
       onChoose={(id) => {

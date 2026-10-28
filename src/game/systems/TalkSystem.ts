@@ -1,4 +1,6 @@
 import type Phaser from 'phaser';
+import { GLOSSARY, PHRASES } from '../../data/glossary';
+import { glossFor, glossLine } from '../../logic/glossary';
 import { CONVERSATIONS, QUIZ, type ConvNode, type ConvOption, type Conversation, type Effect } from '../../data/conversations';
 import { EXCHANGES, LINE_POOLS, type Exchange } from '../../data/dialogue';
 import { POIS } from '../../data/pois';
@@ -226,7 +228,13 @@ export class TalkSystem {
     this.apply(node.effects);
     const options = (node.options ?? [{ label: 'Sari! (Leave)' }]).map((o) => o.label);
     uiStore.set({
-      dialogue: { speaker: node.speaker === '' ? '' : (node.speaker ?? npc.name), role: npc.def.role, text: personalise(node.text, this.scene.profile), options },
+      dialogue: {
+        speaker: node.speaker === '' ? '' : (node.speaker ?? npc.name),
+        role: npc.def.role,
+        text: personalise(node.text, this.scene.profile),
+        gloss: this.scene.settings.glosses ? glossLine(glossFor(node.text, GLOSSARY, PHRASES, 4)) : '',
+        options,
+      },
     });
   }
 

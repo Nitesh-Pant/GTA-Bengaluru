@@ -92,6 +92,14 @@ export function PauseMenu() {
           <input type="checkbox" checked={settings.showMarkers} onChange={(e) => set({ showMarkers: e.target.checked })} />
         </label>
         <label className="setting">
+          <span>Route dots to markers</span>
+          <input type="checkbox" checked={settings.showRoute} onChange={(e) => set({ showRoute: e.target.checked })} />
+        </label>
+        <label className="setting">
+          <span>Word meanings (Kannada, Hindi)</span>
+          <input type="checkbox" checked={settings.glosses} onChange={(e) => set({ glosses: e.target.checked })} />
+        </label>
+        <label className="setting">
           <span>Screen shake</span>
           <input type="checkbox" checked={settings.screenShake} onChange={(e) => set({ screenShake: e.target.checked })} />
         </label>

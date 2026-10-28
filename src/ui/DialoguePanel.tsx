@@ -23,6 +23,7 @@ export function DialoguePanel() {
         </div>
       )}
       <p className={d.speaker ? 'dialogue-text' : 'dialogue-text narration'}>{d.text}</p>
+      {d.gloss && <p className="dialogue-gloss">{d.gloss}</p>}
       <ol className="options">
         {d.options.map((o, i) => (
           <li key={o}>

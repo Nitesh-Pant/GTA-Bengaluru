@@ -178,10 +178,10 @@ Green road-name boards stand on every main road, and the big map labels areas, r
 Not sure where any of these are? **Find** (`F`, or the yellow button on phones) lists the
 nearest of each with the walking time and marks the one you pick.
 
-**Following a marker** (a place from the map search or journal, Find, or a job): red dots run
-from you to it along the main roads (straight when it's close), an arrow beside your character shows
-the direction and distance, and the pin itself carries the place's name with a pulsing ring on the
-spot. The minimap shows the route too, with an arrow on its edge when the marker is off it.
+**Following a marker** (a place from the map search or journal, Find, or a job): an arrow beside your
+character shows the direction and distance, the pin carries the place's name with a pulsing ring on
+the spot, and the minimap rings it (or shows an arrow on its edge when it's off the minimap). Turn on
+**Route dots to markers** in the pause menu for red dots along the main roads all the way there.
 
 Traffic vehicles (cars, autos, buses, scooters, the police car and the ambulance) can't be taken.
 
@@ -299,8 +299,16 @@ minding every surprise roadworks.
 ### Ambience
 
 A city hum, distant honks, birds near parks and lakes, crickets at night, temple bells, a dhol at the
-pandal, and soft background music (a tanpura-like drone with notes in raga Mohanam), all mixed well
-under people's voices.
+pandal, and soothing background music, all mixed well under people's voices. The music is generated
+as you play: soft chords (D, Bm, G, A) under a slow, santoor-like melody in raga Mohanam with a light
+shaker, over a tanpura-like drone, pitched so phone speakers carry it too.
+
+### Word meanings
+
+New to Bengaluru? Speech bubbles and conversations show what the Kannada and Hindi words mean, e.g.
+*"Maga, coffee aaytha?"* gets *maga: dude · aaytha: done?*. Common phrases stay together (*swalpa
+adjust maadi: please adjust a little*). The glossary lives in `src/data/glossary.ts`; switch it off in
+the pause menu under **Word meanings**.
 
 ---
 
@@ -336,7 +344,8 @@ The pause menu (`Esc` or **II**) has:
 - Resume, Journal, Map and How to play
 - Character and time of day
 - Mute all sound, plus sliders for master, sound effects, city ambience, voices and music
-- Street chatter (low, normal, high), destination markers, screen shake
+- Street chatter (low, normal, high), destination markers, route dots to markers (off by default),
+  word meanings for Kannada and Hindi (on by default), screen shake
 - Save and quit to the title, and Reset progress (with confirmation)
 
 **Saving** is automatic and local to the browser (`localStorage`, key `bsam.save`): discoveries, tips,
@@ -350,6 +359,8 @@ dropped.
 
 - Touch controls, a compact side bar and tappable panels on phones and tablets, in portrait or landscape.
 - The menu loads first (about 120 KB gzipped) while the game engine downloads in the background.
+- **Link previews:** sharing the link on WhatsApp, Instagram, X, LinkedIn or Slack shows the title
+  screen picture (`public/og.png`, 1200×630) and a short description, from the tags in `index.html`.
 - The production build is a **Progressive Web App**: it can be installed (*Add to Home Screen*), and
   after one visit it works offline.
 - **Phone visitors are offered the app** the first time they open the site: *Get the app* opens the

@@ -149,6 +149,7 @@ export class WorldScene extends Phaser.Scene {
 
     const overlay = document.getElementById('world-overlay');
     this.bubbles = new BubbleLayer(overlay ?? document.createElement('div'));
+    this.bubbles.glosses = this.settings.glosses;
     this.npcs = new NpcSystem(this);
     this.traffic = new TrafficSystem(this);
     this.vehicles = new VehicleSystem(this);
@@ -371,6 +372,7 @@ export class WorldScene extends Phaser.Scene {
       },
       updateSettings: (patch) => {
         this.settings = { ...this.settings, ...patch };
+        this.bubbles.glosses = this.settings.glosses;
         audio.apply(this.settings);
         uiStore.set({ settings: this.settings });
         this.persist();
@@ -414,7 +416,7 @@ export class WorldScene extends Phaser.Scene {
         const best = this.jobs.nearest().find((j) => j.kind === kind);
         if (!best) return;
         this.guides.set('tour', { ...best.at, label: `${JOB_INFO[kind].name}: ${best.label}` });
-        uiStore.toast({ kind: 'hint', title: `Marked: ${JOB_INFO[kind].name}`, body: `${best.label}. Follow the red dots, or the arrow beside you.` }, 3600);
+        uiStore.toast({ kind: 'hint', title: `Marked: ${JOB_INFO[kind].name}`, body: `${best.label}. Follow the arrow beside you.` }, 3600);
       },
       nearestRides: () =>
         GUIDE_KINDS.flatMap((kind) => {
@@ -602,7 +604,7 @@ export class WorldScene extends Phaser.Scene {
     const best = this.nearestOf(kind);
     if (!best) return;
     this.guides.set('tour', best.item);
-    uiStore.toast({ kind: 'hint', title: `Marked: ${best.item.label}`, body: 'Follow the red dots, or the arrow beside you. The marker clears when you get there.' }, 3600);
+    uiStore.toast({ kind: 'hint', title: `Marked: ${best.item.label}`, body: 'Follow the arrow beside you. The marker clears when you get there.' }, 3600);
   }
 
   /** Count something the player did (a ride, a fare, a biscuit…) and save. */
@@ -806,8 +808,8 @@ export class WorldScene extends Phaser.Scene {
   }
 
   /**
-   * Red dots from you to the marker along the main roads (straight when it's close), drifting towards
-   * it, plus a pulsing ring on the spot itself. Re-planned twice a second as you move.
+   * A pulsing ring on the marked spot and, if "Route dots" is on in settings, red dots from you to it
+   * along the main roads (straight when it's close), drifting towards it. Re-planned twice a second.
    */
   private drawRoute(target: Point | null, x: number, y: number) {
     const g = this.routeGfx;
@@ -815,6 +817,12 @@ export class WorldScene extends Phaser.Scene {
     if (!target) {
       this.route = [];
       this.routeTarget = null;
+      return;
+    }
+    g.lineStyle(2, 0xff6b6b, 0.9).strokeCircle(target.x, target.y, 11 + Math.sin(this.clock / 180) * 2.5);
+    if (!this.settings.showRoute) {
+      this.route = [];
+      this.routeTarget = { x: target.x, y: target.y };
       return;
     }
     const moved = !this.routeTarget || this.routeTarget.x !== target.x || this.routeTarget.y !== target.y;
@@ -829,6 +837,5 @@ export class WorldScene extends Phaser.Scene {
       g.fillStyle(0x1c1726, 0.55).fillCircle(d.x, d.y, 3.2);
       g.fillStyle(0xff6b6b, 1).fillCircle(d.x, d.y, 2.2);
     }
-    g.lineStyle(2, 0xff6b6b, 0.9).strokeCircle(target.x, target.y, 11 + Math.sin(this.clock / 180) * 2.5);
   }
 }

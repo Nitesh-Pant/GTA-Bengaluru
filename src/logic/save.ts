@@ -16,6 +16,10 @@ export interface Settings {
   muted: boolean;
   chatter: ChatterLevel;
   showMarkers: boolean;
+  /** Red dots along the road to the active marker. */
+  showRoute: boolean;
+  /** Meanings of Kannada and Hindi words under speech. */
+  glosses: boolean;
   screenShake: boolean;
 }
 
@@ -80,6 +84,8 @@ export const DEFAULT_SETTINGS: Settings = {
   muted: false,
   chatter: 'normal',
   showMarkers: true,
+  showRoute: false,
+  glosses: true,
   screenShake: true,
 };
 
@@ -138,6 +144,8 @@ export function sanitize(raw: unknown, validPoiIds: ReadonlySet<string>, valid: 
       muted: typeof s.muted === 'boolean' ? s.muted : DEFAULT_SETTINGS.muted,
       chatter: s.chatter === 'low' || s.chatter === 'high' || s.chatter === 'normal' ? s.chatter : DEFAULT_SETTINGS.chatter,
       showMarkers: typeof s.showMarkers === 'boolean' ? s.showMarkers : DEFAULT_SETTINGS.showMarkers,
+      showRoute: typeof s.showRoute === 'boolean' ? s.showRoute : DEFAULT_SETTINGS.showRoute,
+      glosses: typeof s.glosses === 'boolean' ? s.glosses : DEFAULT_SETTINGS.glosses,
       screenShake: typeof s.screenShake === 'boolean' ? s.screenShake : DEFAULT_SETTINGS.screenShake,
     };
   }

@@ -1,4 +1,6 @@
 import type Phaser from 'phaser';
+import { GLOSSARY, PHRASES } from '../../data/glossary';
+import { glossFor, glossLine } from '../../logic/glossary';
 
 export type BubbleKind = 'npc' | 'driver' | 'honk' | 'event';
 
@@ -25,6 +27,8 @@ export class BubbleLayer {
   private pinLabel: HTMLDivElement;
   private nameTag: HTMLDivElement;
   private nameTarget: { x: number; y: number } | null = null;
+  /** Show what Kannada / Hindi words mean under each line (the "Word meanings" setting). */
+  glosses = true;
 
   constructor(private root: HTMLElement) {
     root.innerHTML = '';
@@ -68,6 +72,13 @@ export class BubbleLayer {
     const body = document.createElement('span');
     body.textContent = text;
     el.appendChild(body);
+    const meaning = this.glosses && kind !== 'honk' ? glossLine(glossFor(text, GLOSSARY, PHRASES, 2)) : '';
+    if (meaning) {
+      const g = document.createElement('span');
+      g.className = 'bubble-gloss';
+      g.textContent = meaning;
+      el.appendChild(g);
+    }
     this.root.appendChild(el);
     this.bubbles.set(id, { el, anchor, until: now + durationMs, h: 0 });
     return id;

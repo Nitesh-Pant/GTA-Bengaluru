@@ -166,6 +166,15 @@ kbd {
   color: #9c36b5;
   letter-spacing: 0.02em;
 }
+.bubble-gloss {
+  display: block;
+  margin-top: 3px;
+  padding-top: 3px;
+  border-top: 1px dashed rgba(28, 23, 38, 0.3);
+  font-size: 11px;
+  font-style: italic;
+  color: #5f3dc4;
+}
 .bubble-driver {
   background: #fff3bf;
 }
@@ -461,6 +470,12 @@ kbd {
 .dialogue-text.narration {
   font-style: italic;
   color: #e6ddf5;
+}
+.dialogue-gloss {
+  margin: -4px 0 10px;
+  font-size: 13px;
+  font-style: italic;
+  color: #b197fc;
 }
 .options {
   list-style: none;
@@ -1182,6 +1197,9 @@ kbd {
     font-size: 12px;
   }
   .bubble-name {
+    font-size: 10px;
+  }
+  .bubble-gloss {
     font-size: 10px;
   }
   .bubble-honk {
