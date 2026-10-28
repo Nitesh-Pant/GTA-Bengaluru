@@ -1,9 +1,11 @@
 import { useSyncExternalStore } from 'react';
-import { DEFAULT_SETTINGS, type Settings, type Stats } from '../logic/save';
+import type { Period } from '../logic/dayClock';
+import { DEFAULT_PROFILE, type PlayerProfile } from '../logic/player';
+import { DEFAULT_SETTINGS, defaultStats, type Settings, type Stats } from '../logic/save';
 
 export interface Toast {
   id: number;
-  kind: 'discover' | 'hint' | 'info' | 'arrive';
+  kind: 'discover' | 'hint' | 'info' | 'arrive' | 'taste' | 'achievement';
   title: string;
   body?: string;
 }
@@ -22,23 +24,40 @@ export interface MetroView {
   travelling: string | null;
 }
 
-export type Panel = null | 'pause' | 'journal' | 'map';
+export interface Job {
+  label: string;
+  secondsLeft?: number;
+  /** Shows a ✕ that calls bridge.api.cancelJob(id). */
+  cancellable?: boolean;
+}
+
+export type Panel = null | 'pause' | 'journal' | 'map' | 'ride' | 'character' | 'bus' | 'tour';
 
 export interface UiState {
   phase: 'menu' | 'playing';
   panel: Panel;
   area: { name: string; tagline: string };
-  mode: 'walk' | 'drive' | 'metro';
+  mode: 'walk' | 'drive' | 'metro' | 'ride';
   vehicleName: string | null;
   dialogue: DialogueView | null;
   metro: MetroView | null;
   narration: { title: string; text: string } | null;
   discovered: string[];
   hinted: string[];
+  tasted: string[];
+  achievements: string[];
   destination: string | null;
   toasts: Toast[];
   settings: Settings;
   stats: Stats;
+  player: PlayerProfile;
+  clock: { label: string; period: Period; rush: boolean } | null;
+  /** The IPL match on tonight, e.g. "RCB vs CSK". */
+  match: string | null;
+  /** Jobs in progress (a delivery, an auto fare), shown as HUD chips. */
+  jobs: Record<string, Job>;
+  /** Bus stop whose panel is open. */
+  busStop: string | null;
   raining: boolean;
   eventTitle: string | null;
   ready: boolean;
@@ -55,10 +74,17 @@ const initial = (): UiState => ({
   narration: null,
   discovered: [],
   hinted: [],
+  tasted: [],
+  achievements: [],
   destination: null,
   toasts: [],
   settings: { ...DEFAULT_SETTINGS },
-  stats: { chai: 0, dosa: 0, metroRides: 0, drives: 0 },
+  stats: defaultStats(),
+  player: { ...DEFAULT_PROFILE },
+  clock: null,
+  jobs: {},
+  match: null,
+  busStop: null,
   raining: false,
   eventTitle: null,
   ready: false,
@@ -81,6 +107,13 @@ export const uiStore = {
   reset() {
     state = { ...initial(), settings: state.settings };
     listeners.forEach((l) => l());
+  },
+  /** Add, update or (with null) remove a job chip. */
+  setJob(id: string, job: Job | null) {
+    const jobs = { ...state.jobs };
+    if (job) jobs[id] = job;
+    else delete jobs[id];
+    uiStore.set({ jobs });
   },
   toast(t: Omit<Toast, 'id'>, ms = 4200) {
     const id = toastId++;

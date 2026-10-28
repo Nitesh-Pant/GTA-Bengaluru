@@ -57,6 +57,8 @@ export class MetroSystem {
     pb.enable = false;
     s.player.setVisible(false);
     audio.chime('metro');
+    const here = s.playerFeet();
+    s.talk.voice('announce:metro', null, here.x, here.y, s.clock, 1, true);
     const start = pointAt(METRO_TRACK, plan.startAlong);
     this.train.setPosition(start.x, start.y).setVisible(true).setFlipX(plan.endAlong < plan.startAlong);
     s.cameras.main.startFollow(this.train, true, 0.08, 0.08);

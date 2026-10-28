@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { CONVERSATIONS } from '../src/data/conversations';
+import { CONVERSATIONS, QUIZ } from '../src/data/conversations';
 import { EXCHANGES, LINE_POOLS } from '../src/data/dialogue';
 import { EVENTS } from '../src/data/events';
 import { LOOKS } from '../src/data/looks';
@@ -28,7 +28,7 @@ describe('content data integrity', () => {
       expect(conv.nodes[conv.start]).toBeDefined();
       for (const node of Object.values(conv.nodes)) {
         const effects = [...(node.effects ?? []), ...(node.options ?? []).flatMap((o) => o.effects ?? [])];
-        for (const o of node.options ?? []) if (o.next) expect(conv.nodes[o.next], `${conv.id}.${o.next}`).toBeDefined();
+        for (const o of node.options ?? []) if (o.next && o.next !== QUIZ) expect(conv.nodes[o.next], `${conv.id}.${o.next}`).toBeDefined();
         for (const e of effects) if (e.type === 'hint' || e.type === 'destination') expect(POI_IDS.has(e.poi), e.poi).toBe(true);
       }
     }

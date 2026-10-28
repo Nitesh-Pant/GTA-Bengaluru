@@ -131,6 +131,21 @@ function paintScooter(ctx: CanvasRenderingContext2D, variant: number) {
   outline(ctx, 0, 0, 20, 12);
 }
 
+/** Yulu: a small sky-blue shared e-bike with a front basket and its rider, seen from above (east-facing). */
+export function paintYulu(): HTMLCanvasElement {
+  const [c, ctx] = makeCanvas(20, 12);
+  shadow(ctx, 2, 3, 15, 6);
+  rect(ctx, 3, 5, 12, 2, '#13b5ea');
+  rect(ctx, 3, 4, 2, 4, '#0b7fa8');
+  rect(ctx, 14, 3, 3, 6, '#f8f9fa');
+  rect(ctx, 15, 4, 1, 4, '#13b5ea');
+  rect(ctx, 13, 2, 1, 8, '#343a40');
+  rect(ctx, 6, 3, 4, 6, '#ffd43b');
+  ellipse(ctx, 9, 6, 2.4, 2.4, '#f8f9fa');
+  outline(ctx, 0, 0, 20, 12);
+  return c;
+}
+
 /** A three-coach purple-line metro train (east-facing). */
 export function paintTrain(): HTMLCanvasElement {
   const coach = 46;
@@ -167,5 +182,62 @@ export function paintCow(): HTMLCanvasElement {
   px(ctx, 22, 9, '#1c1726');
   rect(ctx, 3, 9, 2, 1, '#8a8173');
   outline(ctx, 0, 0, 28, 18);
+  return c;
+}
+
+/** Car-variant ids for emergency vehicles (textures `veh_car_<id>` and the flashing `veh_car_<id>b`). */
+export const POLICE_VARIANT = 8;
+export const AMBULANCE_VARIANT = 9;
+
+/** Police car or ambulance, east-facing, with its roof lights in one of two flash states. */
+export function paintEmergency(kind: 'police' | 'ambulance', flash: 0 | 1): HTMLCanvasElement {
+  const [c, ctx] = makeCanvas(34, 20);
+  const x = 3;
+  const y = 3;
+  const L = 28;
+  const W = 14;
+  const body = '#f8f9fa';
+  shadow(ctx, x, y, L, W);
+  rect(ctx, x + 1, y, L - 2, W, body);
+  rect(ctx, x, y + 1, L, W - 2, body);
+  rect(ctx, x, y + W - 3, L, 2, '#ced4da');
+  if (kind === 'police') {
+    rect(ctx, x, y + 5, L, 4, '#1c3d7a');
+    rect(ctx, x + 17, y + 2, 4, W - 4, '#27374d');
+    rect(ctx, x + 6, y + 2, 3, W - 4, '#27374d');
+  } else {
+    rect(ctx, x, y + 2, L, 1, '#c92a2a');
+    rect(ctx, x, y + W - 4, L, 1, '#c92a2a');
+    rect(ctx, x + 20, y + 2, 4, W - 4, '#27374d');
+    // Red cross on the roof
+    rect(ctx, x + 9, y + 6, 6, 2, '#e03131');
+    rect(ctx, x + 11, y + 4, 2, 6, '#e03131');
+  }
+  // Light bar: red and blue (police) or red and white (ambulance), swapping each flash
+  const a = flash ? '#ff2d2d' : kind === 'police' ? '#2d6bff' : '#ffffff';
+  const b = flash ? (kind === 'police' ? '#2d6bff' : '#ffffff') : '#ff2d2d';
+  const lx = kind === 'police' ? x + 12 : x + 16;
+  rect(ctx, lx, y + 2, 2, 5, a);
+  rect(ctx, lx, y + 7, 2, 5, b);
+  rect(ctx, x + L - 1, y + 1, 1, 3, '#fff3bf');
+  rect(ctx, x + L - 1, y + W - 4, 1, 3, '#fff3bf');
+  outline(ctx, 0, 0, 34, 20);
+  return c;
+}
+
+/** Swan pedal boat on Ulsoor Lake, seen from above, facing east. */
+export function paintBoat(variant: number): HTMLCanvasElement {
+  const [c, ctx] = makeCanvas(18, 12);
+  const hull = ['#f8f9fa', '#ffd43b'][variant % 2];
+  const canopy = ['#e03131', '#1971c2'][variant % 2];
+  ellipse(ctx, 9, 7, 8, 4, 'rgba(255,255,255,0.35)');
+  ellipse(ctx, 8, 6, 7, 3.5, hull);
+  rect(ctx, 4, 3, 6, 6, canopy);
+  rect(ctx, 4, 3, 6, 1, shade(canopy, 0.3));
+  // Swan neck and head at the bow
+  rect(ctx, 13, 2, 2, 4, hull);
+  rect(ctx, 14, 1, 3, 2, hull);
+  px(ctx, 16, 2, '#f08c00');
+  outline(ctx, 0, 0, 18, 12);
   return c;
 }

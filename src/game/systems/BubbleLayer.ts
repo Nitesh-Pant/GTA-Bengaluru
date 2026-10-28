@@ -20,6 +20,8 @@ export class BubbleLayer {
   private promptTarget: { x: number; y: number } | null = null;
   private arrow: HTMLDivElement;
   private arrowTarget: { x: number; y: number; label: string } | null = null;
+  private nameTag: HTMLDivElement;
+  private nameTarget: { x: number; y: number } | null = null;
 
   constructor(private root: HTMLElement) {
     root.innerHTML = '';
@@ -32,6 +34,18 @@ export class BubbleLayer {
     this.arrow.style.display = 'none';
     this.arrow.innerHTML = '<i>➤</i><span></span>';
     root.appendChild(this.arrow);
+    this.nameTag = document.createElement('div');
+    this.nameTag.className = 'name-tag';
+    this.nameTag.style.display = 'none';
+    root.appendChild(this.nameTag);
+  }
+
+  /** The player's name floating above their head (or vehicle). */
+  setNameTag(target: { x: number; y: number } | null, name = '') {
+    const show = !!(target && name);
+    if (show !== !!this.nameTarget) this.nameTag.style.display = show ? 'block' : 'none';
+    this.nameTarget = show ? target : null;
+    if (this.nameTag.textContent !== name) this.nameTag.textContent = name;
   }
 
   say(anchor: Bubble['anchor'], speaker: string, text: string, durationMs: number, now: number, kind: BubbleKind = 'npc'): number {
@@ -111,6 +125,11 @@ export class BubbleLayer {
       const off = s.x < -40 || s.x > W + 40 || s.y < -40 || s.y > H + 60;
       b.el.style.display = off ? 'none' : 'block';
       b.el.style.transform = `translate(${x}px, ${y}px)`;
+    }
+    if (this.nameTarget) {
+      // Centred with CSS (-50%), so no layout read is needed every frame.
+      const s = toScreen(this.nameTarget.x, this.nameTarget.y);
+      this.nameTag.style.transform = `translate(${Math.round(s.x)}px, ${Math.round(s.y)}px) translateX(-50%)`;
     }
     if (this.promptTarget) {
       const s = toScreen(this.promptTarget.x, this.promptTarget.y);

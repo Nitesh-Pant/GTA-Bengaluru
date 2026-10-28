@@ -1,11 +1,15 @@
 import type { BuildingDef } from '../../data/map';
 import { TILE } from '../constants';
-import { drawText, ellipse, hash, makeCanvas, OUTLINE, px, rect, shade, textWidth } from './pixel';
+import { drawText, ellipse, hash, makeCanvas, outline, OUTLINE, px, rect, shade, textWidth } from './pixel';
 
 type Ctx = CanvasRenderingContext2D;
 
 /** 3/4-view building: flat terrace (or tiled roof) on top, facade with shopfront below. */
 export function paintBuilding(b: BuildingDef): HTMLCanvasElement {
+  if (b.style === 'stadium') return paintStadium(b);
+  if (b.style === 'vidhana') return paintVidhana(b);
+  if (b.style === 'pandal') return paintPandal(b);
+  if (b.style === 'glasshouse') return paintGlassHouse(b);
   const W = b.w * TILE;
   const H = b.h * TILE;
   const [c, ctx] = makeCanvas(W, H);
@@ -24,6 +28,13 @@ export function paintBuilding(b: BuildingDef): HTMLCanvasElement {
     temple: 40,
     mural: H - 6,
     kiosk: 26,
+    heritage: floors * 16 + 14,
+    stadium: 30,
+    construction: floors * 14 + 8,
+    // Painted by their own functions below; these heights are unused.
+    vidhana: 0,
+    pandal: 0,
+    glasshouse: 0,
   };
   const facadeH = Math.min(facadeByStyle[b.style], H - 12);
   const roofH = H - facadeH;
@@ -82,6 +93,25 @@ function paintRoof(ctx: Ctx, b: BuildingDef, W: number, h: number, seed: number)
       rect(ctx, x + 4, 3, 7, 2, '#8d8176');
     }
     rect(ctx, 0, h - 1, W, 1, '#6c6259');
+    return;
+  }
+  if (b.style === 'construction') {
+    // Unfinished top slab: formwork planks with rebar sticking up.
+    rect(ctx, 0, 0, W, h, '#8a7a62');
+    for (let y = 1; y < h; y += 3) rect(ctx, 0, y, W, 1, '#6f6150');
+    for (let x = 3; x < W - 2; x += 6) for (let y = 2; y < h - 1; y += 5) rect(ctx, x, y, 1, 2, '#3d3d3d');
+    return;
+  }
+  if (b.style === 'heritage') {
+    // Sloped colonial roof with corner turrets.
+    rect(ctx, 0, 0, W, h, roof);
+    for (let y = 2; y < h; y += 3) rect(ctx, 0, y, W, 1, shade(roof, -0.18));
+    rect(ctx, 0, Math.floor(h / 2), W, 1, shade(roof, 0.25));
+    for (const tx of [3, W - 13]) {
+      rect(ctx, tx, 1, 10, h - 2, shade(b.wall, -0.1));
+      rect(ctx, tx + 2, 0, 6, 3, shade(roof, -0.3));
+      rect(ctx, tx + 4, -1, 2, 2, '#fab005');
+    }
     return;
   }
   if (b.style === 'temple') {
@@ -182,6 +212,37 @@ function paintFacade(ctx: Ctx, b: BuildingDef, x: number, y: number, W: number, 
   switch (b.style) {
     case 'mural':
       return paintMural(ctx, x, y, W, H, seed);
+    case 'construction': {
+      // Concrete frame with open floors, bamboo scaffolding and a green safety net.
+      rect(ctx, 0, y, W, H, '#2b2d33');
+      for (let f = 0; f <= floors; f++) rect(ctx, 0, y + Math.min(H - 3, f * 14), W, 3, '#a5a5a0');
+      for (let cx = 0; cx < W; cx += 18) rect(ctx, cx, y, 4, H, '#9a9a96');
+      rect(ctx, 0, y, Math.floor(W * 0.4), H, 'rgba(47,158,68,0.75)');
+      for (let gx = 0; gx < W * 0.4; gx += 3) rect(ctx, gx, y, 1, H, 'rgba(25,90,40,0.5)');
+      for (let sx = 2; sx < W; sx += 9) rect(ctx, sx, y, 1, H, '#c9a26b');
+      for (let sy = y + 6; sy < y + H; sy += 7) rect(ctx, 0, sy, W, 1, '#c9a26b');
+      if (b.sign) sign(ctx, b.sign, x, y + H - 12, W, '#fab005', '#1c1726');
+      return;
+    }
+    case 'heritage': {
+      // Red facade, white-trimmed arched windows, a central porch with steps.
+      for (let f = 0; f < floors; f++)
+        for (let wx = 6; wx < W - 10; wx += 14) {
+          const wy = y + 4 + f * 16;
+          rect(ctx, wx - 1, wy - 1, 8, 11, '#f8f9fa');
+          rect(ctx, wx, wy + 1, 6, 8, '#3d2b2b');
+          rect(ctx, wx + 1, wy, 4, 1, '#3d2b2b');
+          rect(ctx, wx + 3, wy + 1, 1, 8, '#f8f9fa');
+        }
+      const pw = 30;
+      const px0 = Math.floor((W - pw) / 2);
+      rect(ctx, px0, y + H - 22, pw, 20, '#f1e3c6');
+      for (let cx = px0 + 2; cx < px0 + pw; cx += 7) rect(ctx, cx, y + H - 20, 3, 16, '#ffffff');
+      rect(ctx, px0 + 11, y + H - 14, 8, 12, '#3d2b2b');
+      rect(ctx, px0 - 3, y + H - 3, pw + 6, 2, '#ced4da');
+      if (b.sign) sign(ctx, b.sign, x, y + H - 32, W, '#f8f9fa', '#7a2e22');
+      return;
+    }
     case 'temple': {
       for (let sx = 2; sx < W - 2; sx += 6) rect(ctx, sx, y + 2, 3, H - 6, '#c92a2a');
       rect(ctx, 0, y, W, 2, '#f08c00');
@@ -220,7 +281,7 @@ function paintFacade(ctx: Ctx, b: BuildingDef, x: number, y: number, W: number, 
           rect(ctx, gx, gy, 7, 1, '#8fbce6');
           if (hash(gx, gy, seed) > 0.7) rect(ctx, gx + 1, gy + 2, 2, 4, '#a9d3f5');
         }
-      if (b.sign) sign(ctx, b.sign, x, y + (b.style === 'mall' ? 2 : H - 26), W, b.style === 'mall' ? '#e8590c' : '#1c1726', '#f8f9fa', true);
+      if (b.sign) sign(ctx, b.sign, x, y + (b.style === 'mall' ? 2 : H - 26), W, b.style === 'mall' ? '#e8590c' : (b.awning ?? '#1c1726'), b.trim ?? '#f8f9fa', true);
       const dw = 22;
       const dx = Math.floor((W - dw) / 2);
       rect(ctx, dx, y + H - 13, dw, 11, '#1b2a3a');
@@ -362,4 +423,146 @@ function paintMural(ctx: Ctx, x: number, y: number, W: number, H: number, seed: 
   ellipse(ctx, ax + 34, ay + 22, 4, 4, '#212529');
   drawText(ctx, 'NAMMA', ax - 26, y + 4, '#f8f9fa', 2);
   drawText(ctx, 'OORU', ax + 46, y + H - 16, '#ffbe0b', 2);
+}
+
+/** Top-down cricket ground: red-and-gold stands around a striped outfield, floodlights, a gate facade. */
+function paintStadium(b: BuildingDef): HTMLCanvasElement {
+  const W = b.w * TILE;
+  const H = b.h * TILE;
+  const [c, ctx] = makeCanvas(W, H);
+  const cx = W / 2;
+  const cy = (H - 30) / 2 + 2;
+  const rx = W / 2 - 2;
+  const ry = (H - 30) / 2;
+  ellipse(ctx, cx, cy, rx, ry, '#868e96');
+  const seats = ['#d6202a', '#ffd43b', '#d6202a', '#1c1726', '#d6202a'];
+  seats.forEach((col, i) => ellipse(ctx, cx, cy, rx - 4 - i * 5, ry - 4 - i * 4, col));
+  const fx = rx - 32;
+  const fy = ry - 26;
+  for (let i = 0; i < 6; i++) ellipse(ctx, cx, cy, fx - i * (fx / 7), fy - i * (fy / 7), i % 2 ? '#40c057' : '#2f9e44');
+  rect(ctx, cx - 4, cy - 16, 8, 32, '#e9d8a6');
+  rect(ctx, cx - 4, cy - 14, 8, 1, '#f8f9fa');
+  rect(ctx, cx - 4, cy + 13, 8, 1, '#f8f9fa');
+  for (const [lx, ly] of [
+    [10, 8],
+    [W - 14, 8],
+    [10, H - 44],
+    [W - 14, H - 44],
+  ]) {
+    rect(ctx, lx + 1, ly + 4, 2, 10, '#495057');
+    rect(ctx, lx - 2, ly, 8, 5, '#343a40');
+    rect(ctx, lx - 1, ly + 1, 6, 3, '#fff3bf');
+  }
+  // Gate facade along the bottom.
+  const gy = H - 30;
+  rect(ctx, 0, gy, W, 30, b.wall);
+  rect(ctx, 0, gy, W, 2, shade(b.wall, 0.2));
+  for (let gx = 8; gx < W - 16; gx += 26) {
+    rect(ctx, gx, gy + 12, 14, 16, '#343a40');
+    rect(ctx, gx, gy + 12, 14, 2, '#d6202a');
+  }
+  if (b.sign) sign(ctx, b.sign, 0, gy + 3, W, '#d6202a', '#ffd43b');
+  rect(ctx, 0, 0, W, 1, OUTLINE);
+  rect(ctx, 0, H - 1, W, 1, OUTLINE);
+  return c;
+}
+
+/** Vidhana Soudha: granite colonnade, a big central dome with four smaller ones, broad steps. */
+function paintVidhana(b: BuildingDef): HTMLCanvasElement {
+  const W = b.w * TILE;
+  const H = b.h * TILE;
+  const [c, ctx] = makeCanvas(W, H);
+  const stone = b.wall;
+  const roofH = Math.floor(H * 0.38);
+  // Roof terrace with domes
+  rect(ctx, 0, 0, W, roofH, b.roof);
+  noise(ctx, 0, 0, W, roofH, b.roof, 7, 0.05);
+  const dome = (cx: number, cy: number, r: number) => {
+    ellipse(ctx, cx, cy + 2, r, r * 0.7, 'rgba(0,0,0,0.2)');
+    ellipse(ctx, cx, cy, r, r * 0.75, '#f1ece0');
+    ellipse(ctx, cx - r * 0.3, cy - r * 0.25, r * 0.35, r * 0.25, '#ffffff');
+    rect(ctx, cx - 1, cy - r * 0.75 - 4, 2, 5, '#c9a227');
+  };
+  dome(W / 2, roofH * 0.55, 30);
+  for (const dx of [40, W - 40]) dome(dx, roofH * 0.55, 12);
+  // Facade: stone, a band carrying the inscription, columns and windows, the central portico
+  const fy = roofH;
+  const fh = H - roofH;
+  rect(ctx, 0, fy, W, fh, stone);
+  noise(ctx, 0, fy, W, fh, stone, 11, 0.03);
+  rect(ctx, 0, fy, W, 10, shade(stone, -0.08));
+  const motto = "GOVERNMENT WORK IS GOD'S WORK";
+  drawText(ctx, motto, Math.floor((W - textWidth(motto)) / 2), fy + 3, '#5c4a2e');
+  for (let wx = 8; wx < W - 8; wx += 14) {
+    rect(ctx, wx, fy + 14, 5, fh - 34, shade(stone, 0.06));
+    rect(ctx, wx + 5, fy + 14, 1, fh - 34, shade(stone, -0.18));
+    rect(ctx, wx + 8, fy + 18, 4, 7, '#3d3a33');
+    rect(ctx, wx + 8, fy + 32, 4, 7, '#3d3a33');
+  }
+  // Portico and steps
+  const pw = 120;
+  const px0 = Math.floor((W - pw) / 2);
+  rect(ctx, px0, fy + 10, pw, fh - 30, shade(stone, 0.04));
+  for (let cx = px0 + 6; cx < px0 + pw - 4; cx += 12) rect(ctx, cx, fy + 14, 5, fh - 38, '#fbf8f1');
+  if (b.sign) sign(ctx, b.sign, px0, fy + fh - 34, pw, '#5c4a2e', '#fff3bf');
+  for (let i = 0; i < 4; i++) rect(ctx, px0 - 10 - i * 6, fy + fh - 20 + i * 4, pw + 20 + i * 12, 4, shade('#d8d2c4', -i * 0.04));
+  rect(ctx, 0, H - 1, W, 1, OUTLINE);
+  rect(ctx, 0, 0, W, 1, OUTLINE);
+  rect(ctx, 0, 0, 1, H, OUTLINE);
+  rect(ctx, W - 1, 0, 1, H, OUTLINE);
+  return c;
+}
+
+/** Ganesha pandal: a striped festival canopy, marigold garlands, coloured lights and the idol. */
+function paintPandal(b: BuildingDef): HTMLCanvasElement {
+  const W = b.w * TILE;
+  const H = b.h * TILE;
+  const [c, ctx] = makeCanvas(W, H);
+  const roofH = 44;
+  for (let x = 0; x < W; x += 12) rect(ctx, x, 0, 6, roofH, b.roof);
+  for (let x = 6; x < W; x += 12) rect(ctx, x, 0, 6, roofH, b.wall);
+  // Scalloped canopy edge and marigold garlands
+  for (let x = 0; x < W; x += 8) ellipse(ctx, x + 4, roofH, 4, 3, b.roof);
+  for (let x = 2; x < W; x += 5) px(ctx, x, roofH + 4 + (x % 10 < 5 ? 1 : 0), '#f08c00');
+  // Open front: a deep backdrop, the idol, lights on the frame
+  const fy = roofH + 6;
+  rect(ctx, 0, fy, W, H - fy, '#5f1e46');
+  for (let x = 4; x < W; x += 10) rect(ctx, x, fy + 2, 2, 2, ['#ffd43b', '#ff6b6b', '#69db7c', '#74c0fc'][(x / 10) % 4 | 0]);
+  const cx = W / 2;
+  const base = H - 8;
+  rect(ctx, cx - 30, base - 8, 60, 8, '#c92a2a');
+  ellipse(ctx, cx, base - 26, 18, 18, '#f59f00');
+  ellipse(ctx, cx, base - 48, 13, 12, '#f59f00');
+  rect(ctx, cx - 3, base - 44, 6, 18, '#e67700');
+  ellipse(ctx, cx - 14, base - 50, 7, 9, '#f59f00');
+  ellipse(ctx, cx + 14, base - 50, 7, 9, '#f59f00');
+  rect(ctx, cx - 8, base - 64, 16, 7, '#fab005');
+  px(ctx, cx - 5, base - 50, '#1c1726');
+  px(ctx, cx + 4, base - 50, '#1c1726');
+  ellipse(ctx, cx, base - 22, 8, 5, '#fff3bf');
+  if (b.sign) sign(ctx, b.sign, 0, 4, W, '#c92a2a', '#fff3bf');
+  rect(ctx, 0, 0, W, 1, OUTLINE);
+  rect(ctx, 0, H - 1, W, 1, OUTLINE);
+  return c;
+}
+
+/** Lalbagh Glass House: white iron frame, arched glass roof, pale blue panes. */
+function paintGlassHouse(b: BuildingDef): HTMLCanvasElement {
+  const W = b.w * TILE;
+  const H = b.h * TILE;
+  const [c, ctx] = makeCanvas(W, H);
+  const roofH = Math.floor(H * 0.5);
+  rect(ctx, 0, 0, W, roofH, b.roof);
+  for (let x = 0; x < W; x += 8) rect(ctx, x, 0, 1, roofH, '#f8f9fa');
+  for (let y = 4; y < roofH; y += 8) rect(ctx, 0, y, W, 1, 'rgba(255,255,255,0.7)');
+  ellipse(ctx, W / 2, roofH / 2, W * 0.18, roofH * 0.35, '#e7f5ff');
+  rect(ctx, 0, roofH, W, H - roofH, b.wall);
+  for (let x = 0; x < W; x += 10) rect(ctx, x, roofH, 1, H - roofH, '#f8f9fa');
+  for (let y = roofH + 8; y < H; y += 10) rect(ctx, 0, y, W, 1, '#f8f9fa');
+  const dw = 24;
+  rect(ctx, (W - dw) / 2, H - 22, dw, 22, '#a5d8ff');
+  rect(ctx, (W - dw) / 2, H - 24, dw, 2, '#f8f9fa');
+  if (b.sign) sign(ctx, b.sign, 0, roofH + 4, W, '#2b8a3e', '#ffffff');
+  outline(ctx, 0, 0, W, H);
+  return c;
 }

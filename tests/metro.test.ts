@@ -6,7 +6,7 @@ import { destinationsFrom, planTrip, pointAt, validateNetwork } from '../src/log
 describe('metro network', () => {
   it('is valid and two-way', () => {
     expect(validateNetwork(STATIONS)).toEqual([]);
-    expect(STATIONS.length).toBeGreaterThanOrEqual(2);
+    expect(STATIONS.length).toBeGreaterThanOrEqual(3);
   });
   it('travels in both directions to the right platform', () => {
     const there = planTrip(STATIONS, METRO_TRACK, 'indiranagar', 'hub')!;
@@ -22,11 +22,11 @@ describe('metro network', () => {
     expect(planTrip(STATIONS, METRO_TRACK, 'hub', 'nowhere')).toBeNull();
   });
   it('lists destinations from a station', () => {
-    expect(destinationsFrom(STATIONS, 'indiranagar').map((s) => s.id)).toEqual(['hub']);
+    expect(destinationsFrom(STATIONS, 'indiranagar').map((s) => s.id)).toEqual(['kerepark', 'hub']);
   });
   it('flags one-way or dangling links', () => {
     const broken = [
-      { ...STATIONS[0], connections: ['hub', 'ghost'] },
+      { ...STATIONS[0], connections: ['kerepark', 'ghost'] },
       { ...STATIONS[1], connections: [] },
     ];
     const errs = validateNetwork(broken);

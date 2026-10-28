@@ -5,6 +5,8 @@ export type Effect =
   | { type: 'hint'; poi: string }
   | { type: 'stat'; stat: 'chai' | 'dosa' }
   | { type: 'world'; event: 'food_visit' }
+  | { type: 'taste'; dish: string }
+  | { type: 'job' }
   | { type: 'destination'; poi: string };
 
 export interface ConvOption {
@@ -28,6 +30,10 @@ export interface Conversation {
 }
 
 const BYE: ConvOption = { label: 'Sari, bartini! (Leave)' };
+/** An option with `next: QUIZ` asks a random tech question (see src/data/techQuiz.ts). */
+export const QUIZ = 'quiz';
+const EAT: Effect = { type: 'world', event: 'food_visit' };
+const taste = (dish: string): Effect => ({ type: 'taste', dish });
 
 export const CONVERSATIONS: Record<string, Conversation> = {
   teapoint: {
@@ -35,9 +41,9 @@ export const CONVERSATIONS: Record<string, Conversation> = {
     start: 'a',
     nodes: {
       a: {
-        text: 'Banni banni! Ondu chai? Ginger haakidini, fresh.',
+        text: 'Banni banni, {name}! Ondu chai? Ginger haakidini, fresh.',
         options: [
-          { label: 'Ondu strong chai kodi, anna.', next: 'chai', effects: [{ type: 'stat', stat: 'chai' }, { type: 'world', event: 'food_visit' }] },
+          { label: 'Ondu strong chai kodi, anna.', next: 'chai', effects: [{ type: 'stat', stat: 'chai' }, EAT, taste('ginger_chai')] },
           { label: 'Yenu news, anna?', next: 'news' },
           BYE,
         ],
@@ -78,7 +84,7 @@ export const CONVERSATIONS: Record<string, Conversation> = {
           BYE,
         ],
       },
-      cafe: { text: 'Filter Kaapi Co. — steel tumbler, no nonsense. Bun & Bytes ge laptop thogondu hogi, ellaru coding maadtidare.', options: [{ label: 'Noted!' }] },
+      cafe: { text: 'Hatti Kaapi — steel tumbler, no nonsense. Third Wave ge laptop thogondu hogi, ellaru coding maadtidare.', options: [{ label: 'Noted!' }] },
       secret: {
         text: 'Okay don\'t tell anyone: 12th Main lane alli mural wall hinde ondu gully ide. Artists paint there every month. Very underground.',
         effects: [{ type: 'hint', poi: 'graffiti' }],
@@ -111,8 +117,8 @@ export const CONVERSATIONS: Record<string, Conversation> = {
       a: {
         text: 'Banni! Token thogoli. Menu: masala dose, benne dose, idli-vade, kesari bath, filter coffee.',
         options: [
-          { label: 'Ondu masala dose, please', next: 'dose', effects: [{ type: 'stat', stat: 'dosa' }, { type: 'world', event: 'food_visit' }] },
-          { label: 'Idli-vade mattu coffee', next: 'idli', effects: [{ type: 'world', event: 'food_visit' }] },
+          { label: 'Ondu masala dose, please', next: 'dose', effects: [{ type: 'stat', stat: 'dosa' }, EAT, taste('masala_dose')] },
+          { label: 'Idli-vade mattu coffee', next: 'idli', effects: [EAT, taste('idli_vade')] },
           { label: 'Queue yaake ishtu doddadu?', next: 'queue' },
           { label: 'Just looking (Leave)' },
         ],
@@ -131,10 +137,10 @@ export const CONVERSATIONS: Record<string, Conversation> = {
     start: 'a',
     nodes: {
       a: {
-        text: 'Chai? Bun maska? Osmania biscuit? Yenu beku, heli.',
+        text: 'Banni {name}! Chai? Bun maska? Osmania biscuit? Yenu beku, heli.',
         options: [
-          { label: 'Ondu cutting chai', next: 'chai', effects: [{ type: 'stat', stat: 'chai' }, { type: 'world', event: 'food_visit' }] },
-          { label: 'Bun maska!', next: 'bun', effects: [{ type: 'world', event: 'food_visit' }] },
+          { label: 'Ondu cutting chai', next: 'chai', effects: [{ type: 'stat', stat: 'chai' }, EAT, taste('cutting_chai')] },
+          { label: 'Bun maska!', next: 'bun', effects: [EAT, taste('bun_maska')] },
           { label: 'Gossip yenu, anna?', next: 'gossip' },
           BYE,
         ],
@@ -153,7 +159,7 @@ export const CONVERSATIONS: Record<string, Conversation> = {
     start: 'a',
     nodes: {
       a: {
-        text: 'Yen magu, oota aaytha? Illi Military Hotel alli biryani, Ragi Mudde Mane alli mudde. Yaavudhu beku?',
+        text: 'Yen magu, oota aaytha? Illi Shivaji Military Hotel alli biryani, Ragi Mudde Mane alli mudde. Yaavudhu beku?',
         options: [
           { label: 'Ragi mudde hege thinodu?', next: 'mudde' },
           { label: 'Ee area alli special jaaga?', next: 'banyan' },
@@ -216,7 +222,7 @@ export const CONVERSATIONS: Record<string, Conversation> = {
           BYE,
         ],
       },
-      local: { text: 'Haha thanks bhai! Mess food beda, Andhra Meals best. Spice level: emotional.', options: [{ label: 'Haha!' }] },
+      local: { text: 'Haha thanks bhai! Mess food beda, Nagarjuna Andhra meals best. Spice level: emotional.', options: [{ label: 'Haha!' }] },
       shortcut: {
         text: 'Haan bhai! Hardware shop aur tailor ke beech ek gully hai — main road skip karke market pahunch jaate ho. Life saver.',
         effects: [{ type: 'hint', poi: 'shortcut' }],
@@ -232,9 +238,11 @@ export const CONVERSATIONS: Record<string, Conversation> = {
         text: 'Order wait maadtha iddini. Restaurant "two minutes" antu, twenty aaytu.',
         options: [
           { label: 'Best food yelli sigutte illi?', next: 'food' },
+          { label: 'Naanu ondu order deliver maadla?', next: 'job', effects: [{ type: 'job' }] },
           BYE,
         ],
       },
+      job: { text: 'Nija? Sakkath! Order details phone ge kalsidini. Marker follow maadi, time mele reach aagi. Customer ge "five star" kelodu marebedi!', options: [{ label: 'On it!' }] },
       food: {
         text: 'Delivery boy secret: Benne Dose Corner. Chai stall pakka chikka lane, south. No app, no rating, only taste.',
         effects: [{ type: 'hint', poi: 'bennedose' }],
@@ -253,7 +261,7 @@ export const CONVERSATIONS: Record<string, Conversation> = {
           BYE,
         ],
       },
-      stations: { text: 'Ivaga Indiranagar mattu Central Metro Hub. Hosa stations "coming soon". Coming soon andre… coming soon.', options: [{ label: 'Haha, okay.' }] },
+      stations: { text: 'Indiranagar, Halasuru, mattu KR Puram. Innu stations "coming soon". Coming soon andre… coming soon.', options: [{ label: 'Haha, okay.' }] },
     },
   },
   chintu: {
@@ -277,11 +285,13 @@ export const CONVERSATIONS: Record<string, Conversation> = {
       a: {
         text: 'Honey cake fresh ide! Veg puff four o\'clock ge. Dil pasand beka?',
         options: [
-          { label: 'Ondu honey cake', next: 'cake', effects: [{ type: 'world', event: 'food_visit' }] },
+          { label: 'Ondu honey cake', next: 'cake', effects: [EAT, taste('honey_cake')] },
+          { label: 'Veg puff ready na?', next: 'puff', effects: [EAT, taste('veg_puff')] },
           BYE,
         ],
       },
       cake: { text: 'Idho. Sticky, sweet, pink. Fifty years inda same recipe. Change maadidre customers riot maadtare.', options: [{ label: 'Perfect.' }] },
+      puff: { text: 'Oven inda eega bantu. Bisi ide, ondu nimisha wait maadi… illa? Sari, nimma naalige, nimma risk.', options: [{ label: 'Ssss… worth it.' }] },
     },
   },
   guard: {
@@ -289,10 +299,368 @@ export const CONVERSATIONS: Record<string, Conversation> = {
     start: 'a',
     nodes: {
       a: {
-        text: 'Mall ge hogtira? Bag scan. Sale nodi, "Flat 70%". Adu yaavaglu ide.',
-        options: [{ label: 'Since when?', next: 'since' }, BYE],
+        text: 'Mall ge hogtira? Bag scan. Weekend andre crowd nodi, parking ge ondu ghante.',
+        options: [{ label: 'Ondu ghante?!', next: 'since' }, BYE],
       },
-      since: { text: 'Naanu join aadaga inda. Six years. Nanna salary hike kooda "coming soon".', options: [{ label: 'Ayyo.' }] },
+      since: { text: 'Weekend alli, haudu. Naanu six years inda illi. Nanna salary hike kooda "coming soon".', options: [{ label: 'Ayyo.' }] },
+    },
+  },
+  // ── Food counters (each order stamps the food book)
+  kaapi: {
+    id: 'kaapi',
+    start: 'a',
+    nodes: {
+      a: {
+        text: 'Banni! Filter kaapi, strong or light? Sugar kammi beka andre eega heli, amele complaint illa.',
+        options: [
+          { label: 'Ondu strong filter kaapi', next: 'coffee', effects: [EAT, taste('filter_coffee')] },
+          { label: 'Cold brew ideya?', next: 'cold' },
+          BYE,
+        ],
+      },
+      coffee: { speaker: '', text: 'He pours from shoulder height, tumbler to davara and back, without spilling a drop. The froth stands up like it has opinions. You burn your tongue. Worth it.', options: [{ label: 'Sakkath kaapi!' }] },
+      cold: { text: 'Cold brew? Swami, idu filter kaapi angadi. Cold aagi beku andre ee kaapi ondu hour ittu kudiri.', options: [{ label: 'Haha, fair.' }] },
+    },
+  },
+  bunbytes: {
+    id: 'bunbytes',
+    start: 'a',
+    nodes: {
+      a: {
+        text: 'Hey! Welcome to Third Wave. Cold brew, pour-over, and today\'s special: avocado toast. Wi-Fi password is on the cup.',
+        options: [
+          { label: 'Ondu avocado toast, I guess', next: 'toast', effects: [EAT, taste('avocado_toast')] },
+          { label: 'Toast? Dose sigalva?', next: 'price' },
+          BYE,
+        ],
+      },
+      toast: { speaker: '', text: 'It arrives on a wooden plank, photographed by three people before you touch it. Smashed avocado, seeds, chilli flakes. Surprisingly good.', options: [{ label: 'Story ge post maadtini.' }] },
+      price: { text: 'Dose beku andre Rameshwaram Cafe hogi, sir. Illi charging point, AC mattu ondu cold brew. Eradu beku, ellaru eradu kade hogtare.', options: [{ label: 'Point.' }] },
+    },
+  },
+  military: {
+    id: 'military',
+    start: 'a',
+    nodes: {
+      a: {
+        text: 'Assalamu alaikum, banni! Donne biryani ready, chicken fry kooda ide. Late aadre ella khaali, aamele nanna dosh beda.',
+        options: [
+          { label: 'Ondu donne biryani!', next: 'biryani', effects: [EAT, taste('donne_biryani')] },
+          { label: 'Yaake ishtu famous?', next: 'why' },
+          BYE,
+        ],
+      },
+      biryani: { speaker: '', text: 'Jeera samba rice, green masala, tender meat, all in a leaf cup. A raita that is mostly onion. The man next to you closes his eyes after every bite. You understand why.', options: [{ label: 'Next week matte bartini.' }] },
+      why: { text: 'Donne biryani, old-school style. Recipe same, firewood same, queue kooda same. Swalpa adjust maadi, line alli nilli.', options: [{ label: 'Respect.' }] },
+    },
+  },
+  ragi: {
+    id: 'ragi',
+    start: 'a',
+    nodes: {
+      a: {
+        text: 'Banni magu. Ragi mudde, soppu saaru, swalpa palya. Oota maadi, shakti barutte.',
+        options: [
+          { label: 'Ondu mudde kodi, amma', next: 'mudde', effects: [EAT, taste('ragi_mudde')] },
+          { label: 'Hege thinnodu?', next: 'how' },
+          BYE,
+        ],
+      },
+      mudde: { speaker: '', text: 'A smooth dark ball in a pool of green saaru. You pinch a piece, dip, and… chew. Gowramma watches you. "Agiyabedi, nungi!" You swallow. Somewhere, a farmer nods.', options: [{ label: 'Sorry amma, next time nungtini.' }] },
+      how: { text: 'Ondu chikka piece, saaru alli addi, nungi. Agiyabaardu! Hallu illada ajji kooda thinnabahudu, adu namma oota.', options: [{ label: 'Nungodu. Got it.' }] },
+    },
+  },
+  paan: {
+    id: 'paan',
+    start: 'a',
+    nodes: {
+      a: {
+        text: 'Meetha paan, saada paan, fire paan? Fire paan beda, nimma face nodidre first-timer.',
+        options: [
+          { label: 'Meetha paan, please', next: 'paan', effects: [EAT, taste('meetha_paan')] },
+          { label: 'Fire paan! Naanu ready.', next: 'fire' },
+          BYE,
+        ],
+      },
+      paan: { speaker: '', text: 'Gulkand, coconut, fennel, a glossy cherry, folded into a neat leaf triangle. It is sweet, cool and gone in four chews. Babu says it helps digestion. You choose to believe him.', options: [{ label: 'Sakkath, Babu anna.' }] },
+      fire: { text: 'Hahaha! Illa sir, insurance illa nange. Meetha thogoli, naale fire nodona.', options: [{ label: 'Sari sari.' }] },
+    },
+  },
+  campuschai: {
+    id: 'campuschai',
+    start: 'a',
+    nodes: {
+      a: {
+        text: 'Chai, sir? Sprint planning aytha? Mukha nodidre aytu antha anistide.',
+        options: [
+          { label: 'Ondu chai, strong', next: 'chai', effects: [{ type: 'stat', stat: 'chai' }, EAT, taste('campus_chai')] },
+          { label: 'Ee companies alli yaaru best?', next: 'gossip' },
+          BYE,
+        ],
+      },
+      chai: { text: 'Idho. Ee campus alli deadline miss aagutte, release miss aagutte, aadre nanna chai on time. Always.', options: [{ label: 'Only thing that ships.' }] },
+      gossip: {
+        text: 'Google alli free oota, adakke ellaru alli interview kodtare. Amazon alli ellaru ota, ota. EY alli blazer haakondu sweat maadtare. Microsoft alli call mugiyolla. Naanu? Nanna startup: chai.',
+        options: [{ label: 'Best company, anna.' }],
+      },
+    },
+  },
+  bennedose: {
+    id: 'bennedose',
+    start: 'a',
+    nodes: {
+      a: {
+        text: 'Shhh, board illa, app illa. Yaaru helidru? …Paravagilla. Ondu benne dose?',
+        options: [
+          { label: 'Haudu, ondu benne dose!', next: 'dose', effects: [{ type: 'stat', stat: 'dosa' }, EAT, taste('benne_dose')] },
+          BYE,
+        ],
+      },
+      dose: { speaker: '', text: 'A thick Davangere-style dose, shining with a generous scoop of benne, served on a leaf with coconut chutney. Crisp outside, soft inside, butter everywhere. You now understand the secrecy.', options: [{ label: 'Yaarigu helalla. Promise.' }] },
+    },
+  },
+  juice: {
+    id: 'juice',
+    start: 'a',
+    nodes: {
+      a: {
+        text: 'Kabbina haalu, fresh! Shunti, nimbe haaki kodtini. Bisilu alli idu amrutha.',
+        options: [
+          { label: 'Ondu glass kodi', next: 'juice', effects: [EAT, taste('kabbu_juice')] },
+          BYE,
+        ],
+      },
+      juice: { speaker: '', text: 'The big crusher rattles, the bells on it jingle, and green-gold juice foams into a glass with ginger and lime. Cold, sweet and gone in one go.', options: [{ label: 'Innond glass? …Illa, saaku.' }] },
+    },
+  },
+  mysorepak: {
+    id: 'mysorepak',
+    start: 'a',
+    nodes: {
+      a: {
+        text: 'Mysore pak, fresh batch! Soft beka, hard beka? Namma soft one bayalli karagutte.',
+        options: [
+          { label: 'Soft Mysore pak, please', next: 'pak', effects: [EAT, taste('mysore_pak')] },
+          { label: 'Mysore alli invent aaythu, alva?', next: 'story' },
+          BYE,
+        ],
+      },
+      pak: { speaker: '', text: 'A golden, porous square that is mostly ghee and partly magic. It melts before you finish saying "one more". You buy a box "for home". It will not reach home.', options: [{ label: 'Box khaali aagutte.' }] },
+      story: { text: 'Haudu, Mysore palace kitchen alli. Cook ge hesaru kelidru, "pak" antha helidru. Ivattu kooda adu best answer.', options: [{ label: 'Nice story!' }] },
+    },
+  },
+  foodcourt: {
+    id: 'foodcourt',
+    start: 'a',
+    nodes: {
+      a: {
+        text: 'Train ge late aagtideya? Masala puri five minutes alli ready. Cut fruit kooda ide.',
+        options: [
+          { label: 'Ondu masala puri', next: 'puri', effects: [EAT, taste('masala_puri')] },
+          BYE,
+        ],
+      },
+      puri: { speaker: '', text: 'Crushed puris drowned in hot peas masala, topped with onion, sev and green chutney. The plate bends. Your shirt is in danger. Delicious.', options: [{ label: 'Shirt is fine. Mostly.' }] },
+    },
+  },
+  // ── Tech park
+  campusguard: {
+    id: 'campusguard',
+    start: 'a',
+    nodes: {
+      a: {
+        text: 'ID card? Illa? Visitor pass beku. Form fill maadi, photo kodi, host ge call maadi… or chai kudiyoke bandidra? Adu free entry.',
+        options: [
+          { label: 'Ee companies yenu maadtave?', next: 'what' },
+          { label: 'Just looking around', next: 'look' },
+          BYE,
+        ],
+      },
+      what: {
+        text: 'Google: search maadtare. Amazon: box kalistare. EY: slide maadtare. Microsoft: meeting maadtare. Ellaru "AI" anta heltare. Naanu gate open maadtini, adu real AI: Actual Involvement.',
+        options: [{ label: 'Hahaha.' }],
+      },
+      look: { text: 'Sari, lawn alli nadeyiri. Benches mele kootkobedi, adu "collaboration zone". Collaborate maadbeku.', options: [{ label: 'Collaborate maadtini.' }] },
+    },
+  },
+  intern: {
+    id: 'intern',
+    start: 'a',
+    nodes: {
+      a: {
+        text: 'Hi! First week at Amazon. They gave me a laptop, a hoodie and fourteen onboarding videos. I am on video three.',
+        options: [
+          { label: 'Hege ide kelsa?', next: 'work' },
+          { label: 'Any tips for the area?', next: 'tip' },
+          { label: 'Quiz me on tech!', next: QUIZ },
+          BYE,
+        ],
+      },
+      work: { text: 'My manager said "move fast". The shuttle bus did not hear that. Marathahalli bridge took 40 minutes this morning. I learnt "swalpa adjust maadi" on day one.', options: [{ label: 'Welcome to Bengaluru!' }] },
+      tip: {
+        text: 'Seniors told me: chai at the break zone, dose at the darshini across the ring road, and take the metro from Halasuru. That is the whole onboarding, honestly.',
+        effects: [{ type: 'destination', poi: 'metro_kp' }],
+        options: [{ label: 'Thanks! Marked it.' }],
+      },
+    },
+  },
+  // ── New districts
+  koshys: {
+    id: 'koshys',
+    start: 'a',
+    nodes: {
+      a: {
+        text: 'Banni! Appam-stew, mutton cutlet, or just coffee and newspaper like the uncles?',
+        options: [
+          { label: 'Appam and stew, please', next: 'appam', effects: [EAT, taste('appam_stew')] },
+          { label: 'Uncles yaaru?', next: 'uncles' },
+          BYE,
+        ],
+      },
+      appam: { speaker: '', text: 'Lacy, crisp-edged appam with a bowl of coconut stew. The fan creaks overhead. A waiter who has seen four decades of MG Road brings it without writing anything down.', options: [{ label: 'Perfect.' }] },
+      uncles: { text: 'Table four? Fifty years, same table. Cricket, politics, the metro: ellaa solve maadidaare. Yaaru kelalla, aadre avaru solve maadtaane irtaare.', options: [{ label: 'Respect.' }] },
+    },
+  },
+  truffles: {
+    id: 'truffles',
+    start: 'a',
+    nodes: {
+      a: {
+        text: 'Table ge twenty minutes wait, takeaway ge five. Burger?',
+        options: [{ label: 'One burger, takeaway!', next: 'burger', effects: [EAT, taste('truffles_burger')] }, BYE],
+      },
+      burger: { speaker: '', text: 'A tall, dripping burger in paper. You lose a fight with it on the first bite and win on the second. Koramangala nods.', options: [{ label: 'Worth it.' }] },
+    },
+  },
+  andhramess: {
+    id: 'andhramess',
+    start: 'a',
+    nodes: {
+      a: {
+        text: 'Banni! Unlimited meals: rice, podi, ghee, pappu, pickle. Spice level: normal or Andhra?',
+        options: [
+          { label: 'Normal, please', next: 'normal', effects: [EAT, taste('andhra_meals')] },
+          { label: 'Andhra! Full spice!', next: 'andhra', effects: [EAT, taste('andhra_meals')] },
+          BYE,
+        ],
+      },
+      normal: { speaker: '', text: 'Normal here is Andhra anywhere else. Gunpowder podi, a pool of ghee, and a pickle that files a complaint against your tongue. The rice keeps coming.', options: [{ label: 'Water, please!' }] },
+      andhra: { text: 'Respect. Neeru table mele ide. Prayer optional.', options: [{ label: 'Ssssss…' }] },
+    },
+  },
+  tickets: {
+    id: 'tickets',
+    start: 'a',
+    nodes: {
+      a: {
+        text: 'Match tickets? Online two minutes alli sold out, maga. Ee sala cup namde, aadre ticket nimde alla!',
+        options: [{ label: 'Ee sala cup namde!', next: 'chant' }, BYE],
+      },
+      chant: { text: 'EE SALA CUP NAMDE! …Nodi, adu spirit. Gate hathra nintu chant maadi, vibe ge ticket beda.', options: [{ label: 'RCB! RCB!' }] },
+    },
+  },
+  library: {
+    id: 'library',
+    start: 'a',
+    nodes: {
+      a: {
+        text: 'Shhh! Library olage silence. Membership card ideya?',
+        options: [{ label: 'Just looking around', next: 'look' }, BYE],
+      },
+      look: { text: 'Sari. Exam aspirants ge disturb maadbedi, avaru UPSC ge sleep kooda bittidare. Hora park alli running club ide, alli shout maadi.', options: [{ label: 'Shhh. Okay.' }] },
+    },
+  },
+  pgaunty: {
+    id: 'pgaunty',
+    start: 'a',
+    nodes: {
+      a: {
+        text: 'Room beka? Rules: gate 10:30 ge close, room alli cooking illa, guests lobby alli maatra. WiFi password: first rent kodi.',
+        options: [
+          { label: 'Food hege, aunty?', next: 'food' },
+          { label: 'Rent eshtu?', next: 'rent' },
+          BYE,
+        ],
+      },
+      food: { text: 'Monday to Sunday: healthy. Dal is very healthy. Sunday special: dal with extra dal.', options: [{ label: 'Haha, sari aunty.' }] },
+      rent: { text: 'Twelve thousand, food included. Food andre dal included. Electricity separate, AC andre separate-separate.', options: [{ label: 'Bengaluru rates…' }] },
+    },
+  },
+  recruiter: {
+    id: 'recruiter',
+    start: 'a',
+    nodes: {
+      a: {
+        text: 'Walk-in drive! Token thogoli. Quick technical round: one question at a time, answer and move on. Ready?',
+        options: [
+          { label: 'Ready! Ask me.', next: QUIZ },
+          { label: 'What is the role?', next: 'role' },
+          BYE,
+        ],
+      },
+      role: { text: 'Software engineer. Requirements: five years experience in a framework that came out last year, and "team player". Salary: "as per industry standards".', options: [{ label: 'Classic. Ask me a question.', next: QUIZ }, BYE] },
+    },
+  },
+  rider: {
+    id: 'rider',
+    start: 'a',
+    nodes: {
+      a: {
+        text: 'Orders ella pile aagide, bro. Rain bandre innu double. Ondu help maadtira?',
+        options: [
+          { label: 'Haudu, ondu order kodi!', next: 'job', effects: [{ type: 'job' }] },
+          { label: 'Hege ide delivery life?', next: 'life' },
+          BYE,
+        ],
+      },
+      job: { text: 'Sakkath! Restaurant inda pick up, customer ge drop. Timer ide, marker follow maadi. Rapido, metro, scooter, yaavdu beku adu.', options: [{ label: 'Let\'s go!' }] },
+      life: { text: 'Ten minute delivery anta app heltu. Road heltu forty. Naanu madhyadalli, smile maadtha.', options: [{ label: 'Respect, anna.' }] },
+    },
+  },
+  siteengineer: {
+    id: 'siteengineer',
+    start: 'a',
+    nodes: {
+      a: {
+        text: 'Helmet illade olage barbedi! …Oh, just looking? Sari. Five-floor building, "ready in six months".',
+        options: [
+          { label: 'Which six months?', next: 'when' },
+          { label: 'Yenu kelsa nadeetide?', next: 'work' },
+          BYE,
+        ],
+      },
+      when: { text: 'Adu kelbedi. Rain, cement shortage, permission, muhurtha. Six months is a feeling, not a date.', options: [{ label: 'Classic Bengaluru.' }] },
+      work: { text: 'Third floor slab ivattu. Cement mixer bartide, swalpa side alli nilli. Hanumanthu, bricks illi tandu haaku!', options: [{ label: 'All the best!' }] },
+    },
+  },
+  vidhana: {
+    id: 'vidhana',
+    start: 'a',
+    nodes: {
+      a: {
+        text: 'Photo gate inda maatra, saar. Olage Assembly nadeetide. Sunday sanje banni, poora building lights alli hollutte.',
+        options: [
+          { label: 'What does the sign say?', next: 'motto' },
+          BYE,
+        ],
+      },
+      motto: { text: '"Government Work is God\'s Work." Adakke ellaa files devaru thara: yaavaga barutte anta yaarigu gothilla.', options: [{ label: 'Hahaha.' }] },
+    },
+  },
+  pandal: {
+    id: 'pandal',
+    start: 'a',
+    nodes: {
+      a: {
+        text: 'Banni banni! Ganesha darshana maadi, prasada thogoli. Raatri orchestra ide, miss maadbedi!',
+        options: [
+          { label: 'Prasada kodi, please', next: 'prasada', effects: [EAT, taste('kesari_prasada')] },
+          { label: 'Chanda kodla?', next: 'chanda' },
+          BYE,
+        ],
+      },
+      prasada: { speaker: '', text: 'A warm spoonful of kesari bath in a leaf cup, glistening with ghee. The dhol picks up speed. Somebody hands you a marigold too.', options: [{ label: 'Ganapati Bappa Morya!' }] },
+      chanda: { text: 'Chanda receipt book ready! Eshtu kodtira? …Joke, joke. Bhakti saaku, prasada thogoli.', options: [{ label: 'Haha, sari.', next: 'prasada', effects: [EAT, taste('kesari_prasada')] }] },
     },
   },
 };

@@ -4,9 +4,13 @@ import type { EventDef } from '../logic/eventScheduler';
 export const EVENTS: EventDef[] = [
   { id: 'gossip', title: 'Street gossip', areas: 'any', cooldownMs: 60000, chance: 0.5, durationMs: 16000, requires: { walking: true } },
   { id: 'cricket_ball', title: 'Ball on the road!', areas: ['foodlane'], cooldownMs: 90000, chance: 0.6, durationMs: 26000, requires: { notRaining: true } },
-  { id: 'food_invite', title: 'An invitation', areas: ['indiranagar', 'foodlane', 'techpark', 'metrohub', 'marathahalli'], cooldownMs: 120000, chance: 0.35, durationMs: 12000, requires: { walking: true } },
-  { id: 'roadwork', title: 'Surprise roadworks', areas: ['indiranagar', 'marathahalli', 'park', 'techpark', 'foodlane'], cooldownMs: 150000, chance: 0.35, durationMs: 60000 },
+  { id: 'food_invite', title: 'An invitation', areas: ['indiranagar', 'foodlane', 'techpark', 'metrohub', 'marathahalli', 'mgroad', 'koramangala', 'btm'], cooldownMs: 120000, chance: 0.35, durationMs: 12000, requires: { walking: true } },
+  { id: 'roadwork', title: 'Surprise roadworks', areas: ['indiranagar', 'marathahalli', 'park', 'techpark', 'foodlane', 'mgroad', 'koramangala', 'btm'], cooldownMs: 150000, chance: 0.35, durationMs: 60000 },
   { id: 'shortcut_tip', title: 'A local tip', areas: 'any', cooldownMs: 150000, chance: 0.3, durationMs: 10000, requires: { walking: true } },
+  { id: 'argument', title: 'Street argument', areas: 'any', cooldownMs: 90000, chance: 0.45, durationMs: 32000, requires: { walking: true } },
+  { id: 'accident', title: 'Accident! Road rage', areas: 'any', cooldownMs: 120000, chance: 0.45, durationMs: 26000 },
+  { id: 'power_cut', title: 'Power cut!', areas: 'any', cooldownMs: 200000, chance: 0.35, durationMs: 26000 },
+  { id: 'garbage_van', title: 'Kasa gaadi!', areas: 'any', cooldownMs: 160000, chance: 0.4, durationMs: 22000 },
   { id: 'rain', title: 'Rain', areas: 'any', cooldownMs: 240000, chance: 0.18, durationMs: 55000, requires: { notRaining: true } },
 ];
 
@@ -18,4 +22,6 @@ export const ROADWORK_SPOTS = [
   { x: 91, y: 48, axis: 'v' as const },
   { x: 43, y: 82, axis: 'v' as const },
   { x: 74, y: 59, axis: 'h' as const },
+  { x: 24, y: 109, axis: 'h' as const },
+  { x: 70, y: 111, axis: 'h' as const },
 ];

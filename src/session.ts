@@ -1,17 +1,28 @@
+import { ACHIEVEMENT_IDS } from './data/achievements';
+import { DISH_IDS } from './data/food';
 import { POI_IDS } from './data/pois';
 import { audio } from './game/audio';
 import { bridge } from './game/bridge';
 import { destroyGame } from './game/gameHost';
-import { clearSave, loadSave, safeStorage } from './logic/save';
+import type { PlayerProfile } from './logic/player';
+import { clearSave, loadSave, safeStorage, writeSave, type StorageLike } from './logic/save';
 import { uiStore } from './store/uiStore';
 
-export function startGame(fresh: boolean) {
+/** The save with every id checked against current content (places, dishes, achievements). */
+export const loadGameSave = (storage: StorageLike | null = safeStorage()) => loadSave(storage, POI_IDS, { dishes: DISH_IDS, achievements: ACHIEVEMENT_IDS });
+
+/** Starts play. A new game passes the profile from the character screen; Continue keeps the saved one. */
+export function startGame(fresh: boolean, profile?: PlayerProfile) {
   const storage = safeStorage();
   if (fresh) clearSave(storage);
-  const save = loadSave(storage, POI_IDS);
+  const save = loadGameSave(storage);
+  if (profile) {
+    save.player = profile;
+    writeSave(storage, save);
+  }
   audio.init(save.settings);
   uiStore.reset();
-  uiStore.set({ phase: 'playing', settings: save.settings });
+  uiStore.set({ phase: 'playing', settings: save.settings, player: save.player });
 }
 
 export function quitToMenu(reset: boolean) {

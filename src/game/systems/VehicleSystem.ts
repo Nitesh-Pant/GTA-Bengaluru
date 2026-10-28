@@ -168,13 +168,15 @@ export class VehicleSystem {
     }
   }
 
+  /** Returns true if the horn actually sounded. */
   horn(now: number) {
     const v = this.driving();
-    if (!v || now < this.hornCd) return;
+    if (!v || now < this.hornCd) return false;
     this.hornCd = now + 450;
     audio.honk(v.def.type, 1);
     this.scene.bubbles.say(() => ({ x: v.sprite.x, y: v.sprite.y - 6 }), '', v.def.type === 'auto' ? 'pom pom!' : v.def.type === 'scooter' ? 'peep!' : 'HONK!', 700, now, 'honk');
     for (const n of this.scene.npcs.near(v.sprite.x, v.sprite.y, 80)) this.scene.react({ type: 'vehicle_near_ped', actorId: n.id, x: n.x, y: n.y });
+    return true;
   }
 
   /** Player-driven vehicle hit a traffic car. */

@@ -32,11 +32,19 @@ const ui = () => page.evaluate(() => ({
 }));
 
 await page.goto(URL);
-await page.evaluate(() => localStorage.clear());
+await page.evaluate(() => localStorage.clear() || localStorage.setItem('bsam.tourSeen', '1'));
 await page.reload();
 await page.getByRole('button', { name: /Start exploring/ }).click();
+// Character setup: female, name, saree
+await page.getByLabel('Your name').fill('Asha');
+await page.getByRole('button', { name: 'Female' }).click();
+await page.getByRole('button', { name: 'Saree' }).click();
+await page.getByRole('button', { name: "Let's go!" }).click();
 await page.waitForFunction(() => window.__game?.scene?.getScene('world')?.player, null, { timeout: 15000 });
 await page.waitForTimeout(800);
+const profile = await world((s) => s.profile);
+check('character setup applied', profile.name === 'Asha' && profile.gender === 'f' && profile.outfit === 1, JSON.stringify(profile));
+check('welcome uses the name', (await page.locator('.toast').allTextContents()).some((t) => t.includes('Asha')));
 check('single game canvas', (await page.locator('.game-canvas canvas').count()) === 1);
 
 // Walking
@@ -51,7 +59,7 @@ await hold(['ArrowLeft', 'ArrowDown'], 1000);
 b = await state();
 const diag = Math.hypot(b.x - a.x, b.y - a.y);
 check('diagonal not faster', diag <= straight * 1.08, `diag ${diag.toFixed(1)} vs straight ${straight.toFixed(1)}`);
-// Collision: walk up into Filter Kaapi building from the sidewalk
+// Collision: walk up into the Hatti Kaapi building from the sidewalk
 await teleport(16 * 24.5, 16 * 16.6);
 await hold(['ArrowUp'], 1500);
 b = await state();
@@ -135,7 +143,7 @@ u = await ui();
 check('metro cancel', !u.metro && (await state()).mode === 'walk');
 await page.keyboard.press('e');
 await page.waitForTimeout(300);
-await page.keyboard.press('1');
+await page.keyboard.press('2'); // 1 is Halasuru, 2 is KR Puram
 await page.waitForTimeout(2500);
 await page.screenshot({ path: `${OUT}/14-metro-ride.png` });
 await page.waitForFunction(() => window.__game.scene.getScene('world').mode.kind === 'walk', null, { timeout: 15000 });
@@ -234,6 +242,16 @@ await page.waitForTimeout(500);
 const discoveredAfter = await world((s) => s.discovered.length);
 check('discoveries persist', discoveredAfter === discoveredBefore && discoveredAfter > 0, `${discoveredBefore} -> ${discoveredAfter}`);
 
+// NPCs address her as akka/madam, and the profile is saved
+await teleport(16 * 28.5, 16 * 16.7);
+await world((s) => s.talk.say(s.npcs.byId('manju'), 'Anna, swalpa side kodi. Saar, bega!', s.clock));
+await page.waitForTimeout(300);
+const said = (await ui()).bubbles.join(' | ');
+check('NPCs address a woman as akka/madam', said.includes('Akka, swalpa side kodi. Madam, bega!'), said.slice(0, 160));
+await world((s) => s.persist());
+const savedPlayer = await page.evaluate(() => JSON.parse(localStorage.getItem('bsam.save')).player);
+check('profile saved', savedPlayer?.name === 'Asha' && savedPlayer?.gender === 'f', JSON.stringify(savedPlayer));
+
 // Corrupt save falls back safely
 await page.evaluate(() => localStorage.setItem('bsam.save', '{not json'));
 await page.reload();
@@ -257,9 +275,10 @@ await page.waitForTimeout(600);
 const afterReset = await page.evaluate(() => ({ save: localStorage.getItem('bsam.save'), canvases: document.querySelectorAll('.game-canvas canvas').length, game: !!window.__game }));
 check('reset clears save and returns to title', afterReset.save === null && afterReset.canvases === 0 && !afterReset.game && (await page.getByRole('button', { name: /Start exploring/ }).isVisible()), JSON.stringify(afterReset));
 await page.getByRole('button', { name: /Start exploring/ }).click();
+await page.getByRole('button', { name: "Let's go!" }).click();
 await page.waitForFunction(() => window.__game?.scene?.getScene('world')?.player, null, { timeout: 15000 });
 const freshDiscovered = await world((s) => s.discovered);
-// The spawn point is beside Filter Kaapi Co., which is discovered on arrival.
+// The spawn point is beside Hatti Kaapi, which is discovered on arrival.
 check('fresh start after reset', freshDiscovered.every((id) => id === 'kaapi') && (await page.locator('.game-canvas canvas').count()) === 1, JSON.stringify(freshDiscovered));
 
 check('no console errors', errors.length === 0, errors.slice(0, 5).join(' | '));

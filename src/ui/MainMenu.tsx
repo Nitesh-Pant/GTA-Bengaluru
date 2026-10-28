@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { startGame } from '../session';
+import { loadGameSave, startGame } from '../session';
 import { LOOKS } from '../data/looks';
 import { BUILDINGS } from '../data/map';
 import { paintBuilding } from '../game/art/buildings';
@@ -7,6 +7,9 @@ import { paintCharacterSheet } from '../game/art/characters';
 import { paintProp } from '../game/art/props';
 import { paintVehicle } from '../game/art/vehicles';
 import { hasSave, safeStorage } from '../logic/save';
+import { loadGame } from '../game/loadGame';
+import type { PlayerProfile } from '../logic/player';
+import { CharacterSetup } from './CharacterSetup';
 
 /** A little animated street at golden hour, painted with the game's own sprite painters. */
 function StreetScene() {
@@ -89,44 +92,57 @@ function StreetScene() {
 
 export function MainMenu() {
   const [saved] = useState(() => hasSave(safeStorage()));
+  // Start fetching the game engine while the player reads the menu.
+  useEffect(() => {
+    const id = window.setTimeout(() => void loadGame(), 300);
+    return () => clearTimeout(id);
+  }, []);
   const [confirm, setConfirm] = useState(false);
+  const [setup, setSetup] = useState<null | { fresh: boolean; initial?: PlayerProfile }>(null);
   return (
     <div className="menu">
       <StreetScene />
       <div className="menu-card panel">
         <h1>
-          BENGALURU
+          GTA-BENGALURU
           <span>Swalpa Adjust Maadi</span>
         </h1>
         <p className="menu-tag">A top-down wander through traffic, darshinis, metro rides and street gossip. No missions. Just the city.</p>
-        <div className="menu-buttons">
-          {saved ? (
-            <>
-              <button className="btn btn-primary" autoFocus onClick={() => startGame(false)}>
-                Continue wandering
-              </button>
-              {confirm ? (
-                <span className="confirm">
-                  Start over and forget everything?
-                  <button className="btn btn-danger" onClick={() => startGame(true)}>
-                    Yes, fresh start
-                  </button>
-                  <button className="btn" onClick={() => setConfirm(false)}>
-                    Cancel
-                  </button>
-                </span>
-              ) : (
-                <button className="btn" onClick={() => setConfirm(true)}>
-                  New game
+        {setup ? (
+          <CharacterSetup initial={setup.initial} submitLabel="Let's go!" onSubmit={(p) => startGame(setup.fresh, p)} onBack={() => setSetup(null)} />
+        ) : (
+          <div className="menu-buttons">
+            {saved ? (
+              <>
+                <button className="btn btn-primary" autoFocus onClick={() => startGame(false)}>
+                  Continue wandering
                 </button>
-              )}
-            </>
-          ) : (
-            <button className="btn btn-primary" autoFocus onClick={() => startGame(false)}>
-              Start exploring
-            </button>
-          )}
-        </div>
+                <button className="btn" onClick={() => setSetup({ fresh: false, initial: loadGameSave().player })}>
+                  Change character &amp; continue
+                </button>
+                {confirm ? (
+                  <span className="confirm">
+                    Start over and forget everything?
+                    <button className="btn btn-danger" onClick={() => setSetup({ fresh: true })}>
+                      Yes, fresh start
+                    </button>
+                    <button className="btn" onClick={() => setConfirm(false)}>
+                      Cancel
+                    </button>
+                  </span>
+                ) : (
+                  <button className="btn" onClick={() => setConfirm(true)}>
+                    New game
+                  </button>
+                )}
+              </>
+            ) : (
+              <button className="btn btn-primary" autoFocus onClick={() => setSetup({ fresh: true })}>
+                Start exploring
+              </button>
+            )}
+          </div>
+        )}
         <div className="menu-controls">
           <span><kbd>WASD</kbd> move</span>
           <span><kbd>E</kbd> interact</span>
@@ -135,8 +151,9 @@ export function MainMenu() {
           <span><kbd>Esc</kbd> pause</span>
         </div>
         <p className="disclaimer">
-          All places, people and businesses are fictional or loosely inspired by Bengaluru. Street layouts are simplified for play and are not a map
-          of the real city. Progress is saved in this browser only.
+          Places, roads, lakes, companies and shops use their real Bengaluru names, but the layout is simplified and not to scale. People,
+          conversations and events are fictional, and no business named here is affiliated with or endorses this game. Progress is saved in this
+          browser only.
         </p>
       </div>
     </div>

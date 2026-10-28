@@ -1,5 +1,8 @@
 import { useEffect, useState } from 'react';
 import { POIS } from '../data/pois';
+import { bridge } from '../game/bridge';
+import { formatDuration, periodLabel } from '../logic/dayClock';
+import { isTouchDevice } from '../game/touch';
 import { useUi } from '../store/uiStore';
 import { Minimap } from './Minimap';
 
@@ -20,6 +23,13 @@ function ControlsHint() {
     };
   }, []);
   const mode = useUi((s) => s.mode);
+  if (isTouchDevice())
+    return open ? (
+      <div className="controls-hint touch-hint panel" onClick={() => setOpen(false)}>
+        <div>Drag the left pad to {mode === 'drive' ? 'drive' : 'walk'} · tap <b>E</b> to talk, drive or ride the metro</div>
+        <div className="muted">Nothing to complete. Just wander, maga.</div>
+      </div>
+    ) : null;
   if (!open) return <div className="hint-collapsed">Press <kbd>?</kbd> for controls</div>;
   return (
     <div className="controls-hint panel">
@@ -31,7 +41,7 @@ function ControlsHint() {
         </>
       ) : (
         <>
-          <div><kbd>WASD</kbd>/<kbd>Arrows</kbd> walk · <kbd>E</kbd> talk, drive, metro</div>
+          <div><kbd>WASD</kbd>/<kbd>Arrows</kbd> walk · <kbd>E</kbd> talk, drive, metro · <kbd>R</kbd> Rapido</div>
           <div><kbd>J</kbd> journal · <kbd>M</kbd> map · <kbd>Esc</kbd> pause</div>
         </>
       )}
@@ -54,12 +64,39 @@ function Toasts() {
   );
 }
 
+/** Time, rush hour, rain, jobs and events. Separate so per-second job timers only re-render these chips. */
+function StatusChips() {
+  const clock = useUi((s) => s.clock);
+  const raining = useUi((s) => s.raining);
+  const eventTitle = useUi((s) => s.eventTitle);
+  const jobs = useUi((s) => s.jobs);
+  const match = useUi((s) => s.match);
+  return (
+    <>
+      {clock && <span className={`chip chip-time chip-${clock.period}`}>{periodLabel(clock.period)} · {clock.label}</span>}
+      {clock?.rush && <span className="chip chip-rush">Rush hour</span>}
+      {raining && <span className="chip chip-rain">Male! Raining</span>}
+      {match && <span className="chip chip-match">IPL · {match}</span>}
+      {Object.entries(jobs).map(([id, j]) => (
+        <span key={id} className="chip chip-job">
+          {j.label}
+          {j.secondsLeft !== undefined && ` · ${formatDuration(j.secondsLeft)}`}
+          {j.cancellable && (
+            <button className="chip-x" onClick={() => bridge.api?.cancelJob(id)} aria-label={`Cancel ${j.label}`}>
+              ✕
+            </button>
+          )}
+        </span>
+      ))}
+      {eventTitle && <span className="chip chip-event">{eventTitle}</span>}
+    </>
+  );
+}
+
 export function Hud() {
   const area = useUi((s) => s.area);
   const mode = useUi((s) => s.mode);
   const vehicle = useUi((s) => s.vehicleName);
-  const raining = useUi((s) => s.raining);
-  const eventTitle = useUi((s) => s.eventTitle);
   const discovered = useUi((s) => s.discovered.length);
   const ready = useUi((s) => s.ready);
   const panel = useUi((s) => s.panel);
@@ -70,13 +107,12 @@ export function Hud() {
         <div className="area-name">{area.name}</div>
         <div className="area-tag">{area.tagline}</div>
         <div className="chips">
-          <span className={`chip chip-${mode}`}>{mode === 'drive' ? `Driving · ${vehicle}` : mode === 'metro' ? 'On the metro' : 'On foot'}</span>
-          {raining && <span className="chip chip-rain">Male! Raining</span>}
-          {eventTitle && <span className="chip chip-event">{eventTitle}</span>}
+          <span className={`chip chip-${mode}`}>{mode === 'drive' ? `Driving · ${vehicle}` : mode === 'metro' ? 'On the metro' : mode === 'ride' ? `On ${vehicle ?? 'a ride'}` : 'On foot'}</span>
+          <StatusChips />
         </div>
       </div>
       <div className="minimap panel">
-        <Minimap width={184} height={138} scale={2.6} />
+        <Minimap width={184} height={138} scale={2.6} paused={panel === 'map' || panel === 'pause'} />
         <div className="minimap-foot">
           <span>
             Places {discovered}/{POIS.length}

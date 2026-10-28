@@ -1,8 +1,10 @@
 import Phaser from 'phaser';
 import { G, groundAt, PROPS } from '../../data/map';
 import { JUNCTIONS, ROUTES, TRAFFIC, VEHICLE_SIZE, type TrafficSpawn } from '../../data/roads';
+import { trafficTarget } from '../../logic/dayClock';
 import { carPosition, queueLength, resolveDeadlocks, signalState, stepCar, type Obstacle, type Route, type TrafficCar } from '../../logic/traffic';
 import { audio } from '../audio';
+import { AMBULANCE_VARIANT, POLICE_VARIANT } from '../art/vehicles';
 import { t, TILE } from '../constants';
 import type { WorldScene } from '../scenes/WorldScene';
 
@@ -45,6 +47,13 @@ export class TrafficSystem {
   private statics: Obstacle[] = [];
   private signals: Array<{ sprite: Phaser.GameObjects.Image; junction: string; axis: 'ew' | 'ns' }> = [];
   private respawnTimer = 0;
+  /** Police and ambulance: flashing roof lights and sirens. */
+  private emergency: CarEntity[] = [];
+  private flashT = 0;
+  private flash = false;
+  private sirenAt = 0;
+  /** The police siren is on while answering an accident (and now and then on patrol). */
+  policeSiren = false;
   private signalTimer = 0;
 
   constructor(private scene: WorldScene) {
@@ -83,6 +92,7 @@ export class TrafficSystem {
       this.setBodyOrientation(car, true);
       this.cars.push(car);
     }
+    this.emergency = this.cars.filter((c) => c.spawn.type === 'car' && (c.spawn.variant === POLICE_VARIANT || c.spawn.variant === AMBULANCE_VARIANT));
     // Road props (cones, barriers) and the junction cow are squeezable obstacles.
     for (const p of PROPS) {
       if ((p.kind === 'cone' || p.kind === 'barrier') && groundAt(scene.ground, t(p.x), t(p.y) - 2) === G.Road)
@@ -113,6 +123,13 @@ export class TrafficSystem {
 
   byId(id: string) {
     return this.cars.find((c) => c.spawn.id === id);
+  }
+
+  /** Is any active vehicle within `r` px of (x, y)? Stops at the first one found. */
+  anyCarWithin(x: number, y: number, r: number) {
+    const r2 = r * r;
+    for (const c of this.cars) if (c.active && (c.sprite.x - x) ** 2 + (c.sprite.y - y) ** 2 < r2) return true;
+    return false;
   }
 
   nearestCarDistance(x: number, y: number) {
@@ -181,6 +198,7 @@ export class TrafficSystem {
       (c.sprite.body as Phaser.Physics.Arcade.Body).updateFromGameObject();
       this.reactToBlocking(c, now, cam);
     }
+    this.updateEmergency(dt, now);
     this.respawnTimer -= dt;
     if (this.respawnTimer <= 0) {
       this.respawnTimer = 0.5;
@@ -194,6 +212,42 @@ export class TrafficSystem {
         const st = signalState(now, undefined, j.offset);
         sig.sprite.setTexture(`signal_${st[sig.axis]}`);
       }
+    }
+  }
+
+  /** Take a vehicle out of the flow; it comes back later through the normal respawn. */
+  retire(c: CarEntity) {
+    c.active = false;
+    c.sprite.setVisible(false);
+    (c.sprite.body as Phaser.Physics.Arcade.Body).enable = false;
+  }
+
+  isEmergency(c: CarEntity) {
+    return this.emergency.includes(c);
+  }
+
+  private updateEmergency(dt: number, now: number) {
+    this.flashT -= dt;
+    if (this.flashT <= 0) {
+      this.flashT = 0.25;
+      this.flash = !this.flash;
+      for (const c of this.emergency) if (c.active) c.sprite.setTexture(`veh_car_${c.spawn.variant}${this.flash ? 'b' : ''}`);
+    }
+    if (now < this.sirenAt) return;
+    this.sirenAt = now + 1350;
+    const s = this.scene;
+    const p = s.playerFeet();
+    if (Math.random() < 0.02) this.policeSiren = !this.policeSiren;
+    for (const c of this.emergency) {
+      if (!c.active) continue;
+      const police = c.spawn.variant === POLICE_VARIANT;
+      if (police && !this.policeSiren) continue;
+      const d = Math.hypot(c.sprite.x - p.x, c.sprite.y - p.y);
+      if (d > 560) continue;
+      audio.siren(police ? 'police' : 'ambulance', 1 - d / 560, (c.sprite.x - p.x) / 400);
+      // Someone nearby comments on it, now and then.
+      const [n] = s.npcs.near(c.sprite.x, c.sprite.y, 110, true);
+      if (n && Math.random() < 0.25) s.talk.speak(n, ['siren'], now, false, 8000);
     }
   }
 
@@ -233,10 +287,20 @@ export class TrafficSystem {
   }
 
   private respawn(cam: Phaser.Geom.Rectangle) {
+    const view = new Phaser.Geom.Rectangle(cam.x - 80, cam.y - 80, cam.width + 160, cam.height + 160);
+    // Rush hour fills the roads; late at night most vehicles go home (only ever out of sight).
+    const target = trafficTarget(this.scene.dayNight.minutes, this.cars.length);
+    let active = this.cars.filter((c) => c.active).length;
+    if (active > target) {
+      // Any vehicle out of sight, chosen at random so no single road empties out.
+      const spares = this.cars.filter((c) => c.active && !this.isEmergency(c) && !view.contains(c.sprite.x, c.sprite.y));
+      if (spares.length) this.retire(spares[Math.floor(Math.random() * spares.length)]);
+      return;
+    }
     for (const c of this.cars) {
       if (c.active) continue;
+      if (active >= target) return;
       const start = c.logic.route.points[0];
-      const view = new Phaser.Geom.Rectangle(cam.x - 80, cam.y - 80, cam.width + 160, cam.height + 160);
       if (view.contains(start.x, start.y)) continue;
       if (this.nearestCarDistance(start.x, start.y) < 70) continue;
       const l = c.logic;
@@ -246,6 +310,7 @@ export class TrafficSystem {
       c.active = true;
       c.sprite.setVisible(true);
       (c.sprite.body as Phaser.Physics.Arcade.Body).enable = true;
+      active++;
     }
   }
 

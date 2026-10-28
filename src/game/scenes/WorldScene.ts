@@ -1,23 +1,41 @@
 import Phaser from 'phaser';
+import { ACHIEVEMENTS } from '../../data/achievements';
+import { DISHES, dishById } from '../../data/food';
 import { BUILDINGS, buildGround, buildSolids, districtAt, PLAYER_SPAWN, PROPS, type District } from '../../data/map';
 import { STATIONS } from '../../data/metro';
-import { POIS, POI_IDS, poiById } from '../../data/pois';
+import { POIS, poiById } from '../../data/pois';
 import { METRO_TRACK } from '../../data/roads';
 import { PARKED } from '../../data/vehicles';
+import { newlyUnlocked } from '../../logic/achievements';
+import { addressOf, type PlayerProfile } from '../../logic/player';
 import { addHint, checkDiscoveries } from '../../logic/discovery';
-import { boxHitsSolids, type Rect } from '../../logic/geometry';
+import { boxHitsSolids, dist, type Rect } from '../../logic/geometry';
+import { darkness } from '../../logic/dayClock';
+import { CHAR_DIRS, CHAR_FRAMES } from '../art/characters';
 import { pickInteraction, type InteractionCandidate } from '../../logic/interaction';
 import { facingFrom, walkVelocity, type DirInput, type Facing } from '../../logic/movement';
 import { ReactionEngine, type Reactor, type WorldEvent } from '../../logic/reactionEngine';
 import { mulberry32 } from '../../logic/rng';
-import { loadSave, safeStorage, writeSave, type Settings, type Stats } from '../../logic/save';
+import { safeStorage, STAT_KEYS, writeSave, type Settings, type Stats } from '../../logic/save';
+import { loadGameSave } from '../../session';
 import type { PlayerMode } from '../../logic/vehicleState';
 import { inputLocked, uiStore } from '../../store/uiStore';
 import { audio } from '../audio';
-import { bridge } from '../bridge';
+import { bridge, type GuideKind } from '../bridge';
 import { PLAYER_BODY, t, WALK_SPEED, WORLD_H, WORLD_W } from '../constants';
-import { DECAL_PROPS } from '../art/props';
+import { touch } from '../touch';
+import { DECAL_PROPS, propKey } from '../art/props';
 import { BubbleLayer } from '../systems/BubbleLayer';
+import { AnimalSystem } from '../systems/AnimalSystem';
+import { BusSystem } from '../systems/BusSystem';
+import { FareSystem } from '../systems/FareSystem';
+import { MatchSystem } from '../systems/MatchSystem';
+import { BUS_STOPS } from '../../data/transit';
+import { DayNightSystem } from '../systems/DayNightSystem';
+import { DeliverySystem } from '../systems/DeliverySystem';
+import { RideSystem } from '../systems/RideSystem';
+import { addCharacter } from './BootScene';
+import { playerLook } from '../../data/player';
 import { EventSystem } from '../systems/EventSystem';
 import { MetroSystem } from '../systems/MetroSystem';
 import { NpcSystem, type Npc } from '../systems/NpcSystem';
@@ -26,6 +44,8 @@ import { TrafficSystem } from '../systems/TrafficSystem';
 import { VehicleSystem } from '../systems/VehicleSystem';
 import { WeatherSystem } from '../systems/WeatherSystem';
 
+/** Remembers that this browser has seen the first-time tour. */
+export const TOUR_KEY = 'bsam.tourSeen';
 const DEFAULT_SPAWN = { x: t(PLAYER_SPAWN.x), y: t(PLAYER_SPAWN.y) };
 const COW = { x: t(80), y: t(19.9) };
 
@@ -43,9 +63,15 @@ export class WorldScene extends Phaser.Scene {
   // Progress
   discovered: string[] = [];
   hinted: string[] = [];
+  tasted: string[] = [];
+  achievements: string[] = [];
+  /** Who the player is: name, gender (how NPCs address them) and outfit. */
+  profile!: PlayerProfile;
   settings!: Settings;
   stats!: Stats;
   destination: string | null = null;
+  /** Guide markers owned by jobs (delivery, auto fare), by job id. The newest is shown instead of the destination. */
+  readonly guides = new Map<string, { x: number; y: number; label: string }>();
   district!: District;
   // Systems
   bubbles!: BubbleLayer;
@@ -56,6 +82,13 @@ export class WorldScene extends Phaser.Scene {
   weather!: WeatherSystem;
   metro!: MetroSystem;
   worldEvents!: EventSystem;
+  dayNight!: DayNightSystem;
+  ride!: RideSystem;
+  animals!: AnimalSystem;
+  buses!: BusSystem;
+  fares!: FareSystem;
+  match!: MatchSystem;
+  deliveries!: DeliverySystem;
   reactions = new ReactionEngine(mulberry32(1234));
   /** Scene clock in ms; stops while paused so every cooldown pauses with it. */
   clock = 0;
@@ -71,6 +104,10 @@ export class WorldScene extends Phaser.Scene {
   private lastSafe: { x: number; y: number } | null = null;
   private saveTimer = 0;
   private baseZoom = 3;
+  private npcBumpAt = 0;
+  private statsKey = '';
+  /** Reused every frame for the name tag position. */
+  private tagAt = { x: 0, y: 0 };
 
   constructor() {
     super('world');
@@ -80,9 +117,12 @@ export class WorldScene extends Phaser.Scene {
     this.clock = 0;
     this.mode = { kind: 'walk' };
     const storage = safeStorage();
-    const save = loadSave(storage, POI_IDS);
+    const save = loadGameSave(storage);
     this.discovered = save.discovered;
     this.hinted = save.hinted;
+    this.tasted = save.tasted;
+    this.achievements = save.achievements;
+    this.profile = uiStore.get().player;
     this.settings = save.settings;
     this.stats = save.stats;
 
@@ -107,6 +147,13 @@ export class WorldScene extends Phaser.Scene {
     this.weather = new WeatherSystem(this);
     this.metro = new MetroSystem(this);
     this.worldEvents = new EventSystem(this);
+    this.dayNight = new DayNightSystem(this, save.timeOfDay);
+    this.ride = new RideSystem(this);
+    this.animals = new AnimalSystem(this);
+    this.buses = new BusSystem(this);
+    this.fares = new FareSystem(this);
+    this.match = new MatchSystem(this);
+    this.deliveries = new DeliverySystem(this);
     this.traffic.addObstacle({ id: 'cow', kind: 'static', x: COW.x, y: COW.y, radius: 9, squeeze: true });
 
     this.setupColliders();
@@ -118,6 +165,8 @@ export class WorldScene extends Phaser.Scene {
       ready: true,
       discovered: this.discovered,
       hinted: this.hinted,
+      tasted: this.tasted,
+      achievements: this.achievements,
       settings: this.settings,
       stats: { ...this.stats },
       area: { name: this.district.name, tagline: this.district.tagline },
@@ -130,6 +179,23 @@ export class WorldScene extends Phaser.Scene {
       raining: false,
     });
     audio.apply(this.settings);
+    const who = addressOf(this.profile);
+    uiStore.toast(
+      this.discovered.length
+        ? { kind: 'info', title: `Welcome back, ${who}!`, body: 'Bengaluru missed you. Traffic did not.' }
+        : { kind: 'info', title: `Namaskara, ${who}!`, body: 'Bengaluru ge swagatha. No missions: wander, eat, talk. J opens your journal.' },
+      5200,
+    );
+    // First time in the city: the guided tour (also on the Hints button).
+    const store = safeStorage();
+    try {
+      if (store && !store.getItem(TOUR_KEY)) {
+        store.setItem(TOUR_KEY, '1');
+        uiStore.set({ panel: 'tour' });
+      }
+    } catch {
+      /* storage blocked: skip the automatic tour */
+    }
     this.installApi();
     this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => this.teardown());
     this.events.once(Phaser.Scenes.Events.DESTROY, () => this.teardown());
@@ -142,8 +208,7 @@ export class WorldScene extends Phaser.Scene {
 
     for (const b of BUILDINGS) this.add.image(t(b.x), t(b.y), `bld_${b.id}`).setOrigin(0).setDepth(t(b.y + b.h));
     for (const p of PROPS) {
-      const key = p.kind === 'hoarding' ? `prop_hoarding_${p.text}` : `prop_${p.kind}`;
-      const img = this.add.image(t(p.x), t(p.y), key);
+      const img = this.add.image(t(p.x), t(p.y), propKey(p));
       if (DECAL_PROPS.has(p.kind)) img.setOrigin(0.5).setDepth(-50);
       else img.setOrigin(0.5, 1).setDepth(t(p.y));
     }
@@ -168,6 +233,19 @@ export class WorldScene extends Phaser.Scene {
     this.viaduct.add(this.add.tileSprite(0, vy - 11, WORLD_W, 22, 'viaduct').setOrigin(0));
     for (const st of STATIONS) this.viaduct.add(this.add.image(st.platform.x, vy, 'platform').setOrigin(0.5, 0.55));
     for (let x = 48; x < WORLD_W; x += 160) this.add.rectangle(x, vy + 2, 6, 6, 0x8f8a83).setDepth(vy + 2);
+
+    // Pedal boats drifting around Ulsoor Lake.
+    for (let i = 0; i < 3; i++) {
+      const boat = this.add.image(0, 0, `boat_${i % 2}`);
+      const orbit = { a: (i / 3) * Math.PI * 2 };
+      const place = () => {
+        const x = t(68.5) + Math.cos(orbit.a) * t(5 - i * 1.2);
+        const y = t(44.5) + Math.sin(orbit.a) * t(3 - i * 0.6);
+        boat.setPosition(x, y).setDepth(y).setRotation(orbit.a + Math.PI / 2);
+      };
+      place();
+      this.tweens.add({ targets: orbit, a: orbit.a + Math.PI * 2, duration: 60000 + i * 15000, repeat: -1, onUpdate: place });
+    }
 
     this.marker = this.add.image(0, 0, 'marker').setOrigin(0.5, 1).setDepth(8500).setVisible(false);
     this.tweens.add({ targets: this.markerBob, y: -5, duration: 500, yoyo: true, repeat: -1, ease: 'Sine.easeInOut' });
@@ -199,11 +277,14 @@ export class WorldScene extends Phaser.Scene {
     this.physics.add.collider(this.vehicles.group, this.traffic.group, (_a, b) => {
       this.vehicles.crashed((b as Phaser.GameObjects.GameObject).getData('car') as string, this.clock);
     });
-    this.physics.add.collider(this.vehicles.group, this.npcs.group, (_a, b) => {
+    this.physics.add.collider(this.vehicles.group, this.npcs.group, (a, b) => {
       const npc = (b as Phaser.GameObjects.GameObject).getData('npc') as Npc;
       const v = this.vehicles.driving();
-      if (!npc || !v) return;
-      v.speed *= 0.3;
+      // Only the vehicle you're driving slows down; an NPC leaning on a parked Yulu is not your problem.
+      if (!npc || !v || a !== v.sprite || this.clock < this.npcBumpAt) return;
+      // One bump slows you once, instead of dragging you to a crawl for as long as you touch them.
+      this.npcBumpAt = this.clock + 600;
+      v.speed *= 0.4;
       this.react({ type: 'player_bump', actorId: npc.id, x: npc.x, y: npc.y });
     });
   }
@@ -213,9 +294,8 @@ export class WorldScene extends Phaser.Scene {
     const K = Phaser.Input.Keyboard.KeyCodes;
     this.keys = kb.addKeys({ up: K.UP, down: K.DOWN, left: K.LEFT, right: K.RIGHT, w: K.W, a: K.A, s: K.S, d: K.D, space: K.SPACE }) as Keys;
     kb.on('keydown-E', () => this.interact());
-    kb.on('keydown-H', () => {
-      if (!this.locked) this.vehicles.horn(this.clock);
-    });
+    kb.on('keydown-H', () => this.honk());
+    kb.on('keydown-R', () => this.ride.open());
     // Release keys when the window loses focus so the player never keeps walking on their own.
     const blur = () => kb.resetKeys();
     window.addEventListener('blur', blur);
@@ -234,7 +314,8 @@ export class WorldScene extends Phaser.Scene {
   }
 
   private applyBaseZoom(animate: boolean) {
-    const h = this.scale.height;
+    // Use the shorter side (width counts a bit more) so phones in portrait still see the street.
+    const h = Math.min(this.scale.height, this.scale.width * 0.75);
     this.baseZoom = Phaser.Math.Clamp(Math.floor(h / 260), 2, 5);
     this.setZoomForMode(animate);
   }
@@ -281,6 +362,20 @@ export class WorldScene extends Phaser.Scene {
         return { x, y, angle, driving: !!v, rideables: this.vehicles.list.filter((r) => !r.occupied).map((r) => ({ x: r.sprite.x, y: r.sprite.y })) };
       },
       saveNow: () => this.persist(),
+      interact: () => this.interact(),
+      horn: () => this.honk(),
+      setProfile: (p) => this.setProfile(p),
+      setTime: (m) => {
+        this.dayNight.setMinutes(m);
+        this.persist();
+      },
+      bookRide: (id) => this.ride.book(id),
+      openRide: () => this.ride.open(),
+      cancelJob: (id) => {
+        if (id === 'delivery') this.deliveries.cancel();
+      },
+      takeBus: (id) => this.buses.take(id),
+      showNearest: (kind) => this.showNearest(kind),
     };
   }
 
@@ -291,6 +386,11 @@ export class WorldScene extends Phaser.Scene {
   }
 
   // ── Shared helpers used by systems
+
+  /** On the metro or riding pillion: the player isn't walking or driving. */
+  get travelling() {
+    return this.mode.kind === 'metro' || this.mode.kind === 'ride';
+  }
 
   playerFeet() {
     const v = this.mode.kind === 'drive' ? this.vehicles.driving() : null;
@@ -341,6 +441,25 @@ export class WorldScene extends Phaser.Scene {
     this.persist();
   }
 
+  /** Stamp a dish in the food book (first time only). */
+  taste(id: string) {
+    const dish = dishById(id);
+    if (!dish || this.tasted.includes(id)) return;
+    this.tasted = [...this.tasted, id];
+    uiStore.set({ tasted: this.tasted });
+    uiStore.toast({ kind: 'taste', title: `Food book: ${dish.name}`, body: `${this.tasted.length}/${DISHES.length} dishes stamped. ${dish.blurb}` }, 4600);
+    this.persist();
+  }
+
+  private checkAchievements() {
+    const fresh = newlyUnlocked(ACHIEVEMENTS, { stats: this.stats, discovered: this.discovered, tasted: this.tasted }, this.achievements);
+    if (!fresh.length) return;
+    this.achievements = [...this.achievements, ...fresh.map((a) => a.id)];
+    uiStore.set({ achievements: this.achievements });
+    for (const a of fresh) uiStore.toast({ kind: 'achievement', title: `Achievement: ${a.title}`, body: a.description }, 5200);
+    audio.chime('discover');
+  }
+
   setDestination(id: string | null) {
     this.destination = id && poiById(id) ? id : null;
     uiStore.set({ destination: this.destination });
@@ -351,38 +470,105 @@ export class WorldScene extends Phaser.Scene {
     const storage = safeStorage();
     if (this.mode.kind === 'walk' && this.player && this.vehicles?.spotFree(this.player.x, this.player.y)) this.lastSafe = { x: this.player.x, y: this.player.y };
     const lastPosition = this.lastSafe;
+    this.checkAchievements();
     writeSave(storage, {
       version: 2,
       discovered: this.discovered,
       hinted: this.hinted,
+      tasted: this.tasted,
+      achievements: this.achievements,
+      player: this.profile,
+      timeOfDay: Math.floor(this.dayNight.minutes),
       settings: this.settings,
       stats: this.stats,
       lastPosition,
       savedAt: Date.now(),
     });
-    uiStore.set({ stats: { ...this.stats } });
+    // Only tell React when something changed (this runs every 15 s and after many actions).
+    const key = STAT_KEYS.map((k) => this.stats[k]).join(',');
+    if (key !== this.statsKey) {
+      this.statsKey = key;
+      uiStore.set({ stats: { ...this.stats } });
+    }
   }
 
   // ── Interaction
 
+  /** Fixed things you can use (metro entrances, bus stops, Gowri): built once. */
+  private fixedSpots: InteractionCandidate[] = [
+    ...STATIONS.map((st): InteractionCandidate => ({ id: `metro:${st.id}`, kind: 'metro', x: st.entrance.x, y: st.entrance.y, radius: 30, label: `${st.name} Metro` })),
+    ...BUS_STOPS.map((b): InteractionCandidate => ({ id: `bus:${b.id}`, kind: 'metro', x: t(b.x), y: t(b.y), radius: 30, label: `BMTC bus stop · ${b.name}` })),
+    { id: 'cow', kind: 'object', x: COW.x, y: COW.y, radius: 32, label: 'Say hello to Gowri' },
+  ];
+
+  /** What E could do from here. Only things already within reach are listed, so this stays cheap every frame. */
   private candidates(): InteractionCandidate[] {
-    const out: InteractionCandidate[] = [];
     if (this.mode.kind === 'drive') {
       const v = this.vehicles.driving()!;
-      out.push({ id: 'exit', kind: 'exitVehicle', x: v.sprite.x, y: v.sprite.y, radius: Infinity, label: 'Get out' });
-      return out;
+      return [{ id: 'exit', kind: 'exitVehicle', x: v.sprite.x, y: v.sprite.y, radius: Infinity, label: 'Get out' }];
     }
-    if (this.mode.kind !== 'walk') return out;
-    for (const s of STATIONS) out.push({ id: `metro:${s.id}`, kind: 'metro', x: s.entrance.x, y: s.entrance.y, radius: 30, label: `${s.name} Metro` });
-    for (const v of this.vehicles.list)
-      if (!v.occupied) out.push({ id: `veh:${v.def.id}`, kind: 'vehicle', x: v.sprite.x, y: v.sprite.y, radius: v.def.halfLen + 16, label: `Drive ${v.def.name}` });
-    for (const n of this.npcs.npcs)
-      if (n.def.interactable !== false && !n.busy && n.state !== 'goto')
-        out.push({ id: `npc:${n.id}`, kind: 'npc', x: n.x, y: n.y - 4, radius: n.def.reach ?? 26, label: `Talk · ${n.name}` });
-    out.push({ id: 'cow', kind: 'object', x: COW.x, y: COW.y, radius: 32, label: 'Say hello to Gowri' });
+    if (this.mode.kind !== 'walk') return [];
+    const p = this.playerFeet();
+    const reach = (x: number, y: number, r: number) => (x - p.x) ** 2 + (y - p.y) ** 2 <= r * r;
+    const out = this.fixedSpots.filter((c) => reach(c.x, c.y, c.radius));
+    for (const v of this.vehicles.list) {
+      const r = v.def.halfLen + 16;
+      if (!v.occupied && reach(v.sprite.x, v.sprite.y, r)) out.push({ id: `veh:${v.def.id}`, kind: 'vehicle', x: v.sprite.x, y: v.sprite.y, radius: r, label: `Drive ${v.def.name}` });
+    }
+    for (const n of this.npcs.npcs) {
+      const r = n.def.reach ?? 26;
+      if (n.def.interactable !== false && !n.busy && n.state !== 'goto' && reach(n.x, n.y - 4, r))
+        out.push({ id: `npc:${n.id}`, kind: 'npc', x: n.x, y: n.y - 4, radius: r, label: `Talk · ${n.name}` });
+    }
+    for (const d of this.animals.feedable(p.x, p.y)) out.push({ id: `dog:${d.name}`, kind: 'object', x: d.sprite.x, y: d.sprite.y - 6, radius: 28, label: `Give ${d.name} a biscuit` });
+    const cow = this.animals.cowNear(p.x, p.y);
+    if (cow) out.push({ id: `cow:${cow.name}`, kind: 'object', x: cow.sprite.x, y: cow.sprite.y - 8, radius: 32, label: `Say hello to ${cow.name}` });
     const ball = this.worldEvents.ball;
     if (ball && !ball.done) out.push({ id: 'ball', kind: 'object', x: ball.sprite.x, y: ball.sprite.y, radius: 26, label: 'Throw the ball back' });
     return out;
+  }
+
+
+  private setProfile(p: PlayerProfile) {
+    this.profile = p;
+    this.player.anims.stop();
+    addCharacter(this, 'player', playerLook(p));
+    this.player.setTexture('char_player', this.idleFrame());
+    uiStore.set({ player: p });
+    uiStore.toast({ kind: 'info', title: `New look, ${addressOf(p)}!`, body: 'Sakkath aagi kaantira.' }, 3000);
+    this.persist();
+  }
+
+  /** The tour's "Show me": mark the nearest Yulu, bus stop, metro entrance, or the auto / car to borrow. */
+  private showNearest(kind: GuideKind) {
+    const p = this.playerFeet();
+    const spots: Array<{ x: number; y: number; label: string }> =
+      kind === 'bus'
+        ? BUS_STOPS.map((b) => ({ x: t(b.x), y: t(b.y), label: `Bus stop: ${b.name}` }))
+        : kind === 'metro'
+          ? STATIONS.map((st) => ({ x: st.entrance.x, y: st.entrance.y, label: `${st.name} Metro` }))
+          : this.vehicles.list
+              .filter((v) => !v.occupied && (kind === 'yulu' ? v.def.id.startsWith('yulu') : v.def.id === (kind === 'auto' ? 'rajuauto' : 'hatchback')))
+              .map((v) => ({ x: v.sprite.x, y: v.sprite.y, label: v.def.name }));
+    const best = spots.sort((a, b) => Math.hypot(a.x - p.x, a.y - p.y) - Math.hypot(b.x - p.x, b.y - p.y))[0];
+    if (!best) return;
+    this.guides.set('tour', best);
+    uiStore.toast({ kind: 'hint', title: `Marked: ${best.label}`, body: 'Follow the arrow on the screen edge. The marker clears when you get there.' }, 3600);
+  }
+
+  /** Count something the player did (a ride, a fare, a biscuit…) and save. */
+  bump(stat: keyof Stats, by = 1) {
+    this.stats[stat] += by;
+    this.persist();
+  }
+
+  /** Standing frame for the direction the player faces. */
+  private idleFrame() {
+    return CHAR_DIRS.indexOf(this.facing) * CHAR_FRAMES;
+  }
+
+  private honk() {
+    if (!this.locked && this.vehicles.horn(this.clock)) this.stats.honks++;
   }
 
   private interact() {
@@ -396,6 +582,7 @@ export class WorldScene extends Phaser.Scene {
     const [kind, id] = c.id.split(':');
     audio.chime('ui');
     if (kind === 'metro') this.metro.open(id);
+    else if (kind === 'bus') this.buses.open(id);
     else if (kind === 'veh') {
       const v = this.vehicles.byId(id);
       if (v) this.vehicles.enter(v);
@@ -403,6 +590,7 @@ export class WorldScene extends Phaser.Scene {
       const n = this.npcs.byId(id);
       if (n) this.talk.open(n);
     } else if (c.id === 'cow') {
+      this.bump('cow');
       uiStore.set({
         narration: {
           title: 'Gowri the cow',
@@ -410,15 +598,20 @@ export class WorldScene extends Phaser.Scene {
         },
       });
     } else if (c.id === 'ball') this.worldEvents.throwBall();
+    else if (kind === 'dog') this.animals.feed(id);
+    else if (kind === 'cow') {
+      this.bump('cow');
+      uiStore.toast({ kind: 'info', title: `${id} the cow`, body: 'She chews slowly and looks right through you. Somehow, you feel blessed.' }, 3200);
+    }
   }
 
   private readInput(): DirInput {
     const k = this.keys;
     return {
-      up: k.up.isDown || k.w.isDown,
-      down: k.down.isDown || k.s.isDown,
-      left: k.left.isDown || k.a.isDown,
-      right: k.right.isDown || k.d.isDown,
+      up: k.up.isDown || k.w.isDown || touch.up,
+      down: k.down.isDown || k.s.isDown || touch.down,
+      left: k.left.isDown || k.a.isDown || touch.left,
+      right: k.right.isDown || k.d.isDown || touch.right,
     };
   }
 
@@ -448,29 +641,35 @@ export class WorldScene extends Phaser.Scene {
         this.player.anims.play(`player_walk_${this.facing}`, true);
       } else {
         this.player.anims.stop();
-        this.player.setFrame(['down', 'left', 'right', 'up'].indexOf(this.facing) * 3);
+        this.player.setFrame(this.idleFrame());
       }
       this.player.setDepth(this.player.y);
     }
 
     this.npcs.update(dt, now);
     this.traffic.update(dt, now);
-    this.vehicles.update(dt, now, input, this.locked, this.keys.space.isDown);
+    this.vehicles.update(dt, now, input, this.locked, this.keys.space.isDown || touch.brake);
     this.talk.update(now, dt);
+    this.dayNight.update(dt);
+    this.ride.update(now);
+    this.animals.update(dt, now);
+    this.fares.update(now);
+    this.match.update(now);
+    this.deliveries.update(now);
     this.weather.update(dt, now);
     this.metro.update(dt, now);
     this.worldEvents.update(dt, now);
 
     // Interaction prompt
     const p = this.playerFeet();
-    this.candidate = this.locked || this.mode.kind === 'metro' ? null : pickInteraction(this.candidates(), p.x, p.y, false);
+    this.candidate = this.locked || this.travelling ? null : pickInteraction(this.candidates(), p.x, p.y, false);
     if (this.candidate && this.candidate.kind !== 'exitVehicle') this.bubbles.setPrompt({ x: this.candidate.x, y: this.candidate.y }, this.candidate.label);
     else if (this.candidate) this.bubbles.setPrompt({ x: p.x, y: p.y + 6 }, 'Get out');
     else this.bubbles.setPrompt(null);
 
     // Viaduct fades when you're underneath it.
     const vy = METRO_TRACK[0].y;
-    const under = Math.abs(p.y - vy) < 34 && this.mode.kind !== 'metro';
+    const under = Math.abs(p.y - vy) < 34 && !this.travelling;
     this.viaduct.setAlpha(Phaser.Math.Linear(this.viaduct.alpha, under ? 0.35 : 1, 0.15));
     this.metro.train.setAlpha(this.viaduct.alpha);
 
@@ -480,6 +679,16 @@ export class WorldScene extends Phaser.Scene {
       this.checkPlace(p.x, p.y);
     }
     this.updateDestination(p.x, p.y);
+    const tourMark = this.guides.get('tour');
+    if (tourMark && (tourMark.x - p.x) ** 2 + (tourMark.y - p.y) ** 2 < 40 * 40) {
+      this.guides.delete('tour');
+      uiStore.toast({ kind: 'arrive', title: `Here: ${tourMark.label}`, body: 'Press E to use it.' }, 2600);
+    }
+    if (this.mode.kind === 'walk' || this.mode.kind === 'drive') {
+      this.tagAt.x = p.x;
+      this.tagAt.y = p.y - (this.mode.kind === 'walk' ? 30 : 24);
+      this.bubbles.setNameTag(this.tagAt, this.profile.name);
+    } else this.bubbles.setNameTag(null);
     this.bubbles.update(this.cameras.main, now, ui.panel === 'pause' || ui.panel === 'map');
 
     this.saveTimer -= dt;
@@ -490,8 +699,15 @@ export class WorldScene extends Phaser.Scene {
   }
 
   private checkPlace(x: number, y: number) {
-    if (this.mode.kind === 'metro') return;
+    if (this.travelling) return;
     const d = districtAt(x, y);
+    const night = darkness(this.dayNight.minutes) > 0.5;
+    const near = (id: string, tiles: number) => {
+      const poi = poiById(id)!;
+      return dist(poi.x, poi.y, x, y) < t(tiles);
+    };
+    const leafy = d.id === 'park' || d.id === 'cubbon' || near('btmlake', 18);
+    audio.setNature({ birds: (leafy || d.id === 'lalbagh') && !night, crickets: night, bell: near('temple', 14) || near('bulltemple', 12), festival: near('pandal', 16) });
     if (d.id !== this.district?.id) {
       this.district = d;
       uiStore.set({ area: { name: d.name, tagline: d.tagline } });
@@ -510,6 +726,12 @@ export class WorldScene extends Phaser.Scene {
   }
 
   private updateDestination(x: number, y: number) {
+    const w = [...this.guides.values()].pop();
+    if (w) {
+      this.marker.setVisible(true).setPosition(w.x, w.y - 18 + this.markerBob.y);
+      this.bubbles.setDestination(w);
+      return;
+    }
     const poi = this.destination ? poiById(this.destination) : null;
     if (!poi || !this.settings.showMarkers) {
       this.marker.setVisible(false);
