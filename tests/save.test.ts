@@ -30,6 +30,10 @@ describe('saving', () => {
     expect(d.hinted).toEqual([]);
     expect(d.settings.masterVolume).toBe(1);
     expect(d.settings.chatter).toBe('normal');
+    expect(d.settings.voiceVolume).toBe(DEFAULT_SETTINGS.voiceVolume);
+    expect(sanitize({ settings: { voiceVolume: -2 } }, ids).settings.voiceVolume).toBe(0);
+    expect(d.settings.muted).toBe(false);
+    expect(sanitize({ settings: { muted: true } }, ids).settings.muted).toBe(true);
     expect(d.stats.chai).toBe(0);
     expect(d.lastPosition).toBeNull();
   });

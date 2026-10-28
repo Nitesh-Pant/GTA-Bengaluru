@@ -1,7 +1,7 @@
 export type HairStyle = 'short' | 'long' | 'bun' | 'bald' | 'ponytail' | 'cap' | 'helmet' | 'whitecap' | 'beanie' | 'messy';
 export type TopStyle = 'shirt' | 'tshirt' | 'kurta' | 'vest' | 'jacket' | 'uniform' | 'saree';
 export type BottomStyle = 'pants' | 'lungi' | 'veshti' | 'saree' | 'shorts';
-export type Extra = 'backpack' | 'lanyard' | 'mustache' | 'glasses' | 'jasmine' | 'bindi' | 'towel' | 'apron' | 'bag' | 'headband' | 'checks';
+export type Extra = 'backpack' | 'lanyard' | 'mustache' | 'glasses' | 'jasmine' | 'bindi' | 'towel' | 'apron' | 'bag' | 'headband' | 'checks' | 'laptop';
 
 export interface Look {
   skin: string;
@@ -49,4 +49,17 @@ export const LOOKS: Record<string, Look> = {
   guard: { skin: SKIN[1], hair: '#151110', hairStyle: 'cap', top: '#6c757d', topStyle: 'uniform', accent: '#343a40', bottom: '#343a40', bottomStyle: 'pants', shoes: '#111', extras: ['mustache'] },
   commuter: { skin: SKIN[0], hair: '#151110', hairStyle: 'short', top: '#7b2cbf', topStyle: 'shirt', bottom: '#3c3c3c', bottomStyle: 'pants', shoes: '#3a2a20', extras: ['bag'], accent: '#5a189a' },
   commuter_f: { skin: SKIN[4], hair: '#151110', hairStyle: 'long', top: '#ef476f', topStyle: 'kurta', accent: '#ffd166', bottom: '#073b4c', bottomStyle: 'pants', shoes: '#3a2a20', extras: ['bag', 'bindi'] },
+  // Techies who never close the laptop, even walking
+  techie_laptop: { skin: SKIN[0], hair: '#16120f', hairStyle: 'short', top: '#495057', topStyle: 'tshirt', bottom: '#1f2a44', bottomStyle: 'pants', shoes: '#ececec', extras: ['laptop', 'lanyard', 'glasses'], accent: '#3d4a5c' },
+  techie_laptop_f: { skin: SKIN[4], hair: '#14100d', hairStyle: 'long', top: '#e9c46a', topStyle: 'kurta', accent: '#264653', bottom: '#264653', bottomStyle: 'pants', shoes: '#222', extras: ['laptop', 'lanyard'] },
+  // Cricket fans in red-and-gold jerseys, and running-club regulars
+  fan: { skin: SKIN[2], hair: '#151110', hairStyle: 'short', top: '#d6202a', topStyle: 'tshirt', accent: '#ffd43b', bottom: '#1f1f1f', bottomStyle: 'pants', shoes: '#f1f1f1', extras: ['headband'] },
+  fan2: { skin: SKIN[0], hair: '#151110', hairStyle: 'messy', top: '#ffd43b', topStyle: 'tshirt', accent: '#d6202a', bottom: '#2b2b2b', bottomStyle: 'shorts', shoes: '#d6202a' },
+  fan_f: { skin: SKIN[3], hair: '#14100d', hairStyle: 'ponytail', top: '#d6202a', topStyle: 'tshirt', accent: '#ffd43b', bottom: '#1f2a44', bottomStyle: 'pants', shoes: '#f1f1f1', extras: ['bindi'] },
+  runner: { skin: SKIN[1], hair: '#151110', hairStyle: 'short', top: '#ff6b6b', topStyle: 'tshirt', bottom: '#212529', bottomStyle: 'shorts', shoes: '#4dabf7', extras: ['headband'] },
+  runner_f: { skin: SKIN[3], hair: '#14100d', hairStyle: 'ponytail', top: '#845ef7', topStyle: 'tshirt', bottom: '#212529', bottomStyle: 'shorts', shoes: '#f1f1f1' },
+  // Construction crew: helmets, high-vis vests
+  worker: { skin: SKIN[5], hair: '#151110', hairStyle: 'helmet', accent: '#fab005', top: '#f76707', topStyle: 'vest', bottom: '#5c5f66', bottomStyle: 'pants', shoes: '#3a2a20' },
+  worker2: { skin: SKIN[2], hair: '#151110', hairStyle: 'helmet', accent: '#fab005', top: '#fab005', topStyle: 'tshirt', bottom: '#3a6ea5', bottomStyle: 'lungi', shoes: '#3a2a20' },
+  engineer: { skin: SKIN[0], hair: '#151110', hairStyle: 'helmet', accent: '#f8f9fa', top: '#4dabf7', topStyle: 'shirt', bottom: '#343a40', bottomStyle: 'pants', shoes: '#212529', extras: ['glasses'] },
 };

@@ -151,6 +151,14 @@ function drawFrame(ctx: CanvasRenderingContext2D, ox: number, oy: number, L: Loo
         P(10, bodyY + 1, '#e03131');
       }
     }
+    if (ex.has('laptop') && !back) {
+      // Open laptop held at the waist: we see the back of the lid, with a glowing logo.
+      R(4, bodyY + 3, 8, 5, '#adb5bd');
+      R(4, bodyY + 3, 8, 1, '#dee2e6');
+      P(7, bodyY + 5, '#e7f5ff');
+      P(8, bodyY + 5, '#e7f5ff');
+      R(3, bodyY + 7, 10, 1, '#868e96');
+    }
     if (ex.has('bag')) {
       for (let i = 0; i < 5; i++) P(back ? 10 - i : 5 + i, bodyY + i, L.accent ?? '#5c3d2e');
       R(back ? 4 : 10, bodyY + 5, 2, 2, L.accent ?? '#5c3d2e');
@@ -212,6 +220,11 @@ function drawFrame(ctx: CanvasRenderingContext2D, ox: number, oy: number, L: Loo
     R(ax, bodyY + 5, 2, 1, L.skin);
     if (lead) P(ax + 2, bodyY + 4, L.skin);
     if (ex.has('towel')) R(6, bodyY - 1, 3, 2, '#f8f9fa');
+    if (ex.has('laptop')) {
+      R(10, bodyY + 3, 2, 5, '#adb5bd');
+      R(9, bodyY + 7, 4, 1, '#868e96');
+      P(10, bodyY + 4, '#74c0fc');
+    }
     // Head
     R(5, headY, 6, 7, L.skin);
     P(11, headY + 3, L.skin);

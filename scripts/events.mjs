@@ -5,9 +5,11 @@ const page = await browser.newPage({ viewport: { width: 1280, height: 800 } });
 const errors = [];
 page.on('pageerror', (e) => errors.push(e.stack));
 await page.goto(process.env.URL ?? 'http://localhost:5199/');
-await page.evaluate(() => localStorage.clear());
+await page.evaluate(() => localStorage.clear() || localStorage.setItem('bsam.tourSeen', '1'));
 await page.reload();
 await page.getByRole('button', { name: /Start exploring/ }).click();
+await page.getByRole('button', { name: "Let's go!" }).click();
+
 await page.waitForFunction(() => window.__game?.scene?.getScene('world')?.player);
 const cases = [
   ['gossip', 24, 17],

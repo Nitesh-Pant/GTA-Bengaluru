@@ -1,7 +1,8 @@
 export type PlayerMode =
   | { kind: 'walk' }
   | { kind: 'drive'; vehicleId: string }
-  | { kind: 'metro'; from: string; to: string };
+  | { kind: 'metro'; from: string; to: string }
+  | { kind: 'ride' };
 
 export interface RideableInfo {
   id: string;

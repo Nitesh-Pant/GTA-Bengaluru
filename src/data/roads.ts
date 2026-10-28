@@ -7,10 +7,20 @@ export const LANE = {
   H1W: 21 * TILE,
   H2E: 59 * TILE,
   H2W: 61 * TILE,
+  H3E: 109 * TILE,
+  H3W: 111 * TILE,
+  H4E: 165 * TILE,
+  H4W: 167 * TILE,
   V1N: 41 * TILE,
   V1S: 43 * TILE,
   V2N: 89 * TILE,
   V2S: 91 * TILE,
+};
+
+/** Centre lines of the main roads (px): horizontal roads by y, vertical roads by x. */
+export const ROAD_CENTRES = {
+  h: [(LANE.H1E + LANE.H1W) / 2, (LANE.H2E + LANE.H2W) / 2, (LANE.H3E + LANE.H3W) / 2, (LANE.H4E + LANE.H4W) / 2],
+  v: [(LANE.V1N + LANE.V1S) / 2, (LANE.V2N + LANE.V2S) / 2],
 };
 
 const box = (id: string, tx: number, ty: number, offset: number): JunctionBox => ({
@@ -29,6 +39,10 @@ export const JUNCTIONS: JunctionBox[] = [
   box('marathahalli', 88, 18, 4000),
   box('cmh_orr', 40, 58, 7000),
   box('mh_orr', 88, 58, 2500),
+  box('cmh_mg', 40, 108, 1500),
+  box('btm_mg', 88, 108, 5500),
+  box('cmh_av', 40, 164, 3200),
+  box('ba_av', 88, 164, 800),
 ];
 
 const OFF = 64;
@@ -43,6 +57,13 @@ export const ROUTES: Route[] = [
   r('h1_west', false, [[W + OFF, LANE.H1W], [-OFF, LANE.H1W]]),
   r('h2_east', false, [[-OFF, LANE.H2E], [W + OFF, LANE.H2E]]),
   r('h2_west', false, [[W + OFF, LANE.H2W], [-OFF, LANE.H2W]]),
+  r('h3_east', false, [[-OFF, LANE.H3E], [W + OFF, LANE.H3E]]),
+  r('h3_west', false, [[W + OFF, LANE.H3W], [-OFF, LANE.H3W]]),
+  r('h4_east', false, [[-OFF, LANE.H4E], [W + OFF, LANE.H4E]]),
+  r('h4_west', false, [[W + OFF, LANE.H4W], [-OFF, LANE.H4W]]),
+  // Loops around the Koramangala block between the Outer Ring Road and MG Road
+  r('loop_south_cw', true, [[LANE.V1N, LANE.H2E], [LANE.V2S, LANE.H2E], [LANE.V2S, LANE.H3W], [LANE.V1N, LANE.H3W]]),
+  r('loop_south_ccw', true, [[LANE.V2N, LANE.H2W], [LANE.V1S, LANE.H2W], [LANE.V1S, LANE.H3E], [LANE.V2N, LANE.H3E]]),
   r('v1_south', false, [[LANE.V1S, -OFF], [LANE.V1S, H + OFF]]),
   r('v1_north', false, [[LANE.V1N, H + OFF], [LANE.V1N, -OFF]]),
   r('v2_south', false, [[LANE.V2S, -OFF], [LANE.V2S, H + OFF]]),
@@ -85,6 +106,19 @@ export const TRAFFIC: TrafficSpawn[] = [
   { id: 't18', type: 'car', variant: 1, route: 'v2s_to_h1w', at: 0.1 },
   { id: 't19', type: 'bus', variant: 1, route: 'h1w_to_v2s', at: 0.3 },
   { id: 't20', type: 'scooter', variant: 0, route: 'h1_east', at: 0.7 },
+  { id: 't21', type: 'bus', variant: 1, route: 'h3_east', at: 0.2 },
+  { id: 't22', type: 'auto', variant: 3, route: 'h3_west', at: 0.4 },
+  { id: 't23', type: 'car', variant: 6, route: 'h3_west', at: 0.8 },
+  { id: 't24', type: 'scooter', variant: 3, route: 'h3_east', at: 0.65 },
+  { id: 't25', type: 'car', variant: 7, route: 'loop_south_cw', at: 0.35 },
+  { id: 't26', type: 'auto', variant: 2, route: 'loop_south_ccw', at: 0.6 },
+  { id: 't27', type: 'scooter', variant: 2, route: 'loop_south_cw', at: 0.85 },
+  { id: 't28', type: 'car', variant: 1, route: 'h4_east', at: 0.3 },
+  { id: 't29', type: 'auto', variant: 0, route: 'h4_west', at: 0.55 },
+  { id: 't30', type: 'bus', variant: 0, route: 'h4_east', at: 0.8 },
+  // Emergency vehicles: a police patrol and an ambulance (car variants 8 and 9, see art/vehicles.ts)
+  { id: 'police1', type: 'car', variant: 8, route: 'loop_cw', at: 0.65 },
+  { id: 'ambulance1', type: 'car', variant: 9, route: 'h2_east', at: 0.1 },
 ];
 
 /** Traffic body sizes (px): half length and half width. */

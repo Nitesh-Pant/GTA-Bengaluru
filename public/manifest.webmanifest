@@ -1,0 +1,15 @@
+{
+  "name": "GTA-Bengaluru: Swalpa Adjust Maadi",
+  "short_name": "GTA-Bengaluru",
+  "description": "A top-down wander through Bengaluru: traffic, darshinis, metro rides and street gossip.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "fullscreen",
+  "orientation": "any",
+  "background_color": "#1c1726",
+  "theme_color": "#1c1726",
+  "icons": [
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+  ]
+}

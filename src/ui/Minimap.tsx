@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef } from 'react';
-import { buildGround, BUILDINGS } from '../data/map';
+import { buildGround, BUILDINGS, districtCentre, DISTRICTS, STREET_LABELS } from '../data/map';
 import { STATIONS } from '../data/metro';
 import { POIS } from '../data/pois';
 import { METRO_TRACK } from '../data/roads';
@@ -18,37 +18,60 @@ export const KIND_COLOUR: Record<PoiKind, string> = {
   park: '#69db7c',
 };
 
+/** Street labels that repeat a district name are left to the district label when zoomed out. */
+const DISTRICT_NAMES = new Set(DISTRICTS.map((d) => d.name.toLowerCase()));
+
 let baseCanvas: HTMLCanvasElement | null = null;
 const base = () => (baseCanvas ??= paintMinimapBase(buildGround()));
+
+/** Big-map camera, in tiles: zoom 1 fits the whole city. */
+export interface MapCamera {
+  zoom: number;
+  x: number;
+  y: number;
+}
+
+/** Where the big map is looking: pixels per tile and the top-left tile. Small axes stay centred. */
+export function mapView(width: number, height: number, cam: MapCamera) {
+  const s = Math.min(width / MAP_W, height / MAP_H) * cam.zoom;
+  const vw = width / s;
+  const vh = height / s;
+  const ox = vw >= MAP_W ? (MAP_W - vw) / 2 : Math.max(0, Math.min(MAP_W - vw, cam.x - vw / 2));
+  const oy = vh >= MAP_H ? (MAP_H - vh) / 2 : Math.max(0, Math.min(MAP_H - vh, cam.y - vh / 2));
+  return { s, ox, oy };
+}
 
 interface Props {
   width: number;
   height: number;
-  /** Pixels per tile. Omit to fit the whole city. */
+  /** Pixels per tile, following the player. Omit for the big map. */
   scale?: number;
+  /** Big map only: zoom and pan, read every frame so dragging never re-renders React. */
+  camera?: React.RefObject<MapCamera>;
   onPick?: (poiId: string) => void;
+  /** Stop redrawing (e.g. the HUD minimap while the big map or pause menu covers it). */
+  paused?: boolean;
 }
 
 /** Canvas map drawn every animation frame from a snapshot; React never re-renders for movement. */
-export function Minimap({ width, height, scale, onPick }: Props) {
+export function Minimap({ width, height, scale, camera, onPick, paused = false }: Props) {
   const ref = useRef<HTMLCanvasElement>(null);
   const view = useRef({ ox: 0, oy: 0, s: 1 });
   const fit = useMemo(() => Math.min(width / MAP_W, height / MAP_H), [width, height]);
 
   useEffect(() => {
+    if (paused) return;
     const canvas = ref.current!;
     const ctx = canvas.getContext('2d')!;
     let raf = 0;
     const draw = (time: number) => {
       raf = requestAnimationFrame(draw);
       const snap = bridge.api?.snapshot();
-      const s = scale ?? fit;
       const px = snap ? snap.x / TILE : MAP_W / 2;
       const py = snap ? snap.y / TILE : MAP_H / 2;
-      const vw = width / s;
-      const vh = height / s;
-      const ox = scale ? Math.max(0, Math.min(MAP_W - vw, px - vw / 2)) : (MAP_W - vw) / 2;
-      const oy = scale ? Math.max(0, Math.min(MAP_H - vh, py - vh / 2)) : (MAP_H - vh) / 2;
+      const { s, ox, oy } = scale
+        ? mapView(width, height, { zoom: scale / fit, x: px, y: py })
+        : mapView(width, height, camera?.current ?? { zoom: 1, x: MAP_W / 2, y: MAP_H / 2 });
       view.current = { ox, oy, s };
       const X = (tx: number) => (tx - ox) * s;
       const Y = (ty: number) => (ty - oy) * s;
@@ -131,16 +154,35 @@ export function Minimap({ width, height, scale, onPick }: Props) {
         ctx.stroke();
         ctx.restore();
       }
-      // Building names on the big map
-      if (!scale && s >= 6) {
-        ctx.font = '10px "Pixelify Sans", monospace';
-        ctx.fillStyle = 'rgba(255,255,255,0.55)';
-        for (const b of BUILDINGS) if (b.sign && b.w >= 7) ctx.fillText(b.sign, X(b.x + b.w / 2), Y(b.y + b.h / 2));
+      // Names on the big map, so places are recognisable at any zoom: districts when zoomed out,
+      // buildings when zoomed in, roads and lakes always.
+      if (!scale) {
+        const label = (text: string, x: number, y: number, font: string, fill: string, vertical = false) => {
+          if (x < -120 || y < -120 || x > width + 120 || y > height + 120) return;
+          ctx.save();
+          ctx.translate(x, y);
+          if (vertical) ctx.rotate(-Math.PI / 2);
+          ctx.font = font;
+          ctx.lineWidth = 3;
+          ctx.strokeStyle = 'rgba(20,16,30,0.9)';
+          ctx.strokeText(text, 0, 0);
+          ctx.fillStyle = fill;
+          ctx.fillText(text, 0, 0);
+          ctx.restore();
+        };
+        if (s >= 5) for (const b of BUILDINGS) if (b.sign && b.w >= 5) label(b.sign, X(b.x + b.w / 2), Y(b.y + b.h / 2), `${s >= 9 ? 12 : 10}px "Pixelify Sans", monospace`, 'rgba(255,255,255,0.85)');
+        for (const l of STREET_LABELS)
+          if (s >= 8 || !DISTRICT_NAMES.has(l.name.toLowerCase())) label(l.name, X(l.x), Y(l.y), 'bold 11px "Pixelify Sans", monospace', '#fff3bf', l.vertical);
+        if (s < 8)
+          for (const d of DISTRICTS) {
+            const c = districtCentre(d);
+            label((d.short ?? d.name).toUpperCase(), X(c.x), Y(c.y) - (s >= 5 ? 14 : 0), `bold ${s >= 5 ? 13 : 12}px "Pixelify Sans", monospace`, '#ffd43b');
+          }
       }
     };
     raf = requestAnimationFrame(draw);
     return () => cancelAnimationFrame(raf);
-  }, [width, height, scale, fit]);
+  }, [width, height, scale, fit, camera, paused]);
 
   const onClick = (e: React.MouseEvent<HTMLCanvasElement>) => {
     if (!onPick) return;

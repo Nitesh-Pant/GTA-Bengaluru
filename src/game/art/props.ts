@@ -5,6 +5,9 @@ type Ctx = CanvasRenderingContext2D;
 
 /** Props are anchored at bottom-centre of their canvas. Decals render flat on the ground. */
 export const DECAL_PROPS = new Set<PropKind>(['pothole', 'manhole']);
+/** Props whose texture depends on their text, so each text gets its own texture. */
+export const TEXT_PROPS = new Set<PropKind>(['hoarding', 'roadSign', 'lakeSign']);
+export const propKey = (p: { kind: PropKind; text?: string }) => (TEXT_PROPS.has(p.kind) ? `prop_${p.kind}_${p.text}` : `prop_${p.kind}`);
 
 export function paintProp(kind: PropKind, text?: string): HTMLCanvasElement {
   switch (kind) {
@@ -133,6 +136,30 @@ export function paintProp(kind: PropKind, text?: string): HTMLCanvasElement {
         const top = Math.floor(12 - (shown.length * 6 - 1) / 2) + 1;
         shown.forEach((l, i) => drawText(c, l, Math.floor(24 - textWidth(l) / 2), top + i * 6, i === 0 ? '#fab005' : '#f8f9fa'));
       });
+    case 'roadSign': {
+      // Green municipal street sign on a single post.
+      const label = text ?? 'MAIN ROAD';
+      const w = Math.max(24, textWidth(label) + 8);
+      return draw(w, 22, (c) => {
+        rect(c, Math.floor(w / 2) - 1, 10, 2, 12, '#868e96');
+        rect(c, 0, 0, w, 11, '#f8f9fa');
+        rect(c, 1, 1, w - 2, 9, '#1b7f3b');
+        drawText(c, label, Math.floor((w - textWidth(label)) / 2), 3, '#ffffff');
+      });
+    }
+    case 'lakeSign': {
+      // Wooden lake board on two posts.
+      const label = text ?? 'KERE';
+      const w = textWidth(label) + 12;
+      return draw(w, 22, (c) => {
+        rect(c, 4, 10, 2, 12, '#5c3a1e');
+        rect(c, w - 6, 10, 2, 12, '#5c3a1e');
+        rect(c, 0, 0, w, 13, '#5c3a1e');
+        rect(c, 1, 1, w - 2, 11, '#8d5a2b');
+        rect(c, 1, 1, w - 2, 1, '#a9713d');
+        drawText(c, label, Math.floor((w - textWidth(label)) / 2), 4, '#fff3bf');
+      });
+    }
     case 'bush':
       return draw(16, 12, (c) => {
         ellipse(c, 8, 6, 7, 5, '#2f7d32');
@@ -156,6 +183,20 @@ export function paintProp(kind: PropKind, text?: string): HTMLCanvasElement {
         rect(c, 10, 8, 2, 13, '#495057');
         rect(c, 1, 1, 20, 8, '#fcc419');
         drawText(c, 'AUTO', 4, 3, '#212529');
+      });
+    case 'sandPile':
+      return draw(22, 12, (c) => {
+        ellipse(c, 11, 8, 10, 4, '#c9a26b');
+        ellipse(c, 10, 6, 7, 3, '#d9b77f');
+        ellipse(c, 9, 5, 3, 1.5, '#e9cf9f');
+      });
+    case 'bricks':
+      return draw(16, 10, (c) => {
+        for (let row = 0; row < 3; row++)
+          for (let col = 0; col < 3; col++) {
+            rect(c, 1 + col * 5 - (row % 2) * 2 + 2, 2 + row * 3, 4, 2, '#b4543a');
+            rect(c, 1 + col * 5 - (row % 2) * 2 + 2, 2 + row * 3, 4, 1, '#cf6f53');
+          }
       });
     case 'katte':
       return draw(40, 22, (c) => {

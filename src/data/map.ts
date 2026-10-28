@@ -11,9 +11,14 @@ import { PARKED } from './vehicles';
  *   cols 0-39 | V1 (CMH Rd) 40-43 | 44-87 | V2 (Marathahalli Rd) 88-91 | 92-127
  *   rows 0-15   Indiranagar shops | Tech park   | Marathahalli shops
  *   rows 18-21  ===================== 100 Feet Road (H1) =====================
- *   rows 24-55  Indiranagar homes | Kere Park   | Mall + market
+ *   rows 24-55  Indiranagar homes | Lake park   | Mall + market
  *   rows 58-61  ===================== Outer Ring Road (H2) + metro viaduct ====
  *   rows 64-95  Food & chai lane + gully maidan  | Metro hub plaza
+ *   rows 96-105 MG Road shops     | Koramangala startups | BTM PGs
+ *   rows 108-111 ======= MG Road / 80 Feet Road / 16th Main (H3) ===============
+ *   rows 114-143 Cubbon Park + Chinnaswamy | Koramangala offices | PGs + BTM Lake
+ *   rows 144-161 Vidhana Soudha | Bull Temple + Ganesha pandal | Lalbagh
+ *   rows 164-167 ======= Ambedkar Veedhi / Bull Temple Road / Lalbagh Road (H4) ====
  */
 
 export const G = {
@@ -51,7 +56,7 @@ export function buildGround(): Uint8Array {
   // Tech park plaza and lawns
   fill(44, 0, 44, 16, G.Plaza);
   fill(46, 12, 24, 3, G.Garden);
-  // Kere Park
+  // Ulsoor Lake park
   fill(44, 24, 44, 32, G.Grass);
   fill(44, 31, 44, 2, G.Dirt);
   fill(52, 24, 2, 32, G.Dirt);
@@ -78,15 +83,42 @@ export function buildGround(): Uint8Array {
   fill(0, 38, 38, 2, G.Lane);
   fill(108, 0, 2, 16, G.Lane);
   fill(108, 24, 2, 32, G.Lane);
+  // Cubbon Park: lawns with a running track around the library
+  fill(0, 114, 22, 30, G.Grass);
+  fill(2, 116, 18, 2, G.Dirt);
+  fill(2, 139, 18, 2, G.Dirt);
+  fill(2, 116, 2, 25, G.Dirt);
+  fill(18, 116, 2, 25, G.Dirt);
+  fill(6, 133, 10, 3, G.Garden);
+  // Chinnaswamy Stadium forecourt
+  fill(22, 114, 16, 30, G.Plaza);
+  // Koramangala office lawns
+  fill(46, 125, 40, 2, G.Garden);
+  // BTM Lake
+  fill(96, 126, 30, 17, G.Grass);
+  ellipse(111, 134, 9, 6, G.Dirt, G.Grass);
+  ellipse(111, 134, 7, 4.5, G.Water);
+  // Vidhana Soudha lawns, Basavanagudi temple square, Lalbagh gardens
+  fill(0, 144, 40, 18, G.Grass);
+  fill(3, 160, 34, 2, G.Plaza);
+  fill(46, 148, 40, 14, G.Plaza);
+  fill(94, 144, 34, 18, G.Grass);
+  fill(96, 160, 30, 2, G.Garden);
+  fill(118, 146, 8, 12, G.Garden);
   // Sidewalks along the main roads
   fill(0, 16, MAP_W, 2, G.Sidewalk);
   fill(0, 22, MAP_W, 2, G.Sidewalk);
   fill(0, 56, MAP_W, 2, G.Sidewalk);
   fill(0, 62, MAP_W, 2, G.Sidewalk);
+  fill(0, 106, MAP_W, 2, G.Sidewalk);
+  fill(0, 112, MAP_W, 2, G.Sidewalk);
+  fill(0, 162, MAP_W, 2, G.Sidewalk);
   for (const x of [38, 44, 86, 92]) fill(x, 0, 2, MAP_H, G.Sidewalk);
   // Main roads
   fill(0, 18, MAP_W, 4, G.Road);
   fill(0, 58, MAP_W, 4, G.Road);
+  fill(0, 108, MAP_W, 4, G.Road);
+  fill(0, 164, MAP_W, 4, G.Road);
   fill(40, 0, 4, MAP_H, G.Road);
   fill(88, 0, 4, MAP_H, G.Road);
   return g;
@@ -104,7 +136,13 @@ export type BuildingStyle =
   | 'darshini'
   | 'pub'
   | 'mural'
-  | 'kiosk';
+  | 'kiosk'
+  | 'heritage'
+  | 'stadium'
+  | 'construction'
+  | 'vidhana'
+  | 'pandal'
+  | 'glasshouse';
 
 export interface BuildingDef {
   id: string;
@@ -124,15 +162,15 @@ export interface BuildingDef {
 export const BUILDINGS: BuildingDef[] = [
   // ── Indiranagar, north of 100 Feet Road
   { id: 'house_in1', x: 1, y: 0, w: 7, h: 6, style: 'house', wall: '#e9d8b4', roof: '#b4563e', floors: 1 },
-  { id: 'bunbytes', x: 1, y: 8, w: 8, h: 8, style: 'cafe', sign: 'BUN & BYTES', wall: '#f2efe6', roof: '#8f9aa3', awning: '#2aa198', floors: 2 },
+  { id: 'bunbytes', x: 1, y: 8, w: 8, h: 8, style: 'cafe', sign: 'THIRD WAVE', wall: '#f2efe6', roof: '#8f9aa3', awning: '#2aa198', floors: 2 },
   { id: 'lakshmi_res', x: 10, y: 3, w: 7, h: 13, style: 'apartment', sign: 'LAKSHMI RES.', wall: '#efc6a0', roof: '#9aa0a6', floors: 4 },
   { id: 'house_in2', x: 21, y: 0, w: 7, h: 6, style: 'house', wall: '#cde3d0', roof: '#a9573f', floors: 1 },
-  { id: 'kaapi', x: 21, y: 8, w: 7, h: 8, style: 'cafe', sign: 'FILTER KAAPI', wall: '#f6e3c3', roof: '#8d8f93', awning: '#7b4a2a', floors: 2 },
-  { id: 'brewpub', x: 30, y: 5, w: 8, h: 11, style: 'pub', sign: 'HOPS & HOPPERS', wall: '#6b4b34', roof: '#575c61', awning: '#c58b2a', floors: 2 },
+  { id: 'kaapi', x: 21, y: 8, w: 7, h: 8, style: 'cafe', sign: 'HATTI KAAPI', wall: '#f6e3c3', roof: '#8d8f93', awning: '#7b4a2a', floors: 2 },
+  { id: 'brewpub', x: 30, y: 5, w: 8, h: 11, style: 'pub', sign: 'TOIT', wall: '#6b4b34', roof: '#575c61', awning: '#c58b2a', floors: 2 },
   // ── Indiranagar, south of 100 Feet Road
-  { id: 'sneaker', x: 1, y: 26, w: 8, h: 9, style: 'shop', sign: 'SNEAKER ST', wall: '#f4f4f4', roof: '#8e979e', awning: '#e5533d', floors: 2 },
-  { id: 'cowork', x: 10, y: 25, w: 7, h: 11, style: 'office', sign: 'COWORK HUB', wall: '#bcd3e0', roof: '#7d868c', floors: 3 },
-  { id: 'gym', x: 21, y: 26, w: 8, h: 9, style: 'shop', sign: 'IRON GYM', wall: '#d9d9d9', roof: '#80878d', awning: '#222831', floors: 2 },
+  { id: 'sneaker', x: 1, y: 26, w: 8, h: 9, style: 'shop', sign: 'PUMA', wall: '#f4f4f4', roof: '#8e979e', awning: '#e5533d', floors: 2 },
+  { id: 'cowork', x: 10, y: 25, w: 7, h: 11, style: 'office', sign: 'WEWORK', wall: '#bcd3e0', roof: '#7d868c', floors: 3 },
+  { id: 'gym', x: 21, y: 26, w: 8, h: 9, style: 'shop', sign: 'CULT.FIT', wall: '#d9d9d9', roof: '#80878d', awning: '#222831', floors: 2 },
   { id: 'apts_in', x: 30, y: 24, w: 8, h: 12, style: 'apartment', sign: 'SKYVIEW APTS', wall: '#f5d48c', roof: '#9aa0a6', floors: 4 },
   { id: 'house_in3', x: 1, y: 41, w: 7, h: 6, style: 'house', wall: '#f1c9c9', roof: '#a14a3a', floors: 1 },
   { id: 'house_in4', x: 1, y: 49, w: 7, h: 6, style: 'house', wall: '#dfe7f0', roof: '#94523e', floors: 1 },
@@ -143,38 +181,81 @@ export const BUILDINGS: BuildingDef[] = [
   { id: 'metro_in', x: 27, y: 49, w: 10, h: 7, style: 'metro', sign: 'INDIRANAGAR METRO', wall: '#d7d4dd', roof: '#7a5aa6', floors: 2 },
   { id: 'house_in6', x: 9, y: 50, w: 7, h: 6, style: 'house', wall: '#f0e0b0', roof: '#a0553a', floors: 1 },
   // ── Tech park
-  { id: 'techpark', x: 47, y: 1, w: 22, h: 11, style: 'office', sign: 'BYTEWHITE TECH PARK', wall: '#9cc3d9', roof: '#6f7b84', floors: 4 },
-  { id: 'techpark_b', x: 72, y: 1, w: 13, h: 7, style: 'office', sign: 'BLOCK B', wall: '#a8d0c4', roof: '#6f7b84', floors: 3 },
+  // On offices, `awning` and `trim` colour the sign board and its lettering.
+  { id: 'goggle', x: 47, y: 1, w: 7, h: 11, style: 'office', sign: 'GOOGLE', wall: '#e9ecef', roof: '#6f7b84', awning: '#ffffff', trim: '#4285f4', floors: 4 },
+  { id: 'amazoom', x: 55, y: 1, w: 7, h: 11, style: 'office', sign: 'AMAZON', wall: '#c3ced8', roof: '#6f7b84', awning: '#232f3e', trim: '#ff9900', floors: 4 },
+  { id: 'ewhy', x: 63, y: 1, w: 7, h: 11, style: 'office', sign: 'EY', wall: '#d5d5d0', roof: '#6f7b84', awning: '#ffe600', trim: '#2e2e38', floors: 4 },
+  { id: 'microsloth', x: 72, y: 1, w: 13, h: 7, style: 'office', sign: 'MICROSOFT', wall: '#a8d0c4', roof: '#6f7b84', awning: '#00a4ef', trim: '#ffffff', floors: 3 },
+  // ── Ulsoor Lake
+  { id: 'metro_kp', x: 56, y: 50, w: 7, h: 6, style: 'metro', sign: 'HALASURU METRO', wall: '#d7d4dd', roof: '#7a5aa6', floors: 2 },
   // ── Marathahalli
   { id: 'house_mh1', x: 95, y: 0, w: 7, h: 6, style: 'house', wall: '#d8e8f0', roof: '#a35a3f', floors: 1 },
   { id: 'mobile', x: 94, y: 8, w: 7, h: 8, style: 'shop', sign: 'MOBILE BAZAAR', wall: '#ffe066', roof: '#8c8c8c', awning: '#1d70b8', floors: 2 },
-  { id: 'meals', x: 101, y: 8, w: 6, h: 8, style: 'shop', sign: 'ANDHRA MEALS', wall: '#ffd8a8', roof: '#8c8c8c', awning: '#2b8a3e', floors: 2 },
+  { id: 'meals', x: 101, y: 8, w: 6, h: 8, style: 'shop', sign: 'NAGARJUNA', wall: '#ffd8a8', roof: '#8c8c8c', awning: '#2b8a3e', floors: 2 },
   { id: 'pg', x: 111, y: 2, w: 8, h: 14, style: 'apartment', sign: 'GENTS PG', wall: '#c9d6df', roof: '#8c9399', floors: 4 },
-  { id: 'sweets', x: 120, y: 8, w: 8, h: 8, style: 'shop', sign: 'SWEETS & BAKES', wall: '#ffd1dc', roof: '#8c8c8c', awning: '#c2185b', floors: 2 },
-  { id: 'mall', x: 94, y: 25, w: 13, h: 12, style: 'mall', sign: 'SWALPA MALL', wall: '#b9c8d6', roof: '#6c757d', floors: 3 },
-  { id: 'apts_mh', x: 111, y: 24, w: 8, h: 12, style: 'apartment', sign: 'PRESTIGE-ISH', wall: '#e8d5b7', roof: '#9aa0a6', floors: 4 },
+  { id: 'sweets', x: 120, y: 8, w: 8, h: 8, style: 'shop', sign: 'ANAND SWEETS', wall: '#ffd1dc', roof: '#8c8c8c', awning: '#c2185b', floors: 2 },
+  { id: 'mall', x: 94, y: 25, w: 13, h: 12, style: 'mall', sign: 'PHOENIX MARKETCITY', wall: '#b9c8d6', roof: '#6c757d', floors: 3 },
+  { id: 'apts_mh', x: 111, y: 24, w: 8, h: 12, style: 'apartment', sign: 'PRESTIGE', wall: '#e8d5b7', roof: '#9aa0a6', floors: 4 },
   { id: 'apts_mh2', x: 120, y: 25, w: 8, h: 10, style: 'apartment', wall: '#d0e1f9', roof: '#9aa0a6', floors: 3 },
   { id: 'hardware', x: 94, y: 44, w: 6, h: 8, style: 'shop', sign: 'HARDWARE', wall: '#e0e0e0', roof: '#8c8c8c', awning: '#f08c00', floors: 2 },
   { id: 'tailor', x: 102, y: 44, w: 6, h: 8, style: 'shop', sign: 'TAILOR', wall: '#e6fcf5', roof: '#8c8c8c', awning: '#7048e8', floors: 2 },
   { id: 'house_mh2', x: 111, y: 48, w: 7, h: 7, style: 'house', wall: '#fbe3c3', roof: '#a35a3f', floors: 1 },
   { id: 'house_mh3', x: 120, y: 48, w: 7, h: 7, style: 'house', wall: '#d3f9d8', roof: '#9c4d38', floors: 1 },
   // ── Food & chai lane
-  { id: 'military', x: 1, y: 65, w: 9, h: 9, style: 'shop', sign: 'MILITARY HOTEL', wall: '#ffe8cc', roof: '#8c8c8c', awning: '#c92a2a', floors: 2 },
+  { id: 'military', x: 1, y: 65, w: 9, h: 9, style: 'shop', sign: 'SHIVAJI MILITARY HOTEL', wall: '#ffe8cc', roof: '#8c8c8c', awning: '#c92a2a', floors: 2 },
   { id: 'ragi', x: 11, y: 66, w: 7, h: 8, style: 'shop', sign: 'RAGI MUDDE', wall: '#f3d9b1', roof: '#8c8c8c', awning: '#5c940d', floors: 1 },
   { id: 'paan', x: 19, y: 69, w: 4, h: 5, style: 'kiosk', sign: 'PAAN', wall: '#69db7c', roof: '#c92a2a' },
   { id: 'house_fl1', x: 24, y: 65, w: 6, h: 9, style: 'house', wall: '#e5dbff', roof: '#a0553a', floors: 2 },
   { id: 'house_fl2', x: 31, y: 65, w: 6, h: 9, style: 'house', wall: '#fff3bf', roof: '#9c4d38', floors: 2 },
-  { id: 'darshini', x: 47, y: 64, w: 12, h: 10, style: 'darshini', sign: 'SRI UDUPI DARSHINI', wall: '#fff4e0', roof: '#8a8d91', awning: '#e8590c', floors: 2 },
+  { id: 'darshini', x: 47, y: 64, w: 12, h: 10, style: 'darshini', sign: 'RAMESHWARAM CAFE', wall: '#fff4e0', roof: '#8a8d91', awning: '#e8590c', floors: 2 },
   { id: 'bakery', x: 61, y: 66, w: 8, h: 8, style: 'shop', sign: 'IYENGAR BAKERY', wall: '#ffe3e3', roof: '#8c8c8c', awning: '#d6336c', floors: 1 },
   { id: 'juice', x: 71, y: 67, w: 6, h: 7, style: 'kiosk', sign: 'JUICE JN.', wall: '#ffec99', roof: '#37b24d' },
-  { id: 'mysorepak', x: 79, y: 66, w: 7, h: 8, style: 'shop', sign: 'MYSORE PAK', wall: '#fff0f6', roof: '#8c8c8c', awning: '#f59f00', floors: 1 },
+  { id: 'mysorepak', x: 79, y: 66, w: 7, h: 8, style: 'shop', sign: 'SRI KRISHNA SWEETS', wall: '#fff0f6', roof: '#8c8c8c', awning: '#f59f00', floors: 1 },
   { id: 'house_fl3', x: 26, y: 79, w: 6, h: 6, style: 'house', wall: '#d0ebff', roof: '#a35a3f', floors: 1 },
-  { id: 'house_fl4', x: 47, y: 85, w: 7, h: 8, style: 'house', wall: '#ffe066', roof: '#9c4d38', floors: 2 },
+  { id: 'site_fl', x: 47, y: 85, w: 7, h: 8, style: 'construction', sign: 'WORK IN PROGRESS', wall: '#9a9a96', roof: '#7a6650', floors: 3 },
   { id: 'temple', x: 63, y: 84, w: 9, h: 10, style: 'temple', sign: 'GANESHA GUDI', wall: '#fff3bf', roof: '#e8590c' },
   { id: 'bennedose', x: 78, y: 87, w: 7, h: 7, style: 'shop', sign: 'BENNE DOSE', wall: '#fff9db', roof: '#7a7a7a', awning: '#fab005', floors: 1 },
   // ── Metro hub
-  { id: 'metro_hub', x: 97, y: 64, w: 20, h: 8, style: 'metro', sign: 'CENTRAL METRO HUB', wall: '#dcd6e8', roof: '#7a5aa6', floors: 2 },
-  { id: 'foodcourt', x: 118, y: 84, w: 9, h: 8, style: 'shop', sign: 'HUB FOOD COURT', wall: '#e9ecef', roof: '#868e96', awning: '#1098ad', floors: 1 },
+  { id: 'metro_hub', x: 97, y: 64, w: 20, h: 8, style: 'metro', sign: 'KR PURAM METRO', wall: '#dcd6e8', roof: '#7a5aa6', floors: 2 },
+  { id: 'foodcourt', x: 118, y: 84, w: 9, h: 8, style: 'shop', sign: 'FOOD COURT', wall: '#e9ecef', roof: '#868e96', awning: '#1098ad', floors: 1 },
+  // ── MG Road, north side
+  { id: 'higginbothams', x: 1, y: 98, w: 8, h: 8, style: 'shop', sign: 'HIGGINBOTHAMS', wall: '#f1e3c6', roof: '#8c8c8c', awning: '#7b2d26', floors: 2 },
+  { id: 'koshys', x: 10, y: 99, w: 7, h: 7, style: 'cafe', sign: "KOSHY'S", wall: '#fff3e0', roof: '#8c8c8c', awning: '#2b5d34', floors: 2 },
+  { id: 'blossom', x: 18, y: 98, w: 8, h: 8, style: 'shop', sign: 'BLOSSOM BOOKS', wall: '#e7f5ff', roof: '#8c8c8c', awning: '#1971c2', floors: 2 },
+  { id: 'pecos', x: 27, y: 99, w: 9, h: 7, style: 'pub', sign: 'PECOS', wall: '#5c3d2e', roof: '#575c61', awning: '#c58b2a', floors: 2 },
+  // ── Cubbon Park and Chinnaswamy Stadium
+  { id: 'library', x: 5, y: 122, w: 12, h: 10, style: 'heritage', sign: 'STATE CENTRAL LIBRARY', wall: '#b5432f', roof: '#7a2e22', floors: 2 },
+  { id: 'stadium', x: 23, y: 116, w: 15, h: 15, style: 'stadium', sign: 'M. CHINNASWAMY STADIUM', wall: '#ced4da', roof: '#868e96' },
+  { id: 'tickets', x: 24, y: 135, w: 4, h: 4, style: 'kiosk', sign: 'TICKETS', wall: '#ffd43b', roof: '#d6202a' },
+  // ── Koramangala: startups on 80 Feet Road, bigger offices behind (small and medium)
+  { id: 'flipkart', x: 46, y: 97, w: 9, h: 9, style: 'office', sign: 'FLIPKART', wall: '#dbe4ff', roof: '#6f7b84', awning: '#2874f0', trim: '#ffe500', floors: 4 },
+  { id: 'swiggy', x: 56, y: 99, w: 6, h: 7, style: 'office', sign: 'SWIGGY', wall: '#fff4e6', roof: '#6f7b84', awning: '#fc8019', trim: '#ffffff', floors: 3 },
+  { id: 'razorpay', x: 63, y: 99, w: 6, h: 7, style: 'office', sign: 'RAZORPAY', wall: '#e7f0ff', roof: '#6f7b84', awning: '#072654', trim: '#3395ff', floors: 3 },
+  { id: 'cred', x: 70, y: 99, w: 5, h: 7, style: 'office', sign: 'CRED', wall: '#c9c9c9', roof: '#495057', awning: '#000000', trim: '#ffffff', floors: 3 },
+  { id: 'social', x: 76, y: 98, w: 10, h: 8, style: 'pub', sign: 'SOCIAL', wall: '#3b3b3b', roof: '#575c61', awning: '#e03131', floors: 2 },
+  { id: 'infosys', x: 46, y: 114, w: 10, h: 11, style: 'office', sign: 'INFOSYS', wall: '#d0ebff', roof: '#6f7b84', awning: '#007cc3', trim: '#ffffff', floors: 4 },
+  { id: 'wipro', x: 58, y: 116, w: 6, h: 9, style: 'office', sign: 'WIPRO', wall: '#f1f3f5', roof: '#6f7b84', awning: '#ffffff', trim: '#341c53', floors: 3 },
+  { id: 'accenture', x: 66, y: 114, w: 10, h: 11, style: 'office', sign: 'ACCENTURE', wall: '#e5dbff', roof: '#6f7b84', awning: '#a100ff', trim: '#ffffff', floors: 4 },
+  { id: 'ibm', x: 78, y: 117, w: 7, h: 8, style: 'office', sign: 'IBM', wall: '#dee2e6', roof: '#6f7b84', awning: '#1f70c1', trim: '#ffffff', floors: 3 },
+  { id: 'truffles', x: 46, y: 130, w: 8, h: 7, style: 'cafe', sign: 'TRUFFLES', wall: '#fff5f5', roof: '#8c8c8c', awning: '#c92a2a', floors: 2 },
+  { id: 'springboard', x: 56, y: 131, w: 6, h: 6, style: 'office', sign: '91SPRINGBOARD', wall: '#e3fafc', roof: '#6f7b84', awning: '#0b7285', trim: '#ffffff', floors: 2 },
+  { id: 'nexus', x: 64, y: 128, w: 14, h: 12, style: 'mall', sign: 'NEXUS MALL', wall: '#c5d3e0', roof: '#6c757d', floors: 3 },
+  // Startup Street: small startup offices
+  { id: 'zerodha', x: 79, y: 128, w: 6, h: 6, style: 'office', sign: 'ZERODHA', wall: '#e7f5ff', roof: '#6f7b84', awning: '#387ed1', trim: '#ffffff', floors: 2 },
+  { id: 'zepto', x: 79, y: 136, w: 6, h: 6, style: 'office', sign: 'ZEPTO', wall: '#f3e8ff', roof: '#6f7b84', awning: '#5b1e8c', trim: '#ffde59', floors: 2 },
+  // ── BTM Layout: PG capital
+  { id: 'pg_sai', x: 94, y: 97, w: 8, h: 9, style: 'apartment', sign: 'SRI SAI GENTS PG', wall: '#c9d6df', roof: '#8c9399', floors: 4 },
+  { id: 'pg_ladies', x: 103, y: 97, w: 8, h: 9, style: 'apartment', sign: 'LADIES PG', wall: '#ffdeeb', roof: '#8c9399', floors: 4 },
+  { id: 'andhramess', x: 112, y: 99, w: 6, h: 7, style: 'shop', sign: 'ANDHRA MESS', wall: '#fff9db', roof: '#8c8c8c', awning: '#2b8a3e', floors: 1 },
+  { id: 'pg_comfort', x: 119, y: 97, w: 8, h: 9, style: 'apartment', sign: 'COMFORT PG', wall: '#e9fac8', roof: '#8c9399', floors: 4 },
+  { id: 'pg_lakshmi', x: 94, y: 115, w: 8, h: 9, style: 'apartment', sign: 'SRI LAKSHMI PG', wall: '#fff3bf', roof: '#8c9399', floors: 4 },
+  { id: 'pg_royal', x: 104, y: 115, w: 8, h: 9, style: 'apartment', sign: 'ROYAL GENTS PG', wall: '#d0ebff', roof: '#8c9399', floors: 4 },
+  { id: 'pg_greenview', x: 114, y: 115, w: 9, h: 9, style: 'apartment', sign: 'GREEN VIEW LADIES PG', wall: '#d3f9d8', roof: '#8c9399', floors: 4 },
+  // ── Vidhana Soudha, Basavanagudi and Lalbagh, along Ambedkar Veedhi
+  { id: 'vidhana', x: 5, y: 146, w: 30, h: 14, style: 'vidhana', sign: 'VIDHANA SOUDHA', wall: '#e9e4d8', roof: '#b8b2a4' },
+  { id: 'bulltemple', x: 47, y: 151, w: 10, h: 10, style: 'temple', sign: 'DODDA BASAVANA GUDI', wall: '#f4ecd8', roof: '#e8590c' },
+  { id: 'pandal', x: 62, y: 152, w: 14, h: 9, style: 'pandal', sign: 'SRI VINAYAKA SEVA SAMITHI', wall: '#ffd43b', roof: '#e64980' },
+  { id: 'glasshouse', x: 100, y: 148, w: 16, h: 11, style: 'glasshouse', sign: 'LALBAGH GLASS HOUSE', wall: '#d0ebff', roof: '#a5d8ff' },
 ];
 
 export type PropKind =
@@ -202,7 +283,11 @@ export type PropKind =
   | 'bush'
   | 'counter'
   | 'autoSign'
-  | 'katte';
+  | 'katte'
+  | 'roadSign'
+  | 'lakeSign'
+  | 'sandPile'
+  | 'bricks';
 
 export interface PropDef {
   kind: PropKind;
@@ -236,6 +321,10 @@ export const PROP_SOLID: Partial<Record<PropKind, { w: number; h: number }>> = {
   counter: { w: 20, h: 6 },
   autoSign: { w: 3, h: 3 },
   katte: { w: 36, h: 18 },
+  roadSign: { w: 3, h: 3 },
+  lakeSign: { w: 76, h: 3 },
+  sandPile: { w: 18, h: 6 },
+  bricks: { w: 14, h: 5 },
 };
 
 const row = (kind: PropKind, y: number, xs: number[]): PropDef[] => xs.map((x) => ({ kind, x, y }));
@@ -252,7 +341,7 @@ export const PROPS: PropDef[] = [
   ...row('treePink', 23.6, [113, 124]),
   ...row('lamp', 17.8, [100, 120]),
   // Outer Ring Road
-  ...row('tree', 56.5, [3, 12, 22, 48, 58, 80, 114, 124]),
+  ...row('tree', 56.5, [3, 12, 22, 48, 54.5, 80, 114, 124]),
   ...row('treeRed', 63.6, [3, 22, 34, 50, 70, 82]),
   ...row('lamp', 57.8, [8, 18, 64, 74, 120]),
   // Vertical roads
@@ -303,12 +392,12 @@ export const PROPS: PropDef[] = [
   { kind: 'palm', x: 70.6, y: 10 },
   { kind: 'bike', x: 58, y: 13.4 },
   { kind: 'bike', x: 60, y: 13.4 },
-  // Kere Park
+  // Ulsoor Lake park
   ...row('tree', 26, [47, 57, 63, 74, 84]),
   ...row('treePink', 29.4, [49, 60, 70, 80]),
   ...row('tree', 36, [47, 49, 56, 82, 85]),
-  ...row('treeRed', 54.6, [47, 56, 62, 70]),
-  ...row('tree', 49, [48, 57, 85]),
+  ...row('treeRed', 54.6, [47, 54, 70]),
+  ...row('tree', 49, [48, 85]),
   ...row('bench', 34.6, [60, 66, 72]),
   ...row('bench', 53.4, [65, 72]),
   { kind: 'bench', x: 80, y: 52.6 },
@@ -396,19 +485,122 @@ export const PROPS: PropDef[] = [
   { kind: 'lamp', x: 100, y: 77 },
   { kind: 'lamp', x: 112, y: 82 },
   { kind: 'hoarding', x: 123, y: 80.2, text: 'NAMMA CITY' },
+  // Street name boards (see STREET_LABELS for the big map) and the lake board
+  { kind: 'roadSign', x: 33, y: 17.85, text: '100 FEET ROAD' },
+  { kind: 'roadSign', x: 66, y: 17.85, text: '100 FEET ROAD' },
+  { kind: 'roadSign', x: 116, y: 23.75, text: '100 FEET ROAD' },
+  { kind: 'roadSign', x: 15, y: 57.85, text: 'OUTER RING ROAD' },
+  { kind: 'roadSign', x: 84, y: 57.85, text: 'OUTER RING ROAD' },
+  { kind: 'roadSign', x: 98, y: 57.85, text: 'OUTER RING ROAD' },
+  { kind: 'roadSign', x: 38.9, y: 27, text: 'CMH ROAD' },
+  { kind: 'roadSign', x: 38.9, y: 82, text: 'CMH ROAD' },
+  { kind: 'roadSign', x: 92.9, y: 41, text: 'OLD AIRPORT ROAD' },
+  { kind: 'roadSign', x: 86.9, y: 80, text: 'OLD AIRPORT ROAD' },
+  { kind: 'roadSign', x: 20.4, y: 46.8, text: '12TH MAIN' },
+  { kind: 'lakeSign', x: 68.5, y: 36.4, text: 'ULSOOR KERE' },
+  // Building site south of the darshini
+  { kind: 'sandPile', x: 56.2, y: 89.8 },
+  { kind: 'bricks', x: 56.4, y: 92.4 },
+  // Walk-in drive at the tech park
+  { kind: 'hoarding', x: 80.4, y: 9.4, text: 'WALK-IN DRIVE TODAY' },
+  { kind: 'table', x: 83.5, y: 9.9 },
+  // ── MG Road / 80 Feet Road / 16th Main (H3)
+  ...row('lamp', 107.8, [6, 24, 34, 52, 74, 98, 118]),
+  ...row('tree', 106.5, [9.5, 17.5, 26.5, 55.5, 62.5, 69.5, 102.5, 111.5, 118.5]),
+  ...row('treePink', 113.6, [5, 30, 50, 70, 84, 100, 124]),
+  ...row('lamp', 113.7, [14, 40.5, 62, 96, 110]),
+  { kind: 'roadSign', x: 12, y: 107.85, text: 'MG ROAD' },
+  { kind: 'roadSign', x: 66, y: 107.85, text: '80 FEET ROAD' },
+  { kind: 'roadSign', x: 108, y: 107.85, text: '16TH MAIN ROAD' },
+  { kind: 'roadSign', x: 38.9, y: 100, text: 'CMH ROAD' },
+  { kind: 'roadSign', x: 92.9, y: 125, text: 'OLD AIRPORT ROAD' },
+  // Cubbon Park
+  ...row('tree', 115.2, [1, 6, 11, 16, 21]),
+  ...row('treeRed', 120, [6, 10, 14]),
+  ...row('tree', 142.6, [1, 7, 13, 21]),
+  ...row('palm', 137.5, [5, 17]),
+  ...row('bench', 118.4, [8, 13]),
+  ...row('bench', 141.6, [8, 13]),
+  { kind: 'tree', x: 1, y: 125 },
+  { kind: 'tree', x: 1, y: 133 },
+  { kind: 'treePink', x: 21, y: 128 },
+  { kind: 'treePink', x: 21, y: 136 },
+  { kind: 'lamp', x: 4.6, y: 128 },
+  { kind: 'lamp', x: 17.4, y: 128 },
+  { kind: 'hoarding', x: 30, y: 113.8, text: 'CUBBON PARK' },
+  // Chinnaswamy forecourt
+  { kind: 'hoarding', x: 34, y: 134.2, text: 'EE SALA CUP NAMDE' },
+  ...row('flowerCart', 141.4, [26]),
+  { kind: 'bin', x: 36.5, y: 138 },
+  // Koramangala
+  ...row('bench', 126.6, [50, 60, 72, 82]),
+  { kind: 'table', x: 47.4, y: 138.6 },
+  { kind: 'table', x: 52.6, y: 138.6 },
+  { kind: 'bike', x: 57, y: 106.6 },
+  { kind: 'bike', x: 58.5, y: 106.6 },
+  { kind: 'hoarding', x: 60.5, y: 142.8, text: 'STARTUP STREET' },
+  // BTM Layout
+  { kind: 'bike', x: 96, y: 106.6 },
+  { kind: 'bike', x: 97.5, y: 106.6 },
+  { kind: 'bike', x: 124, y: 106.6 },
+  { kind: 'lakeSign', x: 111, y: 127.4, text: 'BTM LAKE' },
+  ...row('tree', 142.6, [98, 104, 118, 124]),
+  ...row('bench', 141.4, [108, 114]),
+  // Ambedkar Veedhi strip
+  ...row('lamp', 163.7, [8, 30, 52, 74, 98, 120]),
+  ...row('tree', 162.5, [2.5, 37.5, 45.5, 86.5, 95.5, 126]),
+  ...row('palm', 159.5, [3, 37]),
+  ...row('tree', 145.5, [2, 10, 18, 26, 34, 96, 104, 112, 120, 126]),
+  ...row('treePink', 152, [96, 120, 124]),
+  ...row('bench', 158.6, [98, 118]),
+  { kind: 'roadSign', x: 14, y: 163.85, text: 'AMBEDKAR VEEDHI' },
+  { kind: 'roadSign', x: 60, y: 163.85, text: 'BULL TEMPLE ROAD' },
+  { kind: 'roadSign', x: 108, y: 163.85, text: 'LALBAGH ROAD' },
+  { kind: 'hoarding', x: 80, y: 150.8, text: 'GANESHA HABBA' },
+  // BMTC bus shelters (see BUS_STOPS)
+  ...[28, 106].map((x): PropDef => ({ kind: 'busStop', x, y: 23.95 })),
+  { kind: 'busStop', x: 28, y: 63.95 },
+  ...[20, 66, 116].map((x): PropDef => ({ kind: 'busStop', x, y: 113.95 })),
+];
+
+/** Road and lake names drawn on the big map, in tiles. `vertical` labels run along north-south roads. */
+export const STREET_LABELS: Array<{ name: string; x: number; y: number; vertical?: boolean }> = [
+  { name: '100 Feet Road', x: 20, y: 20 },
+  { name: '100 Feet Road', x: 66, y: 20 },
+  { name: '100 Feet Road', x: 110, y: 20 },
+  { name: 'Outer Ring Road', x: 20, y: 60 },
+  { name: 'Outer Ring Road', x: 66, y: 60 },
+  { name: 'Outer Ring Road', x: 110, y: 60 },
+  { name: 'CMH Road', x: 42, y: 40, vertical: true },
+  { name: 'CMH Road', x: 42, y: 80, vertical: true },
+  { name: 'Old Airport Road', x: 90, y: 40, vertical: true },
+  { name: 'Old Airport Road', x: 90, y: 80, vertical: true },
+  { name: '12th Main', x: 19, y: 46, vertical: true },
+  { name: 'Ulsoor Lake', x: 68.5, y: 44.5 },
+  { name: 'MG Road', x: 20, y: 110 },
+  { name: '80 Feet Road', x: 66, y: 110 },
+  { name: '16th Main Road', x: 110, y: 110 },
+  { name: 'Cubbon Park', x: 11, y: 117 },
+  { name: 'BTM Lake', x: 111, y: 134 },
+  { name: 'Startup Street', x: 82, y: 143 },
+  { name: 'Ambedkar Veedhi', x: 20, y: 166 },
+  { name: 'Bull Temple Road', x: 66, y: 166 },
+  { name: 'Lalbagh Road', x: 110, y: 166 },
 ];
 
 /** Districts used for the area label, events and dialogue context. First match wins. */
 export interface District {
   id: string;
   name: string;
+  /** Shorter name for the zoomed-out city map, where neighbours are close. */
+  short?: string;
   tagline: string;
   rects: Rect[];
 }
 
 export const DISTRICTS: District[] = [
   { id: 'indiranagar', name: 'Indiranagar', tagline: 'Cafes, sneakers and 100 Feet Road', rects: [{ x: 0, y: 0, w: 44, h: 58 }] },
-  { id: 'techpark', name: 'ByteWhite Tech Park', tagline: 'Standups, sprints and smoke breaks', rects: [{ x: 44, y: 0, w: 44, h: 16 }] },
+  { id: 'techpark', name: 'Bagmane Tech Park', tagline: 'Standups, sprints and smoke breaks', rects: [{ x: 44, y: 0, w: 44, h: 16 }] },
   {
     id: 'marathahalli',
     name: 'Marathahalli Junction',
@@ -418,10 +610,21 @@ export const DISTRICTS: District[] = [
       { x: 44, y: 16, w: 44, h: 8 },
     ],
   },
-  { id: 'park', name: 'Kere Park', tagline: 'Lakeside walks and morning uncles', rects: [{ x: 44, y: 24, w: 44, h: 34 }] },
-  { id: 'foodlane', name: 'Food & Chai Lane', tagline: 'Benne, bisi bisi and bun maska', rects: [{ x: 0, y: 58, w: 88, h: 38 }] },
-  { id: 'metrohub', name: 'Central Metro Hub', tagline: 'Purple line, autos and flower sellers', rects: [{ x: 88, y: 58, w: 40, h: 38 }] },
+  { id: 'park', name: 'Ulsoor Lake', tagline: 'Boating, lakeside walks and morning uncles', rects: [{ x: 44, y: 24, w: 44, h: 34 }] },
+  { id: 'foodlane', name: 'Thippasandra', tagline: 'Benne, bisi bisi and bun maska', rects: [{ x: 0, y: 58, w: 88, h: 38 }] },
+  { id: 'metrohub', name: 'KR Puram', tagline: 'Purple line, autos and flower sellers', rects: [{ x: 88, y: 58, w: 40, h: 38 }] },
+  { id: 'mgroad', name: 'MG Road', tagline: 'Bookshops, old pubs and the boulevard', rects: [{ x: 0, y: 96, w: 44, h: 18 }] },
+  { id: 'cubbon', name: 'Cubbon Park', tagline: 'Bamboo, joggers and the old library', rects: [{ x: 0, y: 114, w: 22, h: 30 }] },
+  { id: 'stadium', name: 'Chinnaswamy Stadium', short: 'Chinnaswamy', tagline: 'Ee sala cup namde!', rects: [{ x: 22, y: 114, w: 22, h: 30 }] },
+  { id: 'koramangala', name: 'Koramangala', tagline: 'Startups, SOCIAL and 80 Feet Road', rects: [{ x: 44, y: 96, w: 44, h: 48 }] },
+  { id: 'btm', name: 'BTM Layout', tagline: 'PG capital of Bengaluru', rects: [{ x: 88, y: 96, w: 40, h: 48 }] },
+  { id: 'vidhana', name: 'Vidhana Soudha', short: 'Vidhana Soudha', tagline: "Government work is God's work", rects: [{ x: 0, y: 144, w: 44, h: 24 }] },
+  { id: 'basavanagudi', name: 'Basavanagudi', tagline: 'Bull Temple, pandals and kadlekai', rects: [{ x: 44, y: 144, w: 44, h: 24 }] },
+  { id: 'lalbagh', name: 'Lalbagh', tagline: 'Glass House and flower beds', rects: [{ x: 88, y: 144, w: 40, h: 24 }] },
 ];
+
+/** Middle of a district's main area, in tiles. */
+export const districtCentre = (d: District) => ({ x: d.rects[0].x + d.rects[0].w / 2, y: d.rects[0].y + d.rects[0].h / 2 });
 
 export function districtAt(px: number, py: number): District {
   const tx = px / TILE;
@@ -443,7 +646,7 @@ export interface Crossing {
 export const CROSSINGS: Crossing[] = (() => {
   const out: Crossing[] = [];
   const vRoads = [40, 88];
-  const hRoads = [18, 58];
+  const hRoads = [18, 58, 108, 164];
   for (const vx of vRoads)
     for (const hy of hRoads) {
       out.push({ x: vx, y: hy - 2, w: 4, h: 2, dir: 'h' });

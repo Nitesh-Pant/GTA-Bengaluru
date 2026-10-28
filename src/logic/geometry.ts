@@ -29,6 +29,9 @@ export function angleDelta(a: number, b: number): number {
 }
 
 /** True if a box centred on (x, y) with the given half-extents hits any solid rect. */
+/** The value in `values` closest to `v`. */
+export const nearest = (values: readonly number[], v: number) => values.reduce((best, a) => (Math.abs(a - v) < Math.abs(best - v) ? a : best));
+
 export function boxHitsSolids(x: number, y: number, halfW: number, halfH: number, solids: readonly Rect[]): boolean {
   const box = { x: x - halfW, y: y - halfH, w: halfW * 2, h: halfH * 2 };
   return solids.some((s) => rectsOverlap(box, s));

@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { quitToMenu } from '../session';
 import { bridge } from '../game/bridge';
+import { PERIODS } from '../logic/dayClock';
 import type { ChatterLevel, Settings } from '../logic/save';
 import { uiStore, useUi } from '../store/uiStore';
 
@@ -17,6 +18,8 @@ function Slider({ label, value, onChange }: { label: string; value: number; onCh
 export function PauseMenu() {
   const panel = useUi((s) => s.panel);
   const settings = useUi((s) => s.settings);
+  const player = useUi((s) => s.player);
+  const period = useUi((s) => s.clock?.period);
   const [confirm, setConfirm] = useState(false);
   if (panel !== 'pause') return null;
   const set = (patch: Partial<Settings>) => bridge.api?.updateSettings(patch);
@@ -25,7 +28,7 @@ export function PauseMenu() {
     uiStore.set({ panel: null });
     bridge.api?.setPaused(false);
   };
-  const open = (p: 'journal' | 'map') => {
+  const open = (p: 'journal' | 'map' | 'character' | 'tour') => {
     bridge.api?.setPaused(false);
     uiStore.set({ panel: p });
   };
@@ -43,11 +46,39 @@ export function PauseMenu() {
           <button className="btn" onClick={() => open('map')}>
             Map <kbd>M</kbd>
           </button>
+          <button className="btn" onClick={() => open('tour')}>
+            How to play
+          </button>
+        </div>
+        <h3>Character &amp; time</h3>
+        <div className="setting">
+          <span>
+            You: {player.name || 'No name'} · {player.gender === 'f' ? 'Female' : 'Male'}
+          </span>
+          <button className="btn" onClick={() => open('character')}>
+            Change character
+          </button>
+        </div>
+        <div className="setting" role="group" aria-label="Time of day">
+          <span>Time of day</span>
+          <span className="time-choices">
+            {PERIODS.map((t) => (
+              <button key={t.id} className={period === t.id ? 'btn btn-on' : 'btn'} aria-pressed={period === t.id} onClick={() => bridge.api?.setTime(t.jumpTo)}>
+                {t.label}
+              </button>
+            ))}
+          </span>
         </div>
         <h3>Settings</h3>
+        <label className="setting">
+          <span>Mute all sound</span>
+          <input type="checkbox" checked={settings.muted} onChange={(e) => set({ muted: e.target.checked })} />
+        </label>
         <Slider label="Master volume" value={settings.masterVolume} onChange={(v) => set({ masterVolume: v })} />
         <Slider label="Sound effects" value={settings.sfxVolume} onChange={(v) => set({ sfxVolume: v })} />
         <Slider label="City ambience" value={settings.ambienceVolume} onChange={(v) => set({ ambienceVolume: v })} />
+        <Slider label="Voices" value={settings.voiceVolume} onChange={(v) => set({ voiceVolume: v })} />
+        <Slider label="Music" value={settings.musicVolume} onChange={(v) => set({ musicVolume: v })} />
         <label className="setting">
           <span>Street chatter</span>
           <select value={settings.chatter} onChange={(e) => set({ chatter: e.target.value as ChatterLevel })}>

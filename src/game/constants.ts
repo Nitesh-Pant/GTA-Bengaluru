@@ -1,6 +1,6 @@
 export const TILE = 16;
 export const MAP_W = 128;
-export const MAP_H = 96;
+export const MAP_H = 168;
 export const WORLD_W = MAP_W * TILE;
 export const WORLD_H = MAP_H * TILE;
 

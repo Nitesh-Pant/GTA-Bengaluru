@@ -16,7 +16,6 @@ export interface EventDef {
   chance: number;
   durationMs: number;
   requires?: EventRequirements;
-  reward?: { hint?: string };
 }
 
 export interface SchedulerContext {

@@ -1,8 +1,10 @@
-import { useEffect } from 'react';
+import { lazy, Suspense, useEffect } from 'react';
 import { bridge } from './game/bridge';
-import { PhaserGame } from './game/PhaserGame';
+import { loadGame } from './game/loadGame';
 import { uiStore, useUi } from './store/uiStore';
 import { DialoguePanel } from './ui/DialoguePanel';
+import { isTouchDevice } from './game/touch';
+import { Footer } from './ui/Footer';
 import { Hud } from './ui/Hud';
 import { Journal } from './ui/Journal';
 import { MainMenu } from './ui/MainMenu';
@@ -10,6 +12,14 @@ import { MapPanel } from './ui/MapPanel';
 import { MetroPanel } from './ui/MetroPanel';
 import { NarrationPanel } from './ui/NarrationPanel';
 import { PauseMenu } from './ui/PauseMenu';
+import { CharacterPanel } from './ui/CharacterSetup';
+import { QuickBar } from './ui/QuickBar';
+import { RidePanel } from './ui/RidePanel';
+import { BusPanel } from './ui/BusPanel';
+import { Tour } from './ui/Tour';
+import { TouchControls } from './ui/TouchControls';
+
+const PhaserGame = lazy(() => loadGame().then((m) => ({ default: m.PhaserGame })));
 
 /** One owner for global keys: Esc closes the top-most panel or toggles pause; J journal; M map. */
 function useGlobalKeys() {
@@ -46,10 +56,18 @@ function useGlobalKeys() {
 export function App() {
   const phase = useUi((s) => s.phase);
   useGlobalKeys();
-  if (phase === 'menu') return <MainMenu />;
+  if (phase === 'menu')
+    return (
+      <>
+        <MainMenu />
+        <Footer />
+      </>
+    );
   return (
     <>
-      <PhaserGame />
+      <Suspense fallback={<div className="loading">Loading the city… swalpa wait maadi</div>}>
+        <PhaserGame />
+      </Suspense>
       <Hud />
       <DialoguePanel />
       <MetroPanel />
@@ -57,6 +75,13 @@ export function App() {
       <Journal />
       <MapPanel />
       <PauseMenu />
+      <QuickBar />
+      <RidePanel />
+      <BusPanel />
+      <Tour />
+      <CharacterPanel />
+      {isTouchDevice() && <TouchControls />}
+      <Footer />
     </>
   );
 }

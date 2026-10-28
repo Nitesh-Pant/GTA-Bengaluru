@@ -1,9 +1,15 @@
+import type { Period } from './dayClock';
+import type { Gender } from './player';
 import type { Rng } from './rng';
 
 export interface LineCondition {
   rain?: boolean;
   areas?: string[];
   mode?: 'walk' | 'drive';
+  /** Only said to a player of this gender. */
+  player?: Gender;
+  /** Only at these times of day. */
+  time?: Period[];
 }
 
 export interface Line {
@@ -18,6 +24,8 @@ export interface LineContext {
   area: string;
   raining: boolean;
   mode: 'walk' | 'drive';
+  player?: Gender;
+  period?: Period;
 }
 
 export interface DirectorOptions {
@@ -35,6 +43,8 @@ const matches = (l: Line, ctx: LineContext) => {
   if (w.rain !== undefined && w.rain !== ctx.raining) return false;
   if (w.areas && !w.areas.includes(ctx.area)) return false;
   if (w.mode && w.mode !== ctx.mode) return false;
+  if (w.player && w.player !== ctx.player) return false;
+  if (w.time && (!ctx.period || !w.time.includes(ctx.period))) return false;
   return true;
 };
 
