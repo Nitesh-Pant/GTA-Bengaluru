@@ -586,6 +586,56 @@ export const CONVERSATIONS: Record<string, Conversation> = {
       rent: { text: 'Twelve thousand, food included. Food andre dal included. Electricity separate, AC andre separate-separate.', options: [{ label: 'Bengaluru rates…' }] },
     },
   },
+  corn: {
+    id: 'corn',
+    start: 'a',
+    nodes: {
+      a: {
+        text: 'Bisi bisi jola, {name}! Nimbe, uppu, khara haaki kodthini. Chai kooda ide.',
+        options: [
+          { label: 'Ondu masala corn, please', next: 'corn', effects: [EAT, taste('masala_corn')] },
+          { label: 'Ondu chai', next: 'chai', effects: [{ type: 'stat', stat: 'chai' }, EAT] },
+          BYE,
+        ],
+      },
+      corn: { text: '*hands over a smoky corn* Thogoli. Aadre monkeys nodi, avu professional kallaru!', options: [{ label: 'Haha, thanks!' }] },
+      chai: { text: 'Bisi chai, chali ge best. Sunrise nodkondu kudi.', options: [{ label: 'Sakkath.' }] },
+    },
+  },
+  hilltop: {
+    id: 'hilltop',
+    start: 'a',
+    nodes: {
+      a: {
+        text: 'Welcome to Hill Top Cafe! Maggi, chai, coffee. Fog is complimentary.',
+        options: [
+          { label: 'One plate Maggi', next: 'maggi', effects: [EAT, taste('hill_maggi')] },
+          { label: 'Ondu filter coffee', next: 'coffee', effects: [EAT] },
+          BYE,
+        ],
+      },
+      maggi: { text: '*steaming bowl* Two-minute Maggi, ten-minute wait. Mountain rules, saar.', options: [{ label: 'Worth it.' }] },
+      coffee: { text: 'Bisi coffee. Hold the cup with both hands, warm aagutte.', options: [{ label: 'Thanks!' }] },
+    },
+  },
+  dhaba: {
+    id: 'dhaba',
+    start: 'a',
+    nodes: {
+      a: {
+        text: 'Aao ji, baitho! Garma garam aloo paratha, makhan ke saath. Chai bhi kadak hai.',
+        options: [
+          { label: 'Ek aloo paratha, paaji!', next: 'paratha', effects: [EAT, taste('dhaba_paratha')] },
+          { label: 'Kadak chai', next: 'chai', effects: [{ type: 'stat', stat: 'chai' }, EAT] },
+          { label: 'Nandi Hills kitna door hai?', next: 'nandi' },
+          BYE,
+        ],
+      },
+      paratha: { text: '*a paratha with a slab of butter* Le lo! Sunrise dekhne ja rahe ho? Pehle pet bharo.', options: [{ label: 'Sakkath, paaji!' }] },
+      chai: { text: 'Kadak chai, ekdum highway style. Neend gayab.', options: [{ label: 'Thanks!' }] },
+      nandi: { text: 'Bas thoda aage, gate se hairpin shuru. Monkeys se khana bacha ke rakhna, haan!', options: [{ label: 'Got it.' }] },
+    },
+  },
   biker: {
     id: 'biker',
     start: 'a',

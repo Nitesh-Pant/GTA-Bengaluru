@@ -139,6 +139,28 @@ class AudioEngine {
     o.stop(t + 0.27);
   }
 
+  /** A monkey's quick chatter: three squeaky chirps. */
+  chatter(volume: number, pan = 0) {
+    if (!this.ctx || this.silent || volume < 0.03) return;
+    const c = this.ctx;
+    for (let i = 0; i < 3; i++) {
+      const t = c.currentTime + i * 0.09;
+      const o = c.createOscillator();
+      o.type = 'triangle';
+      o.frequency.setValueAtTime(1100 + i * 140, t);
+      o.frequency.exponentialRampToValueAtTime(700, t + 0.07);
+      const g = c.createGain();
+      g.gain.setValueAtTime(0, t);
+      g.gain.linearRampToValueAtTime(0.06 * volume, t + 0.01);
+      g.gain.exponentialRampToValueAtTime(0.0005, t + 0.08);
+      const p = c.createStereoPanner();
+      p.pan.value = Math.max(-1, Math.min(1, pan));
+      o.connect(g).connect(p).connect(this.sfx);
+      o.start(t);
+      o.stop(t + 0.09);
+    }
+  }
+
   /** One cycle (about 1.3 s) of a siren: police "wee-woo", ambulance rising wail. */
   siren(kind: 'police' | 'ambulance', volume: number, pan = 0) {
     if (!this.ctx || this.silent || volume < 0.03) return;

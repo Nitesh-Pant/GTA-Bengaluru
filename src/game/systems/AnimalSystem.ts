@@ -1,5 +1,5 @@
 import Phaser from 'phaser';
-import { COWS, CROW_SPOTS, DOGS } from '../../data/animals';
+import { COWS, CROW_SPOTS, DOGS, MONKEYS } from '../../data/animals';
 import { boxHitsSolids, type Rect } from '../../logic/geometry';
 import { mulberry32 } from '../../logic/rng';
 import { uiStore } from '../../store/uiStore';
@@ -23,6 +23,18 @@ interface Dog extends Walker {
   frame: number;
 }
 
+interface Monkey extends Walker {
+  /** Running off with a snack until then. */
+  fleeUntil: number;
+  stealCd: number;
+  chatterCd: number;
+  frameT: number;
+  frame: number;
+}
+
+/** How long after buying food you count as carrying a snack (ms of game clock). */
+const SNACK_MS = 90000;
+
 interface Crow {
   sprite: Phaser.GameObjects.Image;
   home: { x: number; y: number };
@@ -36,6 +48,7 @@ const FOLLOW_MS = 90000;
 export class AnimalSystem {
   readonly dogs: Dog[] = [];
   readonly cows: Walker[] = [];
+  readonly monkeys: Monkey[] = [];
   private crows: Crow[] = [];
   private rng = mulberry32(71);
   private cawCd = 0;
@@ -51,6 +64,11 @@ export class AnimalSystem {
       const at = this.pointIn(c.zone);
       const sprite = scene.add.image(at.x, at.y, 'cow').setOrigin(0.5, 0.85);
       this.cows.push({ name: c.name, sprite, zone: c.zone, target: null, pauseUntil: 0, speed: 9 });
+    }
+    for (const m of MONKEYS) {
+      const at = this.pointIn(m.zone);
+      const sprite = scene.add.image(at.x, at.y, 'monkey', 0).setOrigin(0.5, 0.9);
+      this.monkeys.push({ name: m.name, sprite, zone: m.zone, target: null, pauseUntil: 0, speed: 26, fleeUntil: 0, stealCd: 0, chatterCd: 0, frameT: 0, frame: 0 });
     }
     for (const spot of CROW_SPOTS)
       for (let i = 0; i < 3; i++) {
@@ -149,6 +167,7 @@ export class AnimalSystem {
       }
     }
     for (const c of this.cows) if (near(c.sprite.x, c.sprite.y)) this.wander(c, now, dt);
+    for (const m of this.monkeys) if (near(m.sprite.x, m.sprite.y)) this.monkey(m, p, now, dt, sense);
     for (const c of this.crows) {
       if (!near(c.home.x, c.home.y)) continue;
       if (c.away) {
@@ -178,6 +197,43 @@ export class AnimalSystem {
       this.cawCd = now;
       const caw = this.crows.find((c) => !c.away && cam.contains(c.home.x, c.home.y));
       if (caw) audio.caw(0.5, (caw.home.x - p.x) / 300);
+    }
+  }
+
+  /**
+   * Monkeys wander and chatter at you; carry a snack you just bought and one dashes in, snatches it
+   * and bolts. Hanuman tax.
+   */
+  private monkey(m: Monkey, p: { x: number; y: number }, now: number, dt: number, sense: boolean) {
+    const s = this.scene;
+    let moving: boolean;
+    if (m.fleeUntil > now && m.target) moving = !this.step(m, m.target.x, m.target.y, 130, dt);
+    else {
+      if (m.fleeUntil) {
+        m.fleeUntil = 0;
+        m.target = null;
+      }
+      moving = this.wander(m, now, dt);
+    }
+    m.frameT += dt;
+    const frame = moving && Math.floor(m.frameT * 10) % 2 ? 1 : 0;
+    if (frame !== m.frame) m.sprite.setFrame((m.frame = frame));
+    if (!sense || s.mode.kind !== 'walk') return;
+    const gap = Math.hypot(p.x - m.sprite.x, p.y - m.sprite.y);
+    const snack = s.snack && now - s.snack.at < SNACK_MS ? s.snack : null;
+    if (snack && gap < 34 && now > m.stealCd) {
+      s.snack = null;
+      m.stealCd = now + 60000;
+      const away = Math.atan2(m.sprite.y - p.y, m.sprite.x - p.x);
+      m.target = { x: m.sprite.x + Math.cos(away) * 90, y: m.sprite.y + Math.sin(away) * 90 };
+      m.fleeUntil = now + 1600;
+      audio.chatter(1, (m.sprite.x - p.x) / 300);
+      s.bump('monkeyTax');
+      uiStore.toast({ kind: 'info', title: `${m.name} the monkey snatched your ${snack.name}!`, body: 'Gone in two seconds flat, eaten with great satisfaction. Hanuman tax, paid.' }, 5000);
+    } else if (gap < 70 && now > m.chatterCd) {
+      m.chatterCd = now + 9000 + this.rng() * 6000;
+      m.sprite.setFlipX(p.x < m.sprite.x);
+      audio.chatter(0.5, (m.sprite.x - p.x) / 300);
     }
   }
 }

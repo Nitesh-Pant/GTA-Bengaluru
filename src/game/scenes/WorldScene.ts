@@ -492,9 +492,13 @@ export class WorldScene extends Phaser.Scene {
     this.persist();
   }
 
+  /** The food you're holding (Nandi Hills monkeys know). Set whenever you order something. */
+  snack: { name: string; at: number } | null = null;
+
   /** Stamp a dish in the food book (first time only). */
   taste(id: string) {
     const dish = dishById(id);
+    if (dish) this.snack = { name: dish.name, at: this.clock };
     if (!dish || this.tasted.includes(id)) return;
     this.tasted = [...this.tasted, id];
     uiStore.set({ tasted: this.tasted });

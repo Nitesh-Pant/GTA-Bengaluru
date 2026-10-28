@@ -10,7 +10,7 @@ import { paintBuilding } from '../art/buildings';
 import { paintGround } from '../art/ground';
 import { paintProp, paintSignal, paintViaduct, propKey, TEXT_PROPS } from '../art/props';
 import { AMBULANCE_VARIANT, paintBoat, paintCow, paintEmergency, paintTrain, paintVehicle, paintYulu, POLICE_VARIANT } from '../art/vehicles';
-import { CROW_H, CROW_W, DOG_H, DOG_W, paintCrow, paintDog, paintGarbageVan } from '../art/animals';
+import { CROW_H, CROW_W, DOG_H, DOG_W, MONKEY_H, MONKEY_W, paintCrow, paintDog, paintGarbageVan, paintMonkey } from '../art/animals';
 
 /** Adds `char_<id>` (3 frames x 4 directions) and its `<id>_walk_<dir>` animations. */
 export function addCharacter(scene: Phaser.Scene, id: string, look: Look) {
@@ -80,6 +80,9 @@ export class BootScene extends Phaser.Scene {
       dog.add(0, 0, 0, 0, DOG_W, DOG_H);
       dog.add(1, 0, DOG_W, 0, DOG_W, DOG_H);
     }
+    const monkey = this.addCanvas('monkey', paintMonkey());
+    monkey.add(0, 0, 0, 0, MONKEY_W, MONKEY_H);
+    monkey.add(1, 0, MONKEY_W, 0, MONKEY_W, MONKEY_H);
     const crow = this.addCanvas('crow', paintCrow());
     crow.add(0, 0, 0, 0, CROW_W, CROW_H);
     crow.add(1, 0, CROW_W, 0, CROW_W, CROW_H);

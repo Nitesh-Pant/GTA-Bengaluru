@@ -367,7 +367,7 @@ export const NPCS: NpcDef[] = [
   // ── Devanahalli Highway and Nandi Hills
   { id: 'tollman', name: 'Venkatesh', role: 'Toll booth operator', look: 'staff', x: 137.5, y: 56.7, behaviour: { type: 'idle', facing: 'down' }, personality: 'grumpy', categories: ['tollman', 'ambient'], languages: MIX },
   { id: 'groundnut', name: 'Shivamma', role: 'Groundnut seller', look: 'vendor_f', x: 140.5, y: 57.3, behaviour: { type: 'wander', zone: { x: 139.5, y: 56.9, w: 4, h: 0.6 } }, personality: 'cheerful', categories: ['vendor', 'ambient'], languages: KEN },
-  { id: 'dhaba_owner', name: 'Balwinder', role: 'Dhaba owner', look: 'cook', x: 157, y: 72.6, behaviour: { type: 'idle', facing: 'down' }, personality: 'chatty', categories: ['dhaba', 'cook'], languages: MIX, reach: 40 },
+  { id: 'dhaba_owner', name: 'Balwinder', role: 'Dhaba owner', look: 'cook', x: 157, y: 72.6, behaviour: { type: 'idle', facing: 'down' }, personality: 'chatty', categories: ['dhaba', 'cook'], languages: MIX, reach: 40, conversation: 'dhaba' },
   { id: 'trucker', name: 'Murugan', role: 'Truck driver', look: 'uncle', x: 153.5, y: 75.6, behaviour: { type: 'idle', facing: 'up' }, personality: 'chill', categories: ['dhaba', 'ambient'], languages: MIX },
   { id: 'forest_guard', name: 'Hanumanthappa', role: 'Forest guard', look: 'guard', x: 151, y: 55.4, behaviour: { type: 'idle', facing: 'left' }, personality: 'wise', categories: ['forest_guard', 'guard'], languages: KEN },
   { id: 'biker_rohan', name: 'Rohan', role: 'Weekend biker', look: 'runner', x: 157, y: 34.3, behaviour: { type: 'wander', zone: { x: 155.5, y: 34, w: 4, h: 0.8 } }, personality: 'cheerful', categories: ['biker', 'hills'], languages: MIX, conversation: 'biker' },
@@ -376,6 +376,7 @@ export const NPCS: NpcDef[] = [
   { id: 'couple_b', name: 'Divya', role: 'Selfie seeker', look: 'techie_f2', x: 160.7, y: 28.6, behaviour: { type: 'chat', group: 'nandi_couple', facing: 'left' }, personality: 'chatty', categories: ['hills'], languages: MIX, topics: ['hills'] },
   { id: 'photographer', name: 'Kiran', role: 'Photographer', look: 'hipster', x: 171.5, y: 32.6, behaviour: { type: 'idle', facing: 'up' }, personality: 'chill', categories: ['photographer', 'hills'], languages: MIX },
   { id: 'fog_techie', name: 'Pradeep', role: 'Disappointed techie', look: 'techie_m2', x: 175.5, y: 32.6, behaviour: { type: 'idle', facing: 'left' }, personality: 'grumpy', categories: ['hills', 'techie'], languages: MIX },
-  { id: 'corn_vendor', name: 'Lakshmamma', role: 'Corn and chai seller', look: 'vendor_f', x: 161.6, y: 35.3, behaviour: { type: 'idle', facing: 'left' }, personality: 'cheerful', categories: ['hills_vendor', 'vendor'], languages: KEN },
+  { id: 'corn_vendor', name: 'Lakshmamma', role: 'Corn and chai seller', look: 'vendor_f', x: 161.6, y: 35.3, behaviour: { type: 'idle', facing: 'left' }, personality: 'cheerful', categories: ['hills_vendor', 'vendor'], languages: KEN, conversation: 'corn' },
+  { id: 'hilltop_server', name: 'Ravi', role: 'Hill Top Cafe', look: 'cook', x: 154, y: 33.6, behaviour: { type: 'idle', facing: 'down' }, personality: 'cheerful', categories: ['cook', 'hills'], languages: MIX, conversation: 'hilltop' },
   { id: 'temple_priest', name: 'Shastri', role: 'Temple priest', look: 'uncle_veshti', x: 167, y: 33.6, behaviour: { type: 'idle', facing: 'down' }, personality: 'wise', categories: ['priest', 'uncle'], languages: KEN },
 ];

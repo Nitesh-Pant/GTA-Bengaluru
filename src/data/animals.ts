@@ -21,6 +21,14 @@ export const CROW_SPOTS: Array<{ x: number; y: number }> = [
   { x: 12, y: 129 },
 ];
 
+/** Bonnet macaques on Nandi Hills (tiles). They will have your snack. */
+export const MONKEYS: Array<{ name: string; zone: Rect }> = [
+  { name: 'Chintu', zone: { x: 156, y: 36.4, w: 8, h: 1.2 } },
+  { name: 'Pinky', zone: { x: 165, y: 35, w: 7, h: 1.5 } },
+  { name: 'Bujji', zone: { x: 170, y: 31, w: 6, h: 1.4 } },
+  { name: 'Raja', zone: { x: 144.5, y: 53.4, w: 3, h: 1.4 } },
+];
+
 /** Cows that wander slowly (Gowri, at the junction, never moves). */
 export const COWS: Array<{ name: string; zone: Rect }> = [
   { name: 'Lakshmi', zone: { x: 4, y: 83, w: 14, h: 6 } },

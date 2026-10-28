@@ -80,3 +80,31 @@ export function paintGarbageVan(): HTMLCanvasElement {
   outline(ctx, 0, 0, 40, 20);
   return c;
 }
+
+export const MONKEY_W = 14;
+export const MONKEY_H = 14;
+
+/** Bonnet macaque facing right: frame 0 sitting, frame 1 mid-hop. Long tail curled up behind. */
+export function paintMonkey(): HTMLCanvasElement {
+  const [c, ctx] = makeCanvas(MONKEY_W * 2, MONKEY_H);
+  const fur = '#8a7560';
+  const dark = shade(fur, -0.25);
+  for (let f = 0; f < 2; f++) {
+    const ox = f * MONKEY_W;
+    const up = f === 1 ? 1 : 0;
+    const R = (x: number, y: number, w: number, h: number, col: string) => rect(ctx, ox + x, y - up, w, h, col);
+    ellipse(ctx, ox + 7, 12.5, 5, 1.2, 'rgba(0,0,0,0.25)');
+    R(1, 4, 1, 5, dark); // tail
+    R(1, 3, 2, 1, dark);
+    R(3, 6, 6, 5, fur); // body
+    R(4, 10, 2, 2, dark); // legs
+    R(7, 10, 2, 2, dark);
+    R(8, 2, 5, 5, fur); // head
+    R(9, 1, 3, 1, dark); // bonnet tuft
+    R(10, 4, 3, 3, '#e6a99a'); // face
+    R(11, 4, 1, 1, '#1c1726');
+    R(9, 7, 2, 3, fur); // arm
+    outline(ctx, ox, 0, MONKEY_W, MONKEY_H);
+  }
+  return c;
+}
