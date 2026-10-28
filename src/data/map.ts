@@ -120,6 +120,8 @@ export function buildGround(): Uint8Array {
   for (const y of [18, 58, 108, 164]) fill(0, y, MAP_W, 4, G.Road);
   fill(40, 0, 4, MAP_H, G.Road);
   fill(88, 0, 4, MAP_H, G.Road);
+  // Hosur Road, out of town: NH 44 down through Silk Board to Kanakapura Road.
+  fill(130, 58, 4, MAP_H - 58, G.Road);
   // The Nandi Hills road climbs from NH 44 to the summit in hairpin bends.
   for (const [x, y, w, h] of NANDI_ROAD) fill(x, y, w, h, G.Lane);
   return g;
@@ -151,6 +153,8 @@ function buildCountryside(
   fill(X, 0, W, MAP_H, G.Grass);
   // Dirt shoulders instead of footpaths once you leave the city.
   for (const y of [16, 22, 56, 62, 106, 112, 162]) fill(X, y, W, 2, G.Dirt);
+  fill(128, 62, 2, MAP_H - 62, G.Dirt);
+  fill(134, 62, 2, MAP_H - 62, G.Dirt);
   // Dhaba yard, village squares and furrowed fields.
   fill(150, 72, 14, 4, G.Pave);
   fill(X + 8, 114, 12, 6, G.Pave);
@@ -631,8 +635,13 @@ function countrysideProps(): PropDef[] {
     { kind: 'roadSign', x: 146, y: 57.85, text: 'NANDI HILLS' },
     { kind: 'hoarding', x: 142, y: 63.6, text: 'FASTAG LANE' },
     { kind: 'roadSign', x: 131, y: 17.85, text: 'OLD MADRAS ROAD' },
-    { kind: 'roadSign', x: 131, y: 107.85, text: 'HOSUR ROAD' },
-    { kind: 'roadSign', x: 131, y: 163.85, text: 'KANAKAPURA ROAD' },
+    { kind: 'roadSign', x: 137.5, y: 107.85, text: 'SILK BOARD JN' },
+    { kind: 'roadSign', x: 128.9, y: 126, text: 'HOSUR ROAD' },
+    { kind: 'roadSign', x: 137.5, y: 163.85, text: 'KANAKAPURA ROAD' },
+    { kind: 'hoarding', x: 140, y: 107.6, text: 'WELCOME TO SILK BOARD' },
+    { kind: 'hoarding', x: 140, y: 113.6, text: 'EXPECTED WAIT 45 MIN' },
+    ...row('barrier', 113.6, [128.9, 135]),
+    ...row('cone', 106.6, [128.6, 135.4]),
     { kind: 'roadSign', x: 158, y: 28.6, text: "TIPU'S DROP" },
     { kind: 'roadSign', x: 173.5, y: 30.5, text: 'SUNRISE POINT' },
     { kind: 'roadSign', x: 154.5, y: 45.8, text: 'HAIRPIN 1' },
@@ -645,7 +654,7 @@ function countrysideProps(): PropDef[] {
   ];
   for (let x = 150; x < 175; x += 2) out.push({ kind: 'railing', x: x + 1, y: 27.3 });
   // Eucalyptus lines the roads out of town.
-  for (let x = 133; x < MAP_W; x += 6) {
+  for (let x = 139; x < MAP_W; x += 6) {
     for (const y of [15.3, 106.4, 114.6, 162.6, 64.7]) {
       if (y === 64.7 && x > 130 && x < 168) continue; // toll and dhaba
       out.push({ kind: 'eucalyptus', x, y });
@@ -693,7 +702,9 @@ export const STREET_LABELS: Array<{ name: string; x: number; y: number; vertical
   { name: 'Old Madras Road', x: 160, y: 20 },
   { name: 'NH 44 · Airport Road', x: 140, y: 60 },
   { name: 'NH 44 · Airport Road', x: 178, y: 60 },
-  { name: 'Hosur Road', x: 160, y: 110 },
+  { name: 'Outer Ring Road', x: 160, y: 110 },
+  { name: 'Hosur Road', x: 132, y: 136, vertical: true },
+  { name: 'Hosur Road', x: 132, y: 84, vertical: true },
   { name: 'Kanakapura Road', x: 160, y: 166 },
   { name: 'Nandi Hills Road', x: 164, y: 47 },
   { name: "Tipu's Drop", x: 161, y: 25 },
@@ -732,6 +743,7 @@ export const DISTRICTS: District[] = [
   { id: 'vidhana', name: 'Vidhana Soudha', short: 'Vidhana Soudha', tagline: "Government work is God's work", rects: [{ x: 0, y: 144, w: 44, h: 24 }] },
   { id: 'basavanagudi', name: 'Basavanagudi', tagline: 'Bull Temple, pandals and kadlekai', rects: [{ x: 44, y: 144, w: 44, h: 24 }] },
   { id: 'lalbagh', name: 'Lalbagh', tagline: 'Glass House and flower beds', rects: [{ x: 88, y: 144, w: 40, h: 24 }] },
+  { id: 'silkboard', name: 'Silk Board Junction', short: 'Silk Board', tagline: 'Where time stands still', rects: [{ x: CITY_W, y: 100, w: 14, h: 20 }] },
   { id: 'nandi', name: 'Nandi Hills', tagline: 'Sunrise, fog and hairpin bends', rects: [{ x: 130, y: 23, w: 62, h: 33 }] },
   { id: 'highway', name: 'Devanahalli Highway', short: 'Highway', tagline: 'Tolls, dhabas and the open road', rects: [{ x: CITY_W, y: 0, w: MAP_W - CITY_W, h: MAP_H }] },
 ];

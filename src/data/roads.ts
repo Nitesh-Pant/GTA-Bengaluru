@@ -16,6 +16,9 @@ export const LANE = {
   V1S: 43 * TILE,
   V2N: 89 * TILE,
   V2S: 91 * TILE,
+  /** Hosur Road, just outside the city: north from Kanakapura Road through Silk Board to NH 44. */
+  V3N: 131 * TILE,
+  V3S: 133 * TILE,
 };
 
 /** Centre lines of the main roads (px): horizontal roads by y, vertical roads by x. */
@@ -27,7 +30,10 @@ export const ROAD_CENTRES = {
 /** The main-road grid that rides and the marker route follow. */
 export const ROAD_GRID: RoadGrid = { hs: ROAD_CENTRES.h, vs: ROAD_CENTRES.v, minX: TILE, maxX: WORLD_W - TILE };
 
-const box = (id: string, tx: number, ty: number, offset: number): JunctionBox => ({
+/** Silk Board: a long all-red and a short green, so the queue never quite clears. */
+const SILK_BOARD_TIMING = { green: 5000, yellow: 2000, allRed: 6000 };
+
+const box = (id: string, tx: number, ty: number, offset: number, timing?: JunctionBox['timing']): JunctionBox => ({
   id,
   x0: tx * TILE,
   y0: ty * TILE,
@@ -36,6 +42,7 @@ const box = (id: string, tx: number, ty: number, offset: number): JunctionBox =>
   signal: true,
   offset,
   crossing: 2 * TILE,
+  timing,
 });
 
 export const JUNCTIONS: JunctionBox[] = [
@@ -47,6 +54,9 @@ export const JUNCTIONS: JunctionBox[] = [
   box('btm_mg', 88, 108, 5500),
   box('cmh_av', 40, 164, 3200),
   box('ba_av', 88, 164, 800),
+  box('nh44_hosur', 130, 58, 3000),
+  box('silkboard', 130, 108, 0, SILK_BOARD_TIMING),
+  box('hosur_kanakapura', 130, 164, 6000),
 ];
 
 const OFF = 64;
@@ -76,6 +86,11 @@ export const ROUTES: Route[] = [
   r('h1e_to_v2n', false, [[-OFF, LANE.H1E], [LANE.V2N, LANE.H1E], [LANE.V2N, -OFF]]),
   r('v2s_to_h1w', false, [[LANE.V2S, -OFF], [LANE.V2S, LANE.H1W], [-OFF, LANE.H1W]]),
   r('h1w_to_v2s', false, [[W + OFF, LANE.H1W], [LANE.V2S, LANE.H1W], [LANE.V2S, H + OFF]]),
+  // Through Silk Board: Hosur Road turners
+  r('h3w_to_v3s', false, [[W + OFF, LANE.H3W], [LANE.V3S, LANE.H3W], [LANE.V3S, H + OFF]]),
+  r('v3n_to_h3w', false, [[LANE.V3N, H + OFF], [LANE.V3N, LANE.H3W], [-OFF, LANE.H3W]]),
+  r('h3e_to_v3s', false, [[-OFF, LANE.H3E], [LANE.V3S, LANE.H3E], [LANE.V3S, H + OFF]]),
+  r('v3n_to_h2', false, [[LANE.V3N, H + OFF], [LANE.V3N, LANE.H2E], [W + OFF, LANE.H2E]]),
 ];
 
 export type TrafficType = 'car' | 'auto' | 'bus' | 'scooter';
@@ -125,6 +140,19 @@ export const TRAFFIC: TrafficSpawn[] = [
   { id: 't32', type: 'bus', variant: 0, route: 'h2_west', at: 0.65 },
   { id: 't33', type: 'car', variant: 6, route: 'h2_east', at: 0.85 },
   { id: 't34', type: 'auto', variant: 1, route: 'h3_west', at: 0.1 },
+  // Silk Board's queue
+  { id: 't35', type: 'car', variant: 2, route: 'h3w_to_v3s', at: 0.3 },
+  { id: 't36', type: 'auto', variant: 3, route: 'v3n_to_h3w', at: 0.5 },
+  { id: 't37', type: 'bus', variant: 1, route: 'v3n_to_h3w', at: 0.2 },
+  { id: 't38', type: 'car', variant: 4, route: 'h3e_to_v3s', at: 0.45 },
+  { id: 't39', type: 'scooter', variant: 1, route: 'h3e_to_v3s', at: 0.75 },
+  { id: 't40', type: 'car', variant: 7, route: 'v3n_to_h2', at: 0.6 },
+  { id: 't41', type: 'auto', variant: 0, route: 'h3_east', at: 0.92 },
+  { id: 't42', type: 'car', variant: 5, route: 'h3w_to_v3s', at: 0.55 },
+  { id: 't43', type: 'scooter', variant: 3, route: 'h3w_to_v3s', at: 0.8 },
+  { id: 't44', type: 'car', variant: 1, route: 'v3n_to_h3w', at: 0.75 },
+  { id: 't45', type: 'auto', variant: 2, route: 'h3e_to_v3s', at: 0.2 },
+  { id: 't46', type: 'bus', variant: 0, route: 'h3e_to_v3s', at: 0.6 },
   // Emergency vehicles: a police patrol and an ambulance (car variants 8 and 9, see art/vehicles.ts)
   { id: 'police1', type: 'car', variant: 8, route: 'loop_cw', at: 0.65 },
   { id: 'ambulance1', type: 'car', variant: 9, route: 'h2_east', at: 0.1 },

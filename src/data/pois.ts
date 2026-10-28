@@ -82,6 +82,7 @@ export const POIS: PoiDef[] = [
   // Devanahalli Highway (NH 44)
   { id: 'tollplaza', name: 'Devanahalli Toll Plaza', district: 'highway', kind: 'landmark', x: t(137.5), y: t(57), radius: 56, description: 'FASTag beeps, the boom lifts, and a man sells groundnuts to every car in the queue.' },
   { id: 'dhaba', name: 'Highway Dhaba', district: 'highway', kind: 'food', x: t(157), y: t(74), radius: 48, description: 'Plastic chairs, steel plates and the strongest chai between Bengaluru and the airport. Open all night for the sunrise crowd.' },
+  { id: 'silkboard', name: 'Silk Board Junction', district: 'silkboard', kind: 'landmark', x: t(132), y: t(106.8), radius: 70, description: 'The most famous traffic jam in India. Signals change, seasons change, the queue does not. The metro flyover above has been "almost done" for years.' },
   // Nandi Hills
   { id: 'nandigate', name: 'Nandi Hills Gate', district: 'nandi', kind: 'landmark', x: t(149), y: t(55), radius: 44, description: 'The forest department gate. Ticket, plastic check, and a monkey watching your snacks very closely.' },
   { id: 'hairpins', name: 'Hairpin Bends', district: 'nandi', kind: 'landmark', x: t(164), y: t(47), radius: 64, description: 'The road folds back on itself again and again. Bikers lean into every bend; buses take three attempts.' },

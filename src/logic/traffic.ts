@@ -82,6 +82,8 @@ export interface JunctionBox {
   offset: number;
   /** Width of the zebra crossing band outside the box. */
   crossing: number;
+  /** This junction's own phase lengths (Silk Board's are cruel); otherwise the default. */
+  timing?: SignalTiming;
 }
 
 /**
@@ -102,7 +104,7 @@ export function stopLineGap(
   let best = Infinity;
   for (const b of boxes) {
     if (!b.signal) continue;
-    const s = signalState(timeMs, timing, b.offset);
+    const s = signalState(timeMs, b.timing ?? timing, b.offset);
     const light = horizontal ? s.ew : s.ns;
     if (light === 'green') continue;
     let line: number;

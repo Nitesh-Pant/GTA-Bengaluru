@@ -25,6 +25,7 @@ export const ACHIEVEMENTS: AchievementDef[] = [
   { id: 'cricket', title: 'Sakkath Fielding', description: 'Throw the cricket ball back to the kids.', done: (p) => p.stats.throws >= 1 },
   { id: 'nandi_top', title: 'Above the Clouds', description: 'Reach the top of Nandi Hills.', done: (p) => p.discovered.includes('sunrisepoint') || p.discovered.includes('tipusdrop') },
   { id: 'nandi_sunrise', title: 'Sunrise Chaser', description: 'Watch the sunrise from Nandi Hills.', done: (p) => p.stats.sunrises >= 1 },
+  { id: 'silk_board', title: 'Silk Board Survivor', description: 'Drive through Silk Board junction.', done: (p) => p.stats.silkboard >= 1 },
   { id: 'monkey_tax', title: 'Hanuman Tax', description: 'Lose a snack to a Nandi Hills monkey.', done: (p) => p.stats.monkeyTax >= 1 },
   { id: 'dog_friend', title: 'Biscuit Friend', description: 'Give a street dog a biscuit.', done: (p) => p.stats.dogsFed >= 1 },
   { id: 'fare_1', title: 'Meter Haaki', description: 'Drop off your first auto passenger.', done: (p) => p.stats.fares >= 1 },

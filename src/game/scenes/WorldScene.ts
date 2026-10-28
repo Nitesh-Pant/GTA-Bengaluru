@@ -102,6 +102,9 @@ export class WorldScene extends Phaser.Scene {
 
   private keys!: Keys;
   private viaduct!: Phaser.GameObjects.Container;
+  /** Silk Board's metro flyover, unfinished over the junction itself. */
+  private flyover!: Phaser.GameObjects.Container;
+  private inSilkBoard = false;
   private marker!: Phaser.GameObjects.Image;
   private markerBob = { y: 0 };
   /** GPS-style dotted route to the active marker (see drawRoute). */
@@ -248,6 +251,16 @@ export class WorldScene extends Phaser.Scene {
     this.viaduct.add(this.add.tileSprite(0, vy - 11, vw, 22, 'viaduct').setOrigin(0));
     for (const st of STATIONS) this.viaduct.add(this.add.image(st.platform.x, vy, 'platform').setOrigin(0.5, 0.55));
     for (let x = 48; x < vw; x += 160) this.add.rectangle(x, vy + 2, 6, 6, 0x8f8a83).setDepth(vy + 2);
+    // Silk Board: a metro flyover on both sides of the junction, with the bit over it still missing.
+    const fy = t(110);
+    this.flyover = this.add.container(0, 0).setDepth(8000);
+    for (const [x0, x1] of [
+      [116, 129],
+      [135, 148],
+    ]) {
+      this.flyover.add(this.add.tileSprite(t(x0), fy - 11, t(x1 - x0), 22, 'viaduct').setOrigin(0));
+      for (let x = x0 + 3; x < x1; x += 6) this.add.rectangle(t(x), fy + 2, 6, 6, 0x8f8a83).setDepth(fy + 2);
+    }
 
     // Pedal boats drifting around Ulsoor Lake.
     for (let i = 0; i < 3; i++) {
@@ -490,6 +503,17 @@ export class WorldScene extends Phaser.Scene {
     uiStore.toast({ kind: 'hint', title: `New tip: ${poi?.name ?? id}`, body: 'Marked with a ? on your map. Press J to set it as a destination.' });
     audio.chime('hint');
     this.persist();
+  }
+
+  /** Driving through Silk Board junction counts as surviving it (once per pass). */
+  private checkSilkBoard(x: number, y: number) {
+    const inside = this.mode.kind === 'drive' && x > t(130) && x < t(134) && y > t(108) && y < t(112);
+    if (inside && !this.inSilkBoard) {
+      this.bump('silkboard');
+      if (this.stats.silkboard === 1)
+        uiStore.toast({ kind: 'arrive', title: 'You survived Silk Board!', body: 'Bengalureans will respect you now. Tell everyone how long it took. Add twenty minutes.' }, 5200);
+    }
+    this.inSilkBoard = inside;
   }
 
   /** The food you're holding (Nandi Hills monkeys know). Set whenever you order something. */
@@ -740,6 +764,9 @@ export class WorldScene extends Phaser.Scene {
     const under = Math.abs(p.y - vy) < 34 && !this.travelling;
     this.viaduct.setAlpha(Phaser.Math.Linear(this.viaduct.alpha, under ? 0.35 : 1, 0.15));
     this.metro.train.setAlpha(this.viaduct.alpha);
+    const underFly = Math.abs(p.y - t(110)) < 34 && p.x > t(114) && p.x < t(150);
+    this.flyover.setAlpha(Phaser.Math.Linear(this.flyover.alpha, underFly ? 0.35 : 1, 0.15));
+    this.checkSilkBoard(p.x, p.y);
 
     this.discoverTimer -= dt;
     if (this.discoverTimer <= 0) {

@@ -88,6 +88,7 @@ export const RIDEABLES: RideableDef[] = [
     { id: 'yulu_thippa', x: 44.9, y: 78, heading: UP },
     { id: 'yulu_stadium', x: 38.9, y: 129, heading: UP },
     { id: 'yulu_cubbon', x: 11, y: 116, heading: 0 },
+    { id: 'yulu_silkboard', x: 124.5, y: 112.9, heading: 0 },
     { id: 'yulu_vidhana', x: 22, y: 162.9, heading: 0 },
     { id: 'yulu_basava', x: 66, y: 162.9, heading: 0 },
     { id: 'yulu_lalbagh', x: 108, y: 162.9, heading: 0 },

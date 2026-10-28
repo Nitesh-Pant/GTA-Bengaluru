@@ -356,6 +356,23 @@ const RAW: Record<string, Raw[]> = {
     'Prasada thogoli, magu.',
   ],
 
+  silkboard: [
+    'Silk Board cross maadakke ondu ghante, life alli ondu lesson.',
+    'Bhai, Google Maps ne bola 10 minute. Google Maps ne kabhi Silk Board dekha nahi.',
+    'I have spent more time at this signal than with my family.',
+    'Metro barutte ante. Naanu retire aagodralli.',
+    'Yaar, yahan se Hosur jaana hai. Kal tak pahunch jaaunga.',
+    'Signal green aaythu! Oh wait, adu yellow. Adu red. Ayyo.',
+    ['Morning rush alli Silk Board? Neevu dhairyavantaru.', { time: ['morning'] }],
+    ['Evening jam is a spiritual experience.', { time: ['evening'] }],
+  ],
+  sb_hawker: [
+    'Charger! Car charger! Silk Board ge essential!',
+    'Paani, paani! Thanda paani, ten rupees!',
+    'Sir, phone stand? Jam alli movie nodi!',
+    'Bhaiya, kheera lo, signal lamba hai!',
+  ],
+
   // ── Reactions
   bump: [
     'Ayyo! Nodkondu nadi, anna!',

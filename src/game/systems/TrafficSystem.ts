@@ -209,7 +209,7 @@ export class TrafficSystem {
       this.signalTimer = 0.2;
       for (const sig of this.signals) {
         const j = JUNCTIONS.find((x) => x.id === sig.junction)!;
-        const st = signalState(now, undefined, j.offset);
+        const st = signalState(now, j.timing, j.offset);
         sig.sprite.setTexture(`signal_${st[sig.axis]}`);
       }
     }
