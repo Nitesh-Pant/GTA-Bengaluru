@@ -76,6 +76,8 @@ export interface UiState {
   jobOffer: JobOffer | null;
   raining: boolean;
   eventTitle: string | null;
+  /** Today's festival, if any. */
+  festival: string | null;
   ready: boolean;
 }
 
@@ -104,6 +106,7 @@ const initial = (): UiState => ({
   jobOffer: null,
   raining: false,
   eventTitle: null,
+  festival: null,
   ready: false,
 });
 

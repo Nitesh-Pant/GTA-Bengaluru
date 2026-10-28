@@ -10,6 +10,7 @@ import { JOB_INFO } from '../../data/jobs';
 import { JobSystem } from '../systems/JobSystem';
 import { NandiSystem } from '../systems/NandiSystem';
 import { AirportSystem } from '../systems/AirportSystem';
+import { FestivalSystem } from '../systems/FestivalSystem';
 import { PARKED } from '../../data/vehicles';
 import { newlyUnlocked } from '../../logic/achievements';
 import { addressOf, type PlayerProfile } from '../../logic/player';
@@ -97,6 +98,7 @@ export class WorldScene extends Phaser.Scene {
   jobs!: JobSystem;
   nandi!: NandiSystem;
   airport!: AirportSystem;
+  festivals!: FestivalSystem;
   reactions = new ReactionEngine(mulberry32(1234));
   /** Scene clock in ms; stops while paused so every cooldown pauses with it. */
   clock = 0;
@@ -165,6 +167,7 @@ export class WorldScene extends Phaser.Scene {
     this.metro = new MetroSystem(this);
     this.worldEvents = new EventSystem(this);
     this.dayNight = new DayNightSystem(this, save.timeOfDay);
+    this.dayNight.day = save.day;
     this.ride = new RideSystem(this);
     this.animals = new AnimalSystem(this);
     this.buses = new BusSystem(this);
@@ -174,6 +177,7 @@ export class WorldScene extends Phaser.Scene {
     this.jobs = new JobSystem(this);
     this.nandi = new NandiSystem(this);
     this.airport = new AirportSystem(this);
+    this.festivals = new FestivalSystem(this);
     this.traffic.addObstacle({ id: 'cow', kind: 'static', x: COW.x, y: COW.y, radius: 9, squeeze: true });
 
     this.setupColliders();
@@ -419,6 +423,7 @@ export class WorldScene extends Phaser.Scene {
       horn: () => this.honk(),
       setProfile: (p) => this.setProfile(p),
       setTime: (m) => {
+        if (m < this.dayNight.minutes) this.dayNight.day++; // jumping "back" to morning is tomorrow
         this.dayNight.setMinutes(m);
         this.persist();
       },
@@ -561,6 +566,7 @@ export class WorldScene extends Phaser.Scene {
       achievements: this.achievements,
       player: this.profile,
       timeOfDay: Math.floor(this.dayNight.minutes),
+      day: this.dayNight.day,
       settings: this.settings,
       stats: this.stats,
       lastPosition,
@@ -749,6 +755,7 @@ export class WorldScene extends Phaser.Scene {
     this.match.update(now);
     this.nandi.update(now);
     this.airport.update(now);
+    this.festivals.update(now);
     this.deliveries.update(now);
     this.jobs.update(now);
     this.weather.update(dt, now);

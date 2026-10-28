@@ -389,6 +389,58 @@ const RAW: Record<string, Raw[]> = {
     'Ola cancel aaytha? Naanu iddini, fixed rate.',
   ],
 
+  fest_ugadi: [
+    'Ugadi habbada shubhashayagalu! Bevu-bella thindra?',
+    'Happy Ugadi! Amma made obbattu, I ate five.',
+    'Hosa varsha, hosa plan. Same traffic, aadre.',
+    'Bhai, Ugadi pe naya saal shuru. Resolution: kam chai. Kal se.',
+  ],
+  fest_karaga: [
+    'Karaga ivattu raatri! Dharmaraya temple hatra procession.',
+    'This is the real Bengaluru festival, older than all the tech parks.',
+    'Mallige hoovu ella kade, Karaga vaasane.',
+    'Bhai, Karaga dekha hai kabhi? Raat bhar chalta hai.',
+  ],
+  fest_monsoon: [
+    'Male bandre Bengaluru Venice aagutte.',
+    'Underpass full of water. Again. Every year, same surprise.',
+    'Monsoon mein chai aur bajji, bas aur kuch nahi chahiye.',
+    'I love the rain. I hate the rain. Both, at once.',
+    'Rain coat haaki, bike alli hogi. Helmet olage neeru.',
+  ],
+  fest_ganesha: [
+    'Ganapati Bappa Morya! Pandal alli prasada thogoli.',
+    'Kadubu tinde? Amma maadidru, sakkath ide.',
+    'Our street pandal has the biggest Ganesha. Obviously.',
+    'Bhai, visarjan kab hai? Dhol wale already ready hain.',
+  ],
+  fest_rajyotsava: [
+    'Kannada Rajyotsavada shubhashayagalu! Siri gannadam gelge!',
+    'Kempu-haladi flag ella kade, nodi!',
+    'Ivattu Kannada alli maathadi, swalpa try maadi.',
+    'Happy Rajyotsava! Even my landlord said it in Kannada today.',
+    'Bhai, aaj Kannada mein bolna. "Namaskara" se shuru karo.',
+  ],
+  fest_deepavali: [
+    'Deepavali habbada shubhashayagalu! Pataki hodiyona!',
+    'Happy Diwali! My building has more lights than the airport.',
+    'Raatri ella crackers, nidde illa. Happy Deepavali anyway.',
+    'Bhai, mithai khao! Kaju katli, last piece mera.',
+    ['Rocket nodi! Swalpa dooradalli nilli.', { time: ['night', 'evening'] }],
+  ],
+  fest_kadlekai: [
+    'Kadlekai Parishe! Bull Temple hatra kadlekai raashi raashi.',
+    'Fresh groundnuts, boiled or roasted, one kilo minimum. Rules.',
+    'Kadlekai thinde? Nandi ge first offering, aamele namge.',
+    'Bhai, mungfali mela! Itni mungfali maine kabhi nahi dekhi.',
+  ],
+  fest_sankranti: [
+    'Ellu bella thindu olle maathaadi!',
+    'Sankranti shubhashayagalu! Kabbu thinde?',
+    'Happy Sankranti! Rangoli competition in our lane, I lost again.',
+    'Bhai, Sankranti pe til-gud. Meetha khao, meetha bolo.',
+  ],
+
   // ── Reactions
   bump: [
     'Ayyo! Nodkondu nadi, anna!',

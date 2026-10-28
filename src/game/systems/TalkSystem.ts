@@ -80,7 +80,10 @@ export class TalkSystem {
   speak(npc: Npc, categories: readonly string[], now: number, ambient: boolean, cooldownMs = 18000): boolean {
     const d = this.director;
     if (ambient ? !d.canSpeakAmbient(npc.id, now) : !d.canSpeakReaction(npc.id, now)) return false;
-    const line = d.pick(npc.id, categories, this.ctx());
+    // On a festival day people bring it up now and then.
+    const fest = this.scene.festivals?.current;
+    const pools = ambient && fest && Math.random() < 0.3 ? [fest.pool, ...categories] : categories;
+    const line = d.pick(npc.id, pools, this.ctx());
     if (!line) return false;
     const dur = bubbleDuration(line.text);
     d.markSpoke(npc.id, now, dur, cooldownMs * this.chatterMul().cooldown, ambient);

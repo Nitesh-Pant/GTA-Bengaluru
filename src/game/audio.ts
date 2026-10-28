@@ -139,6 +139,26 @@ class AudioEngine {
     o.stop(t + 0.27);
   }
 
+  /** A festival cracker: a sharp pop with a crackling tail. */
+  cracker(volume: number, pan = 0) {
+    if (!this.ctx || this.silent || volume < 0.03) return;
+    const c = this.ctx;
+    const t = c.currentTime;
+    const src = c.createBufferSource();
+    src.buffer = this.noise;
+    const hp = c.createBiquadFilter();
+    hp.type = 'highpass';
+    hp.frequency.value = 900;
+    const g = c.createGain();
+    g.gain.setValueAtTime(0.35 * volume, t);
+    g.gain.exponentialRampToValueAtTime(0.0005, t + 0.5);
+    const p = c.createStereoPanner();
+    p.pan.value = Math.max(-1, Math.min(1, pan));
+    src.connect(hp).connect(g).connect(p).connect(this.sfx);
+    src.start(t, Math.random() * 1.5);
+    src.stop(t + 0.55);
+  }
+
   /** A jet taking off: a rising, filtered roar over about four seconds. */
   jet(volume: number, pan = 0) {
     if (!this.ctx || this.silent || volume < 0.03) return;

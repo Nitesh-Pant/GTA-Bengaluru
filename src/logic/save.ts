@@ -45,6 +45,8 @@ export interface Stats {
   monkeyTax: number;
   /** Times you drove through Silk Board junction. */
   silkboard: number;
+  /** Festival days lived through. */
+  festivals: number;
   /** Street dogs given a biscuit. */
   dogsFed: number;
   /** Auto passengers dropped, and what they paid. */
@@ -53,7 +55,7 @@ export interface Stats {
   busRides: number;
 }
 
-export const STAT_KEYS = ['chai', 'dosa', 'metroRides', 'drives', 'honks', 'throws', 'cow', 'quiz', 'rides', 'deliveries', 'dogsFed', 'fares', 'rupees', 'busRides', 'sunrises', 'monkeyTax', 'silkboard'] as const satisfies ReadonlyArray<keyof Stats>;
+export const STAT_KEYS = ['chai', 'dosa', 'metroRides', 'drives', 'honks', 'throws', 'cow', 'quiz', 'rides', 'deliveries', 'dogsFed', 'fares', 'rupees', 'busRides', 'sunrises', 'monkeyTax', 'silkboard', 'festivals'] as const satisfies ReadonlyArray<keyof Stats>;
 
 export const defaultStats = (): Stats => Object.fromEntries(STAT_KEYS.map((k) => [k, 0])) as unknown as Stats;
 
@@ -68,6 +70,8 @@ export interface SaveData {
   player: PlayerProfile;
   /** Time of day in game minutes since midnight. */
   timeOfDay: number;
+  /** Game days since you arrived (festivals follow it). */
+  day: number;
   settings: Settings;
   stats: Stats;
   /** Last safe on-foot position. Transient states (vehicle, dialogue, metro) are never saved. */
@@ -103,6 +107,7 @@ export const defaultSave = (): SaveData => ({
   achievements: [],
   player: { ...DEFAULT_PROFILE },
   timeOfDay: START_MINUTES,
+  day: 0,
   settings: { ...DEFAULT_SETTINGS },
   stats: defaultStats(),
   lastPosition: null,
@@ -165,6 +170,7 @@ export function sanitize(raw: unknown, validPoiIds: ReadonlySet<string>, valid: 
     d.lastPosition = Number.isFinite(x) && Number.isFinite(y) ? { x, y } : null;
   }
   d.timeOfDay = num(raw.timeOfDay, START_MINUTES, 0, 1439);
+  d.day = Math.floor(num(raw.day, 0, 0, 1e6));
   d.savedAt = num(raw.savedAt, 0);
   return d;
 }

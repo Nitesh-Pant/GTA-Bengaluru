@@ -86,6 +86,7 @@ function StatusChips() {
   const clock = useUi((s) => s.clock);
   const raining = useUi((s) => s.raining);
   const eventTitle = useUi((s) => s.eventTitle);
+  const festival = useUi((s) => s.festival);
   const jobs = useUi((s) => s.jobs);
   const match = useUi((s) => s.match);
   return (
@@ -105,6 +106,7 @@ function StatusChips() {
           )}
         </span>
       ))}
+      {festival && <span className="chip chip-fest">{festival}</span>}
       {eventTitle && <span className="chip chip-event">{eventTitle}</span>}
     </>
   );
