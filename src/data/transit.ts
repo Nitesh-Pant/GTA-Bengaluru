@@ -7,6 +7,7 @@ export const BUS_STOPS: Array<{ id: string; name: string; x: number; y: number; 
   { id: 'mgroad', name: 'MG Road', x: 20, y: 112.6, shelter: { x: 20, y: 113.95 } },
   { id: 'sonysignal', name: 'Koramangala (Sony Signal)', x: 66, y: 112.6, shelter: { x: 66, y: 113.95 } },
   { id: 'udupigarden', name: 'BTM (Udupi Garden)', x: 116, y: 112.6, shelter: { x: 116, y: 113.95 } },
+  { id: 'nandihills', name: 'Nandi Hills Gate (KSRTC)', x: 146, y: 62.7, shelter: { x: 146, y: 63.95 } },
 ];
 
 export const busStopById = (id: string | null) => BUS_STOPS.find((b) => b.id === id);

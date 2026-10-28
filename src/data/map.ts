@@ -619,6 +619,7 @@ export const PROPS: PropDef[] = [
   // BMTC bus shelters (see BUS_STOPS)
   ...[28, 106].map((x): PropDef => ({ kind: 'busStop', x, y: 23.95 })),
   { kind: 'busStop', x: 28, y: 63.95 },
+  { kind: 'busStop', x: 146, y: 63.95 },
   ...[20, 66, 116].map((x): PropDef => ({ kind: 'busStop', x, y: 113.95 })),
   ...countrysideProps(),
 ];
