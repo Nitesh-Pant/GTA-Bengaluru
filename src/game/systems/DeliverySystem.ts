@@ -24,6 +24,11 @@ export class DeliverySystem {
 
   constructor(private scene: WorldScene) {}
 
+  /** An order is in progress. */
+  get busy() {
+    return !!this.job;
+  }
+
   start() {
     const s = this.scene;
     if (this.job) {

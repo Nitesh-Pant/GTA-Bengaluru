@@ -1,3 +1,4 @@
+import { JOB_INFO, type JobKind } from '../data/jobs';
 import { bridge, type GuideKind } from '../game/bridge';
 import { WALK_SPEED } from '../game/constants';
 import { uiStore, useUi } from '../store/uiStore';
@@ -16,10 +17,9 @@ const walkTime = (px: number) => {
   return s < 2 ? 'right here' : s < 60 ? `${Math.max(5, Math.round(s / 5) * 5)} sec walk` : `${Math.round(s / 60)} min walk`;
 };
 
-/** Find a ride: the nearest bike, auto, bus stop and metro, each one tap from an arrow pointing the way. */
+/** Find: the nearest bike, auto, bus stop and metro, and the nearest jobs, each one tap from a route there. */
 export function FindPanel() {
   const panel = useUi((s) => s.panel);
-  const mode = useUi((s) => s.mode);
   if (panel !== 'find') return null;
   const close = () => uiStore.set({ panel: null });
   const items: PickerItem[] = (bridge.api?.nearestRides() ?? []).map((r) => ({
@@ -27,19 +27,20 @@ export function FindPanel() {
     name: WHAT[r.kind].name,
     note: `${r.label.replace(/^Bus stop: /, '')} · ${walkTime(r.distance)} · ${WHAT[r.kind].how}`,
   }));
-  if (mode === 'walk') items.push({ id: 'rapido', name: 'Rapido bike taxi', note: 'comes to you' });
+  for (const j of bridge.api?.nearestJobs() ?? [])
+    items.push({ id: `job:${j.kind}`, name: `Job: ${JOB_INFO[j.kind].name}`, note: `${j.label} · ${walkTime(j.distance)} · ${JOB_INFO[j.kind].find}` });
   return (
     <PickerPanel
-      label="Find a ride"
+      label="Find rides and jobs"
       logo="F"
       logoClass="ride-logo"
-      title="Find a ride"
+      title="Find rides and jobs"
       subtitle="Pick one and red dots show the way"
       items={items}
       verb="show the way"
       onChoose={(id) => {
         close();
-        if (id === 'rapido') bridge.api?.openRide();
+        if (id.startsWith('job:')) bridge.api?.showJob(id.slice(4) as JobKind);
         else bridge.api?.showNearest(id as GuideKind);
       }}
       onClose={close}

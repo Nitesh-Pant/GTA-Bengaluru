@@ -117,8 +117,13 @@ export function TouchControls() {
       {!locked && (
         <div className="touch-menu">
           <button className="touch-small touch-find" onClick={() => uiStore.set({ panel: 'find' })}>
-            Find ride
+            Find
           </button>
+          {mode === 'walk' && (
+            <button className="touch-small touch-ride" onClick={() => bridge.api?.openRide()}>
+              Ride
+            </button>
+          )}
           <button className="touch-small" onClick={() => open('map')}>Map</button>
           <button className="touch-small" onClick={() => open('journal')}>Journal</button>
           <button className="touch-small" onClick={pause} aria-label="Pause">

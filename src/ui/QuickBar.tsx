@@ -17,9 +17,9 @@ export function QuickBar() {
   const now = periodLabel(period);
   return (
     <div className="quickbar" aria-label="Quick actions">
-      <button className="quick quick-find" onClick={() => uiStore.set({ panel: 'find' })} title="Find the nearest bike, auto, bus stop or metro (F)" aria-label="Find a ride">
+      <button className="quick quick-find" onClick={() => uiStore.set({ panel: 'find' })} title="Find the nearest bike, auto, bus stop, metro or job (F)" aria-label="Find rides and jobs">
         <span className="quick-icon">F</span>
-        <span className="quick-label">Find a ride</span>
+        <span className="quick-label">Find rides &amp; jobs</span>
       </button>
       <button className="quick" onClick={() => uiStore.set({ panel: 'character' })} title="Change your name, look and outfit" aria-label="Change character">
         <span className="quick-icon">☺</span>
@@ -40,7 +40,7 @@ export function QuickBar() {
         <span className="quick-label">Hints</span>
       </button>
       {mode === 'walk' && (
-        <button className="quick" onClick={() => bridge.api?.openRide()} title="Book a Rapido bike taxi (R)" aria-label="Ride">
+        <button className="quick quick-ride" onClick={() => bridge.api?.openRide()} title="Book a Rapido bike taxi (R)" aria-label="Ride">
           <span className="quick-icon">R</span>
           <span className="quick-label">Ride</span>
         </button>

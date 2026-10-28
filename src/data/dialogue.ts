@@ -56,6 +56,17 @@ const RAW: Record<string, Raw[]> = {
     'Bengaluru alli iddira, Kannada maathadi!',
     'Kannada baratta? Ivattinda shuru maadi: "Hegiddira?"',
     'Namma bhaashe Kannada, swalpa try maadi, khushi aagutte.',
+    'Bhai, Bangalore mein sab kuch milta hai, bas parking nahi.',
+    'Yaar, ek din bina traffic ke office pahunchna hai. Bas ek din.',
+    'Weekend pe kahin chalein? Coorg, Ooty, ya bas Koramangala?',
+    'Arre, ye toh wahi cafe hai jo reel mein dekha tha!',
+    'Honestly, the best thing about this city is the evening breeze.',
+    'Google Maps says 12 minutes. I have lived here long enough to laugh.',
+    'Everyone here is either in a meeting or looking for a flat.',
+    'I moved here for work and stayed for the dosas.',
+    ['Mausam ekdum mast hai aaj, chai banti hai.', { rain: false }],
+    ['Baarish mein auto milna is a miracle, yaar.', { rain: true }],
+    ['Good night, Bengaluru. Kal phir traffic mein milte hain.', { time: ['night'] }],
   ],
   techie: [
     'Bro, quick call anta helidru… 45 minutes aaythu.',
@@ -85,6 +96,11 @@ const RAW: Record<string, Raw[]> = {
     ['Morning standup at 9:30, I woke up at 9:25.', { time: ['morning'] }],
     ['Night shift ge hogtidini, US client eddiddare.', { time: ['night'] }],
     ['Logging off at 7. Officially. Unofficially, 11.', { time: ['evening'] }],
+    'Bhai, mera laptop update ho raha hai. Productive day khatam.',
+    'Yaar, standup mein sab "no blockers" bolte hain, aur sab blocked hain.',
+    'Can we push this to next sprint? And the sprint after that?',
+    'My code works on my machine. Ship my machine.',
+    'Bhai, AI ne code likh diya, ab main uska bug fix kar raha hoon.',
   ],
   aunty: [
     'Yen magu, oota aaytha?',
@@ -99,6 +115,9 @@ const RAW: Record<string, Raw[]> = {
     'Beta, shaadi kab kar rahe ho? Bas pooch rahi hoon.',
     'In my time we walked to college, two kilometres, uphill both ways.',
     'Sabzi itni mehengi, kya zamana aa gaya.',
+    'Beta, Bangalore mein sweater kab pehente hain? Kabhi nahi?',
+    'These delivery boys come faster than my own son.',
+    'Beta, sabzi wale se Kannada mein baat karo, sasta deta hai.',
   ],
   uncle: [
     'Namma kaaladalli ee road full kere ittu.',
@@ -114,6 +133,9 @@ const RAW: Record<string, Raw[]> = {
     'Back in my day, a coffee was two rupees and it was better.',
     'Illi ellaru English, Hindi… Kannada yelli hoythu?',
     'Kannada maathadi, magu. Namma ooru, namma bhaashe.',
+    'Beta, ye metro achhi cheez hai. Bas thoda jaldi bana dete.',
+    'In my day we had one phone in the whole street. And we were happy.',
+    'Arre, morning walk ke baad hi filter coffee. Rule hai.',
   ],
   student: [
     'Assignment naale submission, naanu ivaga reel nodtha iddini.',
@@ -126,6 +148,9 @@ const RAW: Record<string, Raw[]> = {
     'Yaar, canteen ki maggi aur exam ka stress, perfect combo.',
     'Attendance 74 percent hai, ek class aur bas.',
     'My roommate is from Delhi. He still calls every dosa a "plain dosa".',
+    'Bhai, PG ka khana aur maa ka khana, dono mein zameen aasmaan ka farak.',
+    'Yaar, ek internship de do koi, unpaid bhi chalega.',
+    'Bro, I have three deadlines and zero motivation.',
   ],
   auto: [
     'Elli hogbeku saar? Meter mele twenty.',
@@ -141,6 +166,9 @@ const RAW: Record<string, Raw[]> = {
     'Sir, one way only that side, I take shortcut.',
     'Kannada maathadi saar, meter kammi aagutte. Joke!',
     'Saar, Kannada baralva? Ondu word kalthkoli: "Beda" andre no.',
+    'Sir, Google Maps not knowing shortcut. I know.',
+    'Bhaiya, baarish mein meter thoda emotional ho jaata hai.',
+    'Madam, your Uber is coming? Okay okay, I wait for next customer.',
   ],
   chaiwala: [
     'Bisi bisi chai, ondu cutting?',
@@ -174,6 +202,8 @@ const RAW: Record<string, Raw[]> = {
     'Bhaiya, best price dunga, aap jaise customer ke liye.',
     'Sir, try once, no compulsion. Okay, little compulsion.',
     'Paytm, GPay, PhonePe, cash, sab chalega.',
+    'Bhaiya, dekh lo, pasand aaye toh lena, warna bhi dekh lo.',
+    'Sir, this phone cover is waterproof. Bengaluru-rain-proof, not sure.',
   ],
   kid: [
     'Anna, ball kodi please!',
@@ -183,6 +213,8 @@ const RAW: Record<string, Raw[]> = {
     'Wall ge hodre out, gothaitha?',
     'Bhaiya, ek over khelo na please!',
     'I am Virat, you are bowler, okay?',
+    'Bhaiya, ball dena please! Last ball hai!',
+    'Uncle, you bowl, I bat. Okay? Okay!',
   ],
   delivery: [
     'Ten minute delivery anta, aadre traffic forty minute.',
@@ -192,6 +224,9 @@ const RAW: Record<string, Raw[]> = {
     'Bhai, gate number batao, security nahi chhod raha.',
     'Sir, your order is "arriving", like my salary.',
     'Do minute bole the, traffic ne bees bana diya.',
+    'Bhai, OTP bata do jaldi, agla order wait kar raha hai.',
+    'Sir, food is hot, I am also hot. Very sunny today.',
+    'Yaar, building mein lift band hai, aur order fifth floor ka.',
   ],
   staff: [
     'QR ticket use maadi, fast aagutte.',
@@ -220,6 +255,8 @@ const RAW: Record<string, Raw[]> = {
     'Run club every Sunday, 6 am. Join aagi!',
     'Pace maintain maadi, guys!',
     'Five K done, now dose.',
+    'Bhai, Cubbon Park mein subah ka mazaa hi alag hai.',
+    'Yaar, run ke baad dosa. Calories cancel.',
   ],
   hipster: [
     'This cafe was cooler before it got cool.',
@@ -228,6 +265,8 @@ const RAW: Record<string, Raw[]> = {
     'Graffiti wall nodidya? Backside alli ide, very underground.',
     'This place is giving very Indiranagar-core.',
     'Yaar, ye cafe Instagram pe hi achha lagta hai.',
+    'Bro, this oat milk cortado is life-changing. Allegedly.',
+    'Yaar, ye jagah ab mainstream ho gayi hai.',
   ],
   vendor: [
     'Mallige hoovu, ondu maaru hattu rupaayi!',
@@ -255,6 +294,9 @@ const RAW: Record<string, Raw[]> = {
     'Halasuru station se office ab paanch minute. Finally!',
     ['Rush hour bus, nindkondu hogbeku. Seat? Kanasu.', { time: ['morning'] }],
     ['Evening metro full. Sardine thara adjust maadi.', { time: ['evening'] }],
+    'Bhai, metro mein seat mil gayi. Aaj ka din safal.',
+    'Yaar, ye bus har stop pe aise rukti hai jaise picnic pe aayi ho.',
+    'I read an entire book this month. All of it at Silk Board.',
   ],
 
   // ── Reactions
@@ -586,5 +628,11 @@ export const EXCHANGES: Exchange[] = [
   ex('weather_else', 'general', 'Nice weather today, no?', 'Yes. What else?', '…', '…'),
   ex('crew_road', 'construction', 'Ee road last month thane maadidvi alva?', 'Haudu. Ivaga cable haakbeku, matte agiyabeku.', 'Next month?', 'Water pipe. Aamele matte road. Job security, guru.'),
   ex('crew_lunch', 'construction', 'Lunch yaavaga?', 'Supervisor hogidmele.', 'Avaru yaavaga hogtare?', 'Avaru lunch ge hogidmele. Wait maadu.'),
+  ex('flat_hunt', 'gossip', 'Bhai, flat mil gaya?', 'Mil gaya, but owner bola "only vegetarian, no pets, no friends".', 'Rent kitna?', 'Itna ki ab mujhe bhi friends nahi chahiye.'),
+  ex('new_in_town', 'general', 'Just moved here from Pune. Any tips?', 'Learn three words: swalpa, adjust, maadi.', 'That is it?', 'And always carry an umbrella. Even in summer.'),
+  ex('chai_or_coffee', 'food', 'Chai ya coffee?', 'Bangalore mein ho, filter coffee lo.', 'Aur North wala dil?', 'Dil ko bhi swalpa adjust maadi bolo.'),
+  ex('cab_wait', 'traffic', 'Cab driver ne bola "two minutes".', 'Kitni der hui?', 'Twenty minutes.', 'Bengaluru minutes, bhai. Different timezone.'),
+  ex('hike_english', 'techie', 'Did you get the appraisal mail?', 'Yes. "Meets expectations."', 'And the hike?', 'Also meets expectations. Very low expectations.'),
+  ex('metro_english', 'metro', 'Is this train going to Whitefield?', 'Yes, and it is faster than any cab.', 'Then why is everyone still in cabs?', 'Habit. And the last-mile auto.'),
   ex('kannada', 'general', 'Kannada class join aagidini!', 'Super! Yenu kalthidya?', '"Swalpa adjust maadi."', 'Ashte saaku, ninge citizenship sigutte.'),
 ];

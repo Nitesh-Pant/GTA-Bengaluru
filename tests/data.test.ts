@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { CONVERSATIONS, QUIZ } from '../src/data/conversations';
 import { EXCHANGES, LINE_POOLS } from '../src/data/dialogue';
 import { EVENTS } from '../src/data/events';
+import { JOB_GIVERS } from '../src/data/jobs';
 import { LOOKS } from '../src/data/looks';
 import { DISTRICTS } from '../src/data/map';
 import { NPCS } from '../src/data/npcs';
@@ -57,6 +58,17 @@ describe('content data integrity', () => {
       expect(e.chance).toBeGreaterThan(0);
       expect(e.chance).toBeLessThanOrEqual(1);
       expect(e.cooldownMs).toBeGreaterThanOrEqual(30000);
+    }
+  });
+  it('every job giver exists and their conversation can start that job', () => {
+    for (const g of JOB_GIVERS) {
+      const npc = NPCS.find((n) => n.id === g.npc);
+      expect(npc, g.npc).toBeDefined();
+      const conv = CONVERSATIONS[npc!.conversation ?? ''];
+      expect(conv, `${g.npc} conversation`).toBeDefined();
+      const options = Object.values(conv.nodes).flatMap((n) => n.options ?? []);
+      if (g.kind === 'delivery') expect(options.some((o) => o.effects?.some((e) => e.type === 'job')), g.npc).toBe(true);
+      if (g.kind === 'quiz') expect(options.some((o) => o.next === QUIZ), g.npc).toBe(true);
     }
   });
 });

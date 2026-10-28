@@ -6,6 +6,8 @@ import { STATIONS } from '../../data/metro';
 import { POIS, poiById } from '../../data/pois';
 import { METRO_TRACK, ROAD_GRID } from '../../data/roads';
 import { guideRoute, pointsAlong } from '../../logic/bikeRide';
+import { JOB_INFO } from '../../data/jobs';
+import { JobSystem } from '../systems/JobSystem';
 import { PARKED } from '../../data/vehicles';
 import { newlyUnlocked } from '../../logic/achievements';
 import { addressOf, type PlayerProfile } from '../../logic/player';
@@ -90,6 +92,7 @@ export class WorldScene extends Phaser.Scene {
   fares!: FareSystem;
   match!: MatchSystem;
   deliveries!: DeliverySystem;
+  jobs!: JobSystem;
   reactions = new ReactionEngine(mulberry32(1234));
   /** Scene clock in ms; stops while paused so every cooldown pauses with it. */
   clock = 0;
@@ -160,6 +163,7 @@ export class WorldScene extends Phaser.Scene {
     this.fares = new FareSystem(this);
     this.match = new MatchSystem(this);
     this.deliveries = new DeliverySystem(this);
+    this.jobs = new JobSystem(this);
     this.traffic.addObstacle({ id: 'cow', kind: 'static', x: COW.x, y: COW.y, radius: 9, squeeze: true });
 
     this.setupColliders();
@@ -385,6 +389,7 @@ export class WorldScene extends Phaser.Scene {
           rideables: this.vehicles.list.filter((r) => !r.occupied).map((r) => ({ x: r.sprite.x, y: r.sprite.y })),
           target: this.routeTarget,
           route: this.route,
+          jobs: this.jobs.spots(),
         };
       },
       saveNow: () => this.persist(),
@@ -402,6 +407,15 @@ export class WorldScene extends Phaser.Scene {
       },
       takeBus: (id) => this.buses.take(id),
       showNearest: (kind) => this.showNearest(kind),
+      acceptJob: (id) => this.jobs.accept(id),
+      snoozeJob: (id) => this.jobs.snooze(id),
+      nearestJobs: () => this.jobs.nearest().map(({ kind, label, distance }) => ({ kind, label, distance })),
+      showJob: (kind) => {
+        const best = this.jobs.nearest().find((j) => j.kind === kind);
+        if (!best) return;
+        this.guides.set('tour', { ...best.at, label: `${JOB_INFO[kind].name}: ${best.label}` });
+        uiStore.toast({ kind: 'hint', title: `Marked: ${JOB_INFO[kind].name}`, body: `${best.label}. Follow the red dots, or the arrow beside you.` }, 3600);
+      },
       nearestRides: () =>
         GUIDE_KINDS.flatMap((kind) => {
           const n = this.nearestOf(kind);
@@ -695,6 +709,7 @@ export class WorldScene extends Phaser.Scene {
     this.fares.update(now);
     this.match.update(now);
     this.deliveries.update(now);
+    this.jobs.update(now);
     this.weather.update(dt, now);
     this.metro.update(dt, now);
     this.worldEvents.update(dt, now);

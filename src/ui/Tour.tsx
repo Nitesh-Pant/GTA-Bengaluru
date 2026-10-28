@@ -67,8 +67,8 @@ function steps(name: string, touch: boolean): Step[] {
       target: '.quickbar',
       body: (
         <>
-          <b>Find a ride</b> shows the nearest bike, auto, bus stop and metro with an arrow to it{touch ? '' : <> (or press <kbd>F</kbd>)</>}. The
-          others change your character, switch the time of day, mute the sound, book a Rapido and open these hints again.
+          <b>Find</b> shows the nearest bike, auto, bus stop, metro and job, with red dots leading there{touch ? '' : <> (or press <kbd>F</kbd>)</>}.
+          The others change your character, switch the time of day, mute the sound, book a Rapido and open these hints again.
         </>
       ),
     },
@@ -105,6 +105,9 @@ function steps(name: string, touch: boolean): Step[] {
       title: 'Earn and help',
       body: (
         <ul className="tour-list">
+          <li>
+            A bouncing <b>!</b> means someone has a job for you. Walk up and they'll tell you about it.
+          </li>
           <li>
             <b>Auto fares</b>: drive any auto, slow down beside people who wave, drop them at the marker, collect the meter.
           </li>

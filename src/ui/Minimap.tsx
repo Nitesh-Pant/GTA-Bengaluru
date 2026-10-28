@@ -122,6 +122,23 @@ export function Minimap({ width, height, scale, camera, onPick, paused = false }
           ctx.fillStyle = '#fcc419';
           ctx.fillRect(X(v.x / TILE) - 1.5, Y(v.y / TILE) - 1.5, 3, 3);
         }
+      // Jobs on offer: a yellow "!" per giver.
+      if (snap)
+        for (const j of snap.jobs) {
+          const x = X(j.x / TILE);
+          const y = Y(j.y / TILE);
+          if (x < -6 || y < -6 || x > width + 6 || y > height + 6) continue;
+          ctx.fillStyle = '#1c1726';
+          ctx.beginPath();
+          ctx.arc(x, y, r + 2, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.fillStyle = '#fcc419';
+          ctx.beginPath();
+          ctx.arc(x, y, r + 1, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.fillStyle = '#1c1726';
+          ctx.fillText('!', x, y + 0.5);
+        }
       // The active marker (a place, Find a ride, or a job) and the route to it.
       if (snap?.target) {
         if (snap.route.length > 1) {

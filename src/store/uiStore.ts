@@ -31,6 +31,17 @@ export interface Job {
   cancellable?: boolean;
 }
 
+/** A job pitched because you walked up to its giver (see JobSystem). */
+export interface JobOffer {
+  /** Which giver: an NPC id or a vehicle id. */
+  id: string;
+  kind: 'delivery' | 'fares' | 'quiz';
+  title: string;
+  who: string;
+  body: string;
+  cta: string;
+}
+
 export type Panel = null | 'pause' | 'journal' | 'map' | 'ride' | 'character' | 'bus' | 'tour' | 'find';
 
 export interface UiState {
@@ -58,6 +69,7 @@ export interface UiState {
   jobs: Record<string, Job>;
   /** Bus stop whose panel is open. */
   busStop: string | null;
+  jobOffer: JobOffer | null;
   raining: boolean;
   eventTitle: string | null;
   ready: boolean;
@@ -85,6 +97,7 @@ const initial = (): UiState => ({
   jobs: {},
   match: null,
   busStop: null,
+  jobOffer: null,
   raining: false,
   eventTitle: null,
   ready: false,

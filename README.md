@@ -66,7 +66,7 @@ guided tour starts the first time; skip it or follow along.
 | `E` | Talk, order food, feed a dog, get in a vehicle, use a metro entrance or bus stop | Get out (only when slow and there is room) |
 | `Space` | – | Handbrake |
 | `H` | – | Horn (pedestrians react, dogs bark) |
-| `F` | Find a ride: nearest bike, auto, bus stop, metro or car, with an arrow to it | same |
+| `F` | Find: nearest bike, auto, bus stop, metro, car or job, with a route to it | same |
 | `R` | Book a Rapido bike taxi | – |
 | `M` | City map: zoom, drag, search, mark places, ride there | same |
 | `J` | Journal: places, food book, achievements | same |
@@ -89,7 +89,8 @@ On-screen controls appear automatically on touch devices:
   you're driving.
 - **E:** talk, use, get in. While driving: a big hold-to-**Brake** under the right thumb, **Horn**
   beside it, and a small **Get out** above, out of the thumb's way.
-- **Find ride** (yellow), **Map**, **Journal** and **II** (pause) buttons.
+- **Find** and **Ride** (yellow; Ride books a Rapido and shows on foot), **Map**, **Journal** and **II**
+  (pause) buttons.
 - Every panel, dialogue option and list is tappable. Portrait and landscape both work.
 
 ### Side bar
@@ -98,7 +99,7 @@ Always on the left of the screen (icon-only on phones):
 
 | Button | What it does |
 | --- | --- |
-| **Find a ride** | Nearest bike, auto, bus stop, metro and car with walking time; pick one for an arrow to it (on phones this is the yellow **Find ride** button) |
+| **Find rides & jobs** | Nearest bike, auto, bus stop, metro, car and job with walking time; pick one for a route to it (on phones, the yellow **Find** button) |
 | **Character** | Change your name, boy/girl and outfit at any time |
 | **Morning → Afternoon** | Jump the time of day (morning, afternoon, evening, night) |
 | **Sound on / off** | Mute or unmute everything |
@@ -114,7 +115,7 @@ Always on the left of the screen (icon-only on phones):
    for her. People greet you by name, and address you as *akka / madam / didi* or *anna / saar / bhai*.
 2. **Guided tour.** Popups spotlight each part of the screen (area card, minimap, side bar) and explain
    how to get around. The *Getting around* page has **Show me** buttons that put a marker on the
-   nearest bike, bus stop, metro, auto or car (the same as **Find a ride**). Bring it back any time with **Hints**, or **How to play**
+   nearest bike, bus stop, metro, auto or car (the same as **Find**). Bring it back any time with **Hints**, or **How to play**
    in the pause menu.
 3. **You start on 100 Feet Road**, Indiranagar, at 8 AM, beside Hatti Kaapi and Manju's tea cart.
    Walk up to people and press `E`.
@@ -174,10 +175,10 @@ Green road-name boards stand on every main road, and the big map labels areas, r
 | **BMTC bus** | 7 stops: Indiranagar 100 Ft Rd, Marathahalli Bridge, Thippasandra, KR Puram, MG Road, Koramangala (Sony Signal), BTM (Udupi Garden) | Stand at the stop, press `E`, choose where. Miss it and "BMTC never waits" |
 | **Namma Metro** | Indiranagar, Halasuru and KR Puram on the elevated purple line | `E` at the entrance, pick a station, ride the viaduct. A recorded announcer calls the next station |
 
-Not sure where any of these are? **Find a ride** (`F`, or the yellow button on phones) lists the
+Not sure where any of these are? **Find** (`F`, or the yellow button on phones) lists the
 nearest of each with the walking time and marks the one you pick.
 
-**Following a marker** (a place from the map search or journal, Find a ride, or a job): red dots run
+**Following a marker** (a place from the map search or journal, Find, or a job): red dots run
 from you to it along the main roads (straight when it's close), an arrow beside your character shows
 the direction and distance, and the pin itself carries the place's name with a pulsing ring on the
 spot. The minimap shows the route too, with an arrow on its edge when the marker is off it.
@@ -190,10 +191,14 @@ Traffic vehicles (cars, autos, buses, scooters, the police car and the ambulance
 
 ### Jobs (all optional)
 
+Anyone with a job wears a bouncing yellow **!** (the minimap shows them too), and so does every auto
+you can borrow. Walk up to one and a card pitches the job with a button to start it (**Not now** keeps
+that giver quiet for a couple of minutes). **Find** also lists the nearest job of each kind.
+
 - **Auto fares.** Drive any of the autos and people wave you down. Slow down beside them, drop them at the
   marker and collect the meter, rounded down ("change illa"). Earnings show in the journal.
-- **Food delivery.** Ask a delivery rider (Imran in Thippasandra, or Mallesh outside Swiggy) for an
-  order. Pick it up at a restaurant and drop it at an office, PG or landmark before the timer runs out.
+- **Food delivery.** Ask a delivery rider (Imran in Thippasandra, Mallesh outside Swiggy, Salman at
+  Marathahalli or Imtiyaz in BTM) for an order. Pick it up at a restaurant and drop it at an office, PG or landmark before the timer runs out.
   Any way of travelling counts. The ✕ on the HUD chip hands the order back.
 - **Tech questions.** The recruiter at the tech park's walk-in drive, the Amazon intern, and most
   techies, founders and job candidates will quiz you (20 questions).
@@ -362,7 +367,7 @@ dropped.
 | Areas | 14 |
 | Places to discover | 62 (5 secret) |
 | People | 146 |
-| Dialogue lines / exchanges / conversations | 395 / 53 / 38 |
+| Dialogue lines / exchanges / conversations | 437 / 59 / 38 |
 | Dishes | 21 |
 | Achievements | 28 |
 | Tech questions | 20 |

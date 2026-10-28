@@ -16,6 +16,7 @@ import { CharacterPanel } from './ui/CharacterSetup';
 import { QuickBar } from './ui/QuickBar';
 import { RidePanel } from './ui/RidePanel';
 import { FindPanel } from './ui/FindPanel';
+import { JobOffer } from './ui/JobOffer';
 import { BusPanel } from './ui/BusPanel';
 import { Tour } from './ui/Tour';
 import { TouchControls } from './ui/TouchControls';
@@ -79,6 +80,7 @@ export function App() {
       <QuickBar />
       <RidePanel />
       <FindPanel />
+      <JobOffer />
       <BusPanel />
       <Tour />
       <CharacterPanel />

@@ -1,3 +1,4 @@
+import type { JobKind } from '../data/jobs';
 import type { PlayerProfile } from '../logic/player';
 import type { Settings } from '../logic/save';
 
@@ -18,6 +19,8 @@ export interface MinimapSnapshot {
   angle: number;
   driving: boolean;
   rideables: Array<{ x: number; y: number }>;
+  /** Job givers on offer right now (the "!" markers). */
+  jobs: Array<{ x: number; y: number }>;
   /** The active marker (destination or guide) and the dotted route to it, in world px. */
   target: { x: number; y: number } | null;
   route: ReadonlyArray<{ x: number; y: number }>;
@@ -53,6 +56,13 @@ export interface GameApi {
   showNearest(kind: GuideKind): void;
   /** The nearest of each kind, for the Find a ride panel. */
   nearestRides(): NearbyRide[];
+  /** The nearest giver of each open job (delivery, auto fares, tech quiz), for Find. */
+  nearestJobs(): Array<{ kind: JobKind; label: string; distance: number }>;
+  /** Mark the nearest giver of this job. */
+  showJob(kind: JobKind): void;
+  /** Start the job pitched by uiStore.jobOffer, or quieten that giver for a while. */
+  acceptJob(id: string): void;
+  snoozeJob(id: string): void;
   /** Board a BMTC bus from the open stop to another stop. */
   takeBus(toStopId: string): void;
 }

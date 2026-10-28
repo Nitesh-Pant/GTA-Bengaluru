@@ -215,7 +215,7 @@ export const NPCS: NpcDef[] = [
     languages: MIX,
   },
   { id: 'w_mh2', name: 'Divya', role: 'Commuter', look: 'commuter_f', x: 105, y: 16.9, behaviour: { type: 'route', points: sidewalkH1N(93.5, 126), loop: false }, personality: 'chill', categories: ['commuter', 'ambient'], languages: MIX },
-  { id: 'deliv_mh', name: 'Salman', role: 'Delivery rider', look: 'delivery', x: 107.5, y: 17.2, behaviour: { type: 'idle', facing: 'down' }, personality: 'anxious', categories: ['delivery'], languages: MIX },
+  { id: 'deliv_mh', name: 'Salman', role: 'Delivery rider', look: 'delivery', x: 107.5, y: 17.2, behaviour: { type: 'idle', facing: 'down' }, personality: 'anxious', categories: ['delivery'], languages: MIX, conversation: 'rider' },
 
   // ── Food & chai lane
   { id: 'shetty', name: 'Shetty', role: 'Darshini cashier', look: 'cook', x: 53, y: 74.15, behaviour: { type: 'idle', facing: 'down' }, personality: 'cheerful', categories: ['cook'], languages: KEN, conversation: 'shetty', reach: 44 },
@@ -339,7 +339,7 @@ export const NPCS: NpcDef[] = [
   { id: 'pg3', name: 'Aishwarya', role: 'PG resident', look: 'student_f', x: 121.6, y: 106.6, behaviour: { type: 'chat', group: 'pggirls', facing: 'right' }, personality: 'chatty', categories: ['pg'], languages: MIX, topics: ['pg', 'general'] },
   { id: 'pg4', name: 'Riya', role: 'PG resident', look: 'techie_f', x: 122.9, y: 106.6, behaviour: { type: 'chat', group: 'pggirls', facing: 'left' }, personality: 'cheerful', categories: ['pg'], languages: MIX, topics: ['pg', 'general'] },
   { id: 'btm_walker', name: 'Lokesh', role: 'Lake walker', look: 'uncle', x: 110, y: 141.6, behaviour: { type: 'wander', zone: { x: 100, y: 141, w: 20, h: 1 } }, personality: 'wise', categories: ['uncle'], languages: KEN, speed: 26 },
-  { id: 'btm_rider', name: 'Imtiyaz', role: 'Delivery rider', look: 'delivery', x: 101.5, y: 113.2, behaviour: { type: 'idle', facing: 'down' }, personality: 'anxious', categories: ['delivery'], languages: MIX },
+  { id: 'btm_rider', name: 'Imtiyaz', role: 'Delivery rider', look: 'delivery', x: 101.5, y: 113.2, behaviour: { type: 'idle', facing: 'down' }, personality: 'anxious', categories: ['delivery'], languages: MIX, conversation: 'rider' },
   // Pushcart hawkers who call out as they go
   { id: 'hawk_tomato', name: 'Thimmappa', role: 'Vegetable cart', look: 'shopkeeper', x: 3, y: 76.2, behaviour: { type: 'route', points: [{ x: 3, y: 76.2 }, { x: 36, y: 76.2, pause: 3 }], loop: false }, personality: 'cheerful', categories: ['hawk_veg'], languages: KEN, speed: 22 },
   { id: 'hawk_soppu', name: 'Sarojamma', role: 'Greens seller', look: 'vendor_f', x: 95, y: 78.6, behaviour: { type: 'route', points: [{ x: 95, y: 78.6 }, { x: 126, y: 78.6, pause: 3 }], loop: false }, personality: 'chatty', categories: ['hawk_soppu'], languages: KEN, speed: 20 },

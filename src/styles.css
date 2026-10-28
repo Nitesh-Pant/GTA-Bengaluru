@@ -1049,6 +1049,70 @@ kbd {
   border-color: #fff3bf;
   color: #1c1726;
 }
+.touch-ride {
+  background: rgba(252, 196, 25, 0.92);
+  border-color: #fff3bf;
+  color: #1c1726;
+}
+
+/* ── Job offer: pops up beside a job giver */
+.job-offer {
+  position: fixed;
+  left: 50%;
+  bottom: 52px;
+  transform: translateX(-50%);
+  z-index: 6;
+  width: min(360px, calc(100vw - 32px));
+  padding: 10px 12px;
+  border-color: var(--saffron);
+  animation: slide 0.25s ease-out;
+}
+.job-offer-head {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+.job-badge {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--saffron);
+  color: var(--ink);
+  border: 2px solid var(--ink);
+  font-family: var(--title);
+  font-size: 14px;
+  animation: job-bob 0.9s ease-in-out infinite alternate;
+}
+@keyframes job-bob {
+  to {
+    transform: translateY(-3px);
+  }
+}
+.job-offer-title {
+  font-family: var(--title);
+  font-size: 11px;
+  color: var(--saffron);
+  line-height: 1.5;
+}
+.job-offer p {
+  margin: 8px 0 10px;
+  font-size: 13px;
+  line-height: 1.35;
+}
+.job-offer-actions {
+  display: flex;
+  gap: 8px;
+}
+.job-offer-actions .btn-primary {
+  flex: 1;
+}
+.job-offer-keys {
+  margin-top: 6px;
+  font-size: 12px;
+}
 .touch-hint {
   padding: 6px 9px;
   font-size: 12px;
@@ -1059,6 +1123,20 @@ kbd {
   width: min(300px, calc(100vw - 120px));
 }
 @media (pointer: coarse) {
+  /* Phones: the job card sits under the HUD, clear of the stick and buttons. */
+  .job-offer {
+    top: 136px;
+    bottom: auto;
+    left: 64px;
+    right: 12px;
+    transform: none;
+    width: auto;
+    max-width: 360px;
+    padding: 8px 10px;
+  }
+  .job-offer p {
+    font-size: 12px;
+  }
   /* Phones: a more compact HUD, messages and speech, still easy to read. */
   .area-card {
     min-width: 0;
@@ -1232,8 +1310,9 @@ kbd {
   .quick-label {
     display: none;
   }
-  /* Phones get a labelled Find ride button beside Map instead. */
-  .quick-find {
+  /* Phones get labelled Find and Ride buttons beside Map instead. */
+  .quick-find,
+  .quick-ride {
     display: none;
   }
   .quick-icon {
@@ -1254,6 +1333,17 @@ kbd {
     left: auto;
     right: 156px;
     flex-direction: row;
+  }
+  .job-offer {
+    top: 60px;
+    left: 50%;
+    right: auto;
+    transform: translateX(-50%);
+    width: min(330px, calc(100vw - 560px));
+    min-width: 280px;
+  }
+  .job-offer p {
+    margin: 4px 0 6px;
   }
   /* Landscape phones: messages sit low in the gap between the stick and the pedals, off the road ahead. */
   .toasts {
