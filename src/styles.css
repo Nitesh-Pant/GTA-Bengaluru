@@ -1031,6 +1031,8 @@ kbd {
   color: #1c1726;
 }
 .touch-hint {
+  padding: 6px 9px;
+  font-size: 12px;
   top: 26%;
   bottom: auto;
   left: 50%;
@@ -1038,6 +1040,59 @@ kbd {
   width: min(300px, calc(100vw - 120px));
 }
 @media (pointer: coarse) {
+  /* Phones: a more compact HUD, messages and speech, still easy to read. */
+  .area-card {
+    min-width: 0;
+    max-width: calc(100vw - 172px);
+    padding: 5px 8px 6px;
+  }
+  .area-name {
+    font-size: 9px;
+  }
+  .area-tag {
+    font-size: 11px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .chips {
+    margin-top: 4px;
+    gap: 3px;
+  }
+  .chip {
+    font-size: 10px;
+  }
+  .minimap {
+    padding: 3px;
+  }
+  .minimap-foot {
+    padding: 2px 1px 0;
+    font-size: 10px;
+  }
+  .toast {
+    padding: 4px 8px 5px;
+    border-left-width: 4px;
+  }
+  .toast-title {
+    font-size: 12px;
+  }
+  .toast-body {
+    font-size: 11px;
+  }
+  .bubble {
+    max-width: 190px;
+    padding: 4px 6px 5px;
+    font-size: 12px;
+  }
+  .bubble-name {
+    font-size: 10px;
+  }
+  .bubble-honk {
+    font-size: 11px;
+  }
+  .name-tag {
+    font-size: 11px;
+  }
   /* Left-aligned so the button column on the right stays clear. */
   .toasts {
     top: auto;
@@ -1066,12 +1121,12 @@ kbd {
   .touch-menu {
     flex-direction: row;
     bottom: auto;
-    top: 104px;
+    top: 84px;
     left: 12px;
     right: auto;
   }
   .touch-hint {
-    top: 148px;
+    top: 128px;
     left: 12px;
     transform: none;
     width: min(360px, calc(50vw - 24px));
@@ -1168,11 +1223,17 @@ kbd {
     font-size: 14px;
   }
 }
+/* Phones: the side bar sits right under the compact area card. */
+@media (pointer: coarse) {
+  .quickbar {
+    top: 84px;
+  }
+}
 @media (max-height: 560px) and (pointer: coarse) {
   .quickbar {
     top: 12px;
     left: auto;
-    right: 210px;
+    right: 156px;
     flex-direction: row;
   }
   /* Landscape phones: messages sit low in the gap between the stick and the pedals, off the road ahead. */

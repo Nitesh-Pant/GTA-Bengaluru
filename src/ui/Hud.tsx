@@ -118,6 +118,8 @@ export function Hud() {
   const ready = useUi((s) => s.ready);
   const panel = useUi((s) => s.panel);
   if (!ready) return <div className="loading">Painting the city… swalpa wait maadi</div>;
+  // Phones get a smaller minimap so it doesn't eat the screen (and no keyboard hints).
+  const phone = isTouchDevice();
   return (
     <div className="hud" style={{ visibility: panel === 'pause' ? 'hidden' : 'visible' }}>
       <div className="area-card panel">
@@ -129,14 +131,16 @@ export function Hud() {
         </div>
       </div>
       <div className="minimap panel">
-        <Minimap width={184} height={138} scale={2.6} paused={panel === 'map' || panel === 'pause'} />
+        <Minimap width={phone ? 124 : 184} height={phone ? 92 : 138} scale={phone ? 2.2 : 2.6} paused={panel === 'map' || panel === 'pause'} />
         <div className="minimap-foot">
           <span>
             Places {discovered}/{POIS.length}
           </span>
-          <span className="muted">
-            <kbd>J</kbd> <kbd>M</kbd>
-          </span>
+          {!phone && (
+            <span className="muted">
+              <kbd>J</kbd> <kbd>M</kbd>
+            </span>
+          )}
         </div>
       </div>
       <Toasts />
