@@ -122,15 +122,45 @@ export function Minimap({ width, height, scale, camera, onPick, paused = false }
           ctx.fillStyle = '#fcc419';
           ctx.fillRect(X(v.x / TILE) - 1.5, Y(v.y / TILE) - 1.5, 3, 3);
         }
-      if (st.destination) {
-        const poi = POIS.find((p) => p.id === st.destination);
-        if (poi) {
-          const x = X(poi.x / TILE);
-          const y = Y(poi.y / TILE);
+      // The active marker (a place, Find a ride, or a job) and the route to it.
+      if (snap?.target) {
+        if (snap.route.length > 1) {
+          ctx.strokeStyle = 'rgba(255,107,107,0.9)';
+          ctx.lineWidth = Math.max(1.5, s * 0.5);
+          ctx.setLineDash([3, 2]);
+          ctx.beginPath();
+          snap.route.forEach((p, i) => (i ? ctx.lineTo(X(p.x / TILE), Y(p.y / TILE)) : ctx.moveTo(X(p.x / TILE), Y(p.y / TILE))));
+          ctx.stroke();
+          ctx.setLineDash([]);
+        }
+        const tx = X(snap.target.x / TILE);
+        const ty = Y(snap.target.y / TILE);
+        const edge = 7;
+        if (tx < edge || ty < edge || tx > width - edge || ty > height - edge) {
+          // Off the minimap: a red arrow on its edge, pointing the way.
+          const cx = width / 2;
+          const cy = height / 2;
+          const ang = Math.atan2(ty - cy, tx - cx);
+          const k = Math.min((cx - edge) / Math.abs(Math.cos(ang) || 1e-6), (cy - edge) / Math.abs(Math.sin(ang) || 1e-6));
+          ctx.save();
+          ctx.translate(cx + Math.cos(ang) * k, cy + Math.sin(ang) * k);
+          ctx.rotate(ang);
+          ctx.fillStyle = '#ff6b6b';
+          ctx.strokeStyle = '#1c1726';
+          ctx.lineWidth = 1.5;
+          ctx.beginPath();
+          ctx.moveTo(6, 0);
+          ctx.lineTo(-4, 5);
+          ctx.lineTo(-4, -5);
+          ctx.closePath();
+          ctx.fill();
+          ctx.stroke();
+          ctx.restore();
+        } else {
           ctx.strokeStyle = '#ff6b6b';
           ctx.lineWidth = 2;
           ctx.beginPath();
-          ctx.arc(x, y, r * 2 + 2 + Math.sin(time / 200) * 1.5, 0, Math.PI * 2);
+          ctx.arc(tx, ty, r * 2 + 2 + Math.sin(time / 200) * 1.5, 0, Math.PI * 2);
           ctx.stroke();
         }
       }

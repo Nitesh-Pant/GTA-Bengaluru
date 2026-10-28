@@ -175,7 +175,12 @@ Green road-name boards stand on every main road, and the big map labels areas, r
 | **Namma Metro** | Indiranagar, Halasuru and KR Puram on the elevated purple line | `E` at the entrance, pick a station, ride the viaduct. A recorded announcer calls the next station |
 
 Not sure where any of these are? **Find a ride** (`F`, or the yellow button on phones) lists the
-nearest of each with the walking time and puts an arrow on the screen edge pointing the way.
+nearest of each with the walking time and marks the one you pick.
+
+**Following a marker** (a place from the map search or journal, Find a ride, or a job): red dots run
+from you to it along the main roads (straight when it's close), an arrow beside your character shows
+the direction and distance, and the pin itself carries the place's name with a pulsing ring on the
+spot. The minimap shows the route too, with an arrow on its edge when the marker is off it.
 
 Traffic vehicles (cars, autos, buses, scooters, the police car and the ambulance) can't be taken.
 

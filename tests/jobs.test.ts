@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { POIS } from '../src/data/pois';
-import { pathLength, planRide, type RoadGrid } from '../src/logic/bikeRide';
+import { guideRoute, pathLength, planRide, pointsAlong, type RoadGrid } from '../src/logic/bikeRide';
 import { pointAt } from '../src/logic/metro';
 import { pickDelivery } from '../src/logic/delivery';
 import { mulberry32 } from '../src/logic/rng';
@@ -28,6 +28,34 @@ describe('bike taxi route', () => {
     expect(pathLength(pts)).toBe(150);
     expect(pointAt(pts, 120)).toMatchObject({ x: 100, y: 20 });
     expect(pointAt(pts, 999)).toMatchObject({ x: 100, y: 50 });
+  });
+});
+
+describe('marker guide route', () => {
+  it('goes straight to a nearby marker', () => {
+    const from = { x: 30 * T, y: 30 * T };
+    const to = { x: 36 * T, y: 34 * T };
+    expect(guideRoute(from, to, grid, 12 * T)).toEqual([from, to]);
+  });
+  it('follows the main roads to a far marker, from you to exactly the marker', () => {
+    const from = { x: 26 * T, y: 17 * T };
+    const to = { x: 110 * T, y: 105 * T };
+    const pts = guideRoute(from, to, grid, 12 * T);
+    expect(pts[0]).toEqual(from);
+    expect(pts[pts.length - 1]).toEqual(to);
+    for (const p of pts.slice(1, -1)) expect(onRoad(p)).toBe(true);
+  });
+  it('spaces dots evenly along the path, shifted by the offset', () => {
+    const path = [{ x: 0, y: 0 }, { x: 30, y: 0 }, { x: 30, y: 20 }];
+    expect(pointsAlong(path, 10)).toEqual([
+      { x: 0, y: 0 },
+      { x: 10, y: 0 },
+      { x: 20, y: 0 },
+      { x: 30, y: 0 },
+      { x: 30, y: 10 },
+      { x: 30, y: 20 },
+    ]);
+    expect(pointsAlong(path, 10, 5)[0]).toEqual({ x: 5, y: 0 });
   });
 });
 

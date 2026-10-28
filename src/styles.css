@@ -237,10 +237,29 @@ kbd {
   font-size: 12px;
   white-space: nowrap;
 }
+.dest-arrow span {
+  max-width: 46vw;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
 .dest-arrow i {
   display: inline-block;
   font-style: normal;
   color: #ff6b6b;
+}
+.dest-label {
+  position: absolute;
+  left: 0;
+  top: 0;
+  padding: 2px 7px;
+  background: #ff6b6b;
+  color: #1c1726;
+  border: 2px solid var(--ink);
+  border-radius: 3px;
+  font-size: 12px;
+  font-weight: 700;
+  white-space: nowrap;
+  box-shadow: 2px 2px 0 rgba(0, 0, 0, 0.35);
 }
 
 /* ── HUD */

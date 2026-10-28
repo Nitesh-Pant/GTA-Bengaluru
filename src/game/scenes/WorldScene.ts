@@ -4,12 +4,13 @@ import { DISHES, dishById } from '../../data/food';
 import { BUILDINGS, buildGround, buildSolids, districtAt, PLAYER_SPAWN, PROPS, type District } from '../../data/map';
 import { STATIONS } from '../../data/metro';
 import { POIS, poiById } from '../../data/pois';
-import { METRO_TRACK } from '../../data/roads';
+import { METRO_TRACK, ROAD_GRID } from '../../data/roads';
+import { guideRoute, pointsAlong } from '../../logic/bikeRide';
 import { PARKED } from '../../data/vehicles';
 import { newlyUnlocked } from '../../logic/achievements';
 import { addressOf, type PlayerProfile } from '../../logic/player';
 import { addHint, checkDiscoveries } from '../../logic/discovery';
-import { boxHitsSolids, closest, dist, type Rect } from '../../logic/geometry';
+import { boxHitsSolids, closest, dist, type Point, type Rect } from '../../logic/geometry';
 import { darkness } from '../../logic/dayClock';
 import { CHAR_DIRS, CHAR_FRAMES } from '../art/characters';
 import { pickInteraction, type InteractionCandidate } from '../../logic/interaction';
@@ -98,6 +99,11 @@ export class WorldScene extends Phaser.Scene {
   private viaduct!: Phaser.GameObjects.Container;
   private marker!: Phaser.GameObjects.Image;
   private markerBob = { y: 0 };
+  /** GPS-style dotted route to the active marker (see drawRoute). */
+  private routeGfx!: Phaser.GameObjects.Graphics;
+  private route: Point[] = [];
+  private routeTarget: Point | null = null;
+  private routeUntil = 0;
   private candidate: InteractionCandidate | null = null;
   private discoverTimer = 0;
   /** Last on-foot position known to be free; what we save, so reloads never start inside a car or wall. */
@@ -248,6 +254,8 @@ export class WorldScene extends Phaser.Scene {
     }
 
     this.marker = this.add.image(0, 0, 'marker').setOrigin(0.5, 1).setDepth(8500).setVisible(false);
+    // On the ground: above road decals and shadows, below people, vehicles and buildings.
+    this.routeGfx = this.add.graphics().setDepth(-30);
     this.tweens.add({ targets: this.markerBob, y: -5, duration: 500, yoyo: true, repeat: -1, ease: 'Sine.easeInOut' });
   }
 
@@ -369,7 +377,15 @@ export class WorldScene extends Phaser.Scene {
         const x = metro ? this.metro.train.x : v ? v.sprite.x : this.player.x;
         const y = metro ? this.metro.train.y : v ? v.sprite.y : this.player.y;
         const angle = v ? v.heading : ({ down: Math.PI / 2, up: -Math.PI / 2, left: Math.PI, right: 0 } as const)[this.facing];
-        return { x, y, angle, driving: !!v, rideables: this.vehicles.list.filter((r) => !r.occupied).map((r) => ({ x: r.sprite.x, y: r.sprite.y })) };
+        return {
+          x,
+          y,
+          angle,
+          driving: !!v,
+          rideables: this.vehicles.list.filter((r) => !r.occupied).map((r) => ({ x: r.sprite.x, y: r.sprite.y })),
+          target: this.routeTarget,
+          route: this.route,
+        };
       },
       saveNow: () => this.persist(),
       interact: () => this.interact(),
@@ -572,7 +588,7 @@ export class WorldScene extends Phaser.Scene {
     const best = this.nearestOf(kind);
     if (!best) return;
     this.guides.set('tour', best.item);
-    uiStore.toast({ kind: 'hint', title: `Marked: ${best.item.label}`, body: 'Follow the arrow on the screen edge. The marker clears when you get there.' }, 3600);
+    uiStore.toast({ kind: 'hint', title: `Marked: ${best.item.label}`, body: 'Follow the red dots, or the arrow beside you. The marker clears when you get there.' }, 3600);
   }
 
   /** Count something the player did (a ride, a fare, a biscuit…) and save. */
@@ -753,21 +769,51 @@ export class WorldScene extends Phaser.Scene {
     const w = [...this.guides.values()].pop();
     if (w) {
       this.marker.setVisible(true).setPosition(w.x, w.y - 18 + this.markerBob.y);
-      this.bubbles.setDestination(w);
+      this.bubbles.setDestination(w, { x, y });
+      this.drawRoute(w, x, y);
       return;
     }
     const poi = this.destination ? poiById(this.destination) : null;
     if (!poi || !this.settings.showMarkers) {
       this.marker.setVisible(false);
       this.bubbles.setDestination(null);
+      this.drawRoute(null, x, y);
       return;
     }
     this.marker.setVisible(true).setPosition(poi.x, poi.y - 18 + this.markerBob.y);
-    this.bubbles.setDestination({ x: poi.x, y: poi.y, label: poi.name });
+    this.bubbles.setDestination({ x: poi.x, y: poi.y, label: poi.name }, { x, y });
+    this.drawRoute(poi, x, y);
     if (Math.hypot(poi.x - x, poi.y - y) < Math.min(poi.radius, 40)) {
       uiStore.toast({ kind: 'arrive', title: `You're at ${poi.name}`, body: 'Destination cleared. Keep wandering!' }, 3000);
       audio.chime('arrive');
       this.setDestination(null);
     }
+  }
+
+  /**
+   * Red dots from you to the marker along the main roads (straight when it's close), drifting towards
+   * it, plus a pulsing ring on the spot itself. Re-planned twice a second as you move.
+   */
+  private drawRoute(target: Point | null, x: number, y: number) {
+    const g = this.routeGfx;
+    g.clear();
+    if (!target) {
+      this.route = [];
+      this.routeTarget = null;
+      return;
+    }
+    const moved = !this.routeTarget || this.routeTarget.x !== target.x || this.routeTarget.y !== target.y;
+    if (moved || this.clock >= this.routeUntil) {
+      this.route = guideRoute({ x, y }, target, ROAD_GRID, t(12));
+      this.routeTarget = { x: target.x, y: target.y };
+      this.routeUntil = this.clock + 500;
+    } else this.route[0] = { x, y };
+    const view = this.cameras.main.worldView;
+    for (const d of pointsAlong(this.route, 14, (this.clock / 40) % 14)) {
+      if (d.x < view.x - 8 || d.y < view.y - 8 || d.x > view.right + 8 || d.y > view.bottom + 8) continue;
+      g.fillStyle(0x1c1726, 0.55).fillCircle(d.x, d.y, 3.2);
+      g.fillStyle(0xff6b6b, 1).fillCircle(d.x, d.y, 2.2);
+    }
+    g.lineStyle(2, 0xff6b6b, 0.9).strokeCircle(target.x, target.y, 11 + Math.sin(this.clock / 180) * 2.5);
   }
 }

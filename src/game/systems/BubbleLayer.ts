@@ -20,6 +20,9 @@ export class BubbleLayer {
   private promptTarget: { x: number; y: number } | null = null;
   private arrow: HTMLDivElement;
   private arrowTarget: { x: number; y: number; label: string } | null = null;
+  private arrowFrom: { x: number; y: number } | null = null;
+  /** The marker's name, floating over the pin when it's on screen. */
+  private pinLabel: HTMLDivElement;
   private nameTag: HTMLDivElement;
   private nameTarget: { x: number; y: number } | null = null;
 
@@ -34,6 +37,10 @@ export class BubbleLayer {
     this.arrow.style.display = 'none';
     this.arrow.innerHTML = '<i>➤</i><span></span>';
     root.appendChild(this.arrow);
+    this.pinLabel = document.createElement('div');
+    this.pinLabel.className = 'dest-label';
+    this.pinLabel.style.display = 'none';
+    root.appendChild(this.pinLabel);
     this.nameTag = document.createElement('div');
     this.nameTag.className = 'name-tag';
     this.nameTag.style.display = 'none';
@@ -87,9 +94,14 @@ export class BubbleLayer {
     this.prompt.style.display = 'flex';
   }
 
-  setDestination(target: { x: number; y: number; label: string } | null) {
+  /** Point at a marker from `from` (the player): an arrow beside them, and the name over the pin. */
+  setDestination(target: { x: number; y: number; label: string } | null, from: { x: number; y: number } | null = null) {
     this.arrowTarget = target;
-    if (!target) this.arrow.style.display = 'none';
+    this.arrowFrom = from;
+    if (!target) {
+      this.arrow.style.display = 'none';
+      this.pinLabel.style.display = 'none';
+    }
   }
 
   update(cam: Phaser.Cameras.Scene2D.Camera, now: number, hidden: boolean) {
@@ -136,24 +148,30 @@ export class BubbleLayer {
       const w = this.prompt.offsetWidth;
       this.prompt.style.transform = `translate(${Math.round(s.x - w / 2)}px, ${Math.round(s.y + 10)}px)`;
     }
-    if (this.arrowTarget) {
+    if (this.arrowTarget && this.arrowFrom) {
       const t = this.arrowTarget;
       const s = toScreen(t.x, t.y);
-      const margin = 40;
-      const inView = s.x > margin && s.x < W - margin && s.y > margin + 40 && s.y < H - margin;
-      if (inView) {
-        this.arrow.style.display = 'none';
-      } else {
-        const cx = W / 2;
-        const cy = H / 2;
-        const ang = Math.atan2(s.y - cy, s.x - cx);
-        const k = Math.min((W / 2 - margin) / Math.abs(Math.cos(ang) || 1e-6), (H / 2 - margin) / Math.abs(Math.sin(ang) || 1e-6));
-        const ax = cx + Math.cos(ang) * k;
-        const ay = cy + Math.sin(ang) * k;
-        const meters = Math.round(Math.hypot(t.x - (cam.worldView.centerX), t.y - cam.worldView.centerY) / 4);
+      // The pin's name, so the exact spot is obvious once it's on screen.
+      const onScreen = s.x > 0 && s.x < W && s.y > 0 && s.y < H;
+      this.pinLabel.style.display = onScreen ? 'block' : 'none';
+      if (onScreen) {
+        if (this.pinLabel.textContent !== t.label) this.pinLabel.textContent = t.label;
+        this.pinLabel.style.transform = `translate(${Math.round(s.x)}px, ${Math.round(s.y - 34 * cam.zoom)}px) translate(-50%, -100%)`;
+      }
+      // An arrow on a ring around the player, never hidden behind the HUD at the screen edge.
+      const f = this.arrowFrom;
+      const d = Math.hypot(t.x - f.x, t.y - f.y);
+      if (d < 56) this.arrow.style.display = 'none';
+      else {
+        const p = toScreen(f.x, f.y - 10);
+        const ang = Math.atan2(t.y - f.y, t.x - f.x);
+        const ring = 70;
+        const ax = Math.max(60, Math.min(W - 60, p.x + Math.cos(ang) * ring));
+        const ay = Math.max(60, Math.min(H - 60, p.y + Math.sin(ang) * ring));
+        const meters = Math.round(d / 4);
         this.arrow.style.display = 'flex';
         (this.arrow.firstChild as HTMLElement).style.transform = `rotate(${ang}rad)`;
-        (this.arrow.lastChild as HTMLElement).textContent = `${t.label} · ${meters} m`;
+        (this.arrow.lastChild as HTMLElement).textContent = onScreen ? `${meters} m` : `${t.label} · ${meters} m`;
         this.arrow.style.transform = `translate(${Math.round(ax)}px, ${Math.round(ay)}px) translate(-50%, -50%)`;
       }
     }

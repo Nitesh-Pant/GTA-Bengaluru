@@ -1,4 +1,5 @@
 import { TILE, WORLD_H, WORLD_W } from '../game/constants';
+import type { RoadGrid } from '../logic/bikeRide';
 import type { JunctionBox, Route } from '../logic/traffic';
 
 /** Lane centre lines (px). India drives on the left, so eastbound uses the north half of a road. */
@@ -22,6 +23,9 @@ export const ROAD_CENTRES = {
   h: [(LANE.H1E + LANE.H1W) / 2, (LANE.H2E + LANE.H2W) / 2, (LANE.H3E + LANE.H3W) / 2, (LANE.H4E + LANE.H4W) / 2],
   v: [(LANE.V1N + LANE.V1S) / 2, (LANE.V2N + LANE.V2S) / 2],
 };
+
+/** The main-road grid that rides and the marker route follow. */
+export const ROAD_GRID: RoadGrid = { hs: ROAD_CENTRES.h, vs: ROAD_CENTRES.v, minX: TILE, maxX: WORLD_W - TILE };
 
 const box = (id: string, tx: number, ty: number, offset: number): JunctionBox => ({
   id,

@@ -18,6 +18,9 @@ export interface MinimapSnapshot {
   angle: number;
   driving: boolean;
   rideables: Array<{ x: number; y: number }>;
+  /** The active marker (destination or guide) and the dotted route to it, in world px. */
+  target: { x: number; y: number } | null;
+  route: ReadonlyArray<{ x: number; y: number }>;
 }
 
 /** Commands React can send into the running world. Set by WorldScene on create, cleared on shutdown. */

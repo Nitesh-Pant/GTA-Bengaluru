@@ -1,22 +1,16 @@
 import Phaser from 'phaser';
 import { G, groundAt } from '../../data/map';
 import { CAPTAINS, rideDestinations, type RideDest } from '../../data/rides';
-import { ROAD_CENTRES, type TrafficType } from '../../data/roads';
-import { pathLength, planRide, type RoadGrid } from '../../logic/bikeRide';
+import { ROAD_GRID, type TrafficType } from '../../data/roads';
+import { pathLength, planRide } from '../../logic/bikeRide';
 import { pointAt } from '../../logic/metro';
 import { boxHitsSolids } from '../../logic/geometry';
 import { mulberry32, pick } from '../../logic/rng';
 import { uiStore } from '../../store/uiStore';
 import { audio } from '../audio';
-import { TILE, WORLD_W } from '../constants';
+import { TILE } from '../constants';
 import type { WorldScene } from '../scenes/WorldScene';
 
-const GRID: RoadGrid = {
-  hs: ROAD_CENTRES.h,
-  vs: ROAD_CENTRES.v,
-  minX: TILE,
-  maxX: WORLD_W - TILE,
-};
 const SPEED = 240;
 /** Chance the first captain cancels, because of course. */
 const CANCEL_CHANCE = 0.3;
@@ -82,7 +76,7 @@ export class RideSystem {
   }
 
   private start(dest: RideDest, captain: string) {
-    const path = planRide(this.scene.playerFeet(), dest, GRID);
+    const path = planRide(this.scene.playerFeet(), dest, ROAD_GRID);
     uiStore.toast({ kind: 'arrive', title: `Captain ${captain} has arrived`, body: '"OTP heli, saar." You read out four digits. Helmet on, off you go!' });
     const here = this.scene.playerFeet();
     this.scene.talk.voice('announce:rapido', 'm', here.x, here.y, this.scene.clock, 1, true);
@@ -97,7 +91,7 @@ export class RideSystem {
 
   /** Plan a road route from the player to `to` (used by buses too). */
   route(to: { x: number; y: number }, from = this.scene.playerFeet()) {
-    return planRide(from, to, GRID);
+    return planRide(from, to, ROAD_GRID);
   }
 
   /**
