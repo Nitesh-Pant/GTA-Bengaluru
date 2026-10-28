@@ -215,8 +215,10 @@ export class TalkSystem {
 
   // ── Conversations (E)
 
-  open(npc: Npc) {
-    const conv = npc.def.conversation ? CONVERSATIONS[npc.def.conversation] : this.genericConversation(npc);
+  /** Talk to `npc`, or have them start a particular conversation (a traffic stop). */
+  open(npc: Npc, conversation?: string) {
+    const id = conversation ?? npc.def.conversation;
+    const conv = id ? CONVERSATIONS[id] : this.genericConversation(npc);
     npc.state = 'talk';
     npc.faceTowards(this.scene.playerFeet().x, this.scene.playerFeet().y);
     (npc.sprite.body as Phaser.Physics.Arcade.Body).setVelocity(0, 0);
@@ -301,6 +303,7 @@ export class TalkSystem {
       else if (e.type === 'destination') s.setDestination(e.poi);
       else if (e.type === 'taste') s.taste(e.dish);
       else if (e.type === 'job') s.deliveries.start();
+      else if (e.type === 'challan') s.police.resolve(e.action);
       else if (e.type === 'stat') {
         s.stats[e.stat]++;
         s.persist();

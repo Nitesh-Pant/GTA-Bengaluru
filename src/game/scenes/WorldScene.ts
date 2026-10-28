@@ -11,6 +11,7 @@ import { JobSystem } from '../systems/JobSystem';
 import { NandiSystem } from '../systems/NandiSystem';
 import { AirportSystem } from '../systems/AirportSystem';
 import { FestivalSystem } from '../systems/FestivalSystem';
+import { PoliceSystem } from '../systems/PoliceSystem';
 import { PARKED } from '../../data/vehicles';
 import { newlyUnlocked } from '../../logic/achievements';
 import { addressOf, type PlayerProfile } from '../../logic/player';
@@ -99,6 +100,7 @@ export class WorldScene extends Phaser.Scene {
   nandi!: NandiSystem;
   airport!: AirportSystem;
   festivals!: FestivalSystem;
+  police!: PoliceSystem;
   reactions = new ReactionEngine(mulberry32(1234));
   /** Scene clock in ms; stops while paused so every cooldown pauses with it. */
   clock = 0;
@@ -178,6 +180,7 @@ export class WorldScene extends Phaser.Scene {
     this.nandi = new NandiSystem(this);
     this.airport = new AirportSystem(this);
     this.festivals = new FestivalSystem(this);
+    this.police = new PoliceSystem(this);
     this.traffic.addObstacle({ id: 'cow', kind: 'static', x: COW.x, y: COW.y, radius: 9, squeeze: true });
 
     this.setupColliders();
@@ -756,6 +759,7 @@ export class WorldScene extends Phaser.Scene {
     this.nandi.update(now);
     this.airport.update(now);
     this.festivals.update(now);
+    this.police.update(now);
     this.deliveries.update(now);
     this.jobs.update(now);
     this.weather.update(dt, now);

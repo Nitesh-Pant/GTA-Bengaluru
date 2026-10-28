@@ -380,7 +380,7 @@ export const NPCS: NpcDef[] = [
   { id: 'hilltop_server', name: 'Ravi', role: 'Hill Top Cafe', look: 'cook', x: 154, y: 33.6, behaviour: { type: 'idle', facing: 'down' }, personality: 'cheerful', categories: ['cook', 'hills'], languages: MIX, conversation: 'hilltop' },
   { id: 'temple_priest', name: 'Shastri', role: 'Temple priest', look: 'uncle_veshti', x: 167, y: 33.6, behaviour: { type: 'idle', facing: 'down' }, personality: 'wise', categories: ['priest', 'uncle'], languages: KEN },
   // ── Silk Board junction
-  { id: 'sb_cop', name: 'Constable Gowda', role: 'Traffic police', look: 'cop', x: 129, y: 107.4, behaviour: { type: 'idle', facing: 'right' }, personality: 'grumpy', categories: ['cop', 'silkboard'], languages: MIX },
+  { id: 'sb_cop', name: 'Constable Ramaiah', role: 'Traffic police', look: 'cop', x: 129, y: 107.4, behaviour: { type: 'idle', facing: 'right' }, personality: 'grumpy', categories: ['cop', 'silkboard'], languages: MIX },
   { id: 'sb_hawker', name: 'Mahesh', role: 'Signal hawker', look: 'vendor_f', x: 137, y: 113.2, behaviour: { type: 'wander', zone: { x: 136, y: 112.9, w: 8, h: 0.5 } }, personality: 'cheerful', categories: ['sb_hawker', 'vendor'], languages: MIX },
   { id: 'sb_commuter', name: 'Sneha', role: 'Stuck commuter', look: 'commuter_f', x: 122, y: 106.8, behaviour: { type: 'idle', facing: 'right' }, personality: 'anxious', categories: ['silkboard', 'commuter'], languages: MIX },
   // ── Kempegowda Airport
@@ -389,4 +389,7 @@ export const NPCS: NpcDef[] = [
   { id: 'ap_traveller', name: 'Ananya', role: 'Traveller', look: 'commuter_f', x: 188, y: 55.4, behaviour: { type: 'idle', facing: 'left' }, personality: 'anxious', categories: ['airport', 'commuter'], languages: MIX },
   { id: 'ap_techie', name: 'Siddharth', role: 'Flight delayed', look: 'techie_laptop', x: 190, y: 54.8, behaviour: { type: 'idle', facing: 'left' }, personality: 'grumpy', categories: ['airport', 'techie'], languages: MIX },
   { id: 'ap_guard', name: 'Prakash', role: 'CISF guard', look: 'guard', x: 186.5, y: 54.4, behaviour: { type: 'idle', facing: 'down' }, personality: 'wise', categories: ['guard'], languages: MIX },
+  // ── Traffic police checkpoints (see PoliceSystem)
+  { id: 'cop_cmh', name: 'Constable Shivu', role: 'Traffic police', look: 'cop', x: 38.6, y: 23.3, behaviour: { type: 'idle', facing: 'up' }, personality: 'grumpy', categories: ['cop'], languages: MIX },
+  { id: 'cop_mg', name: 'Constable Nagaraj', role: 'Traffic police', look: 'cop', x: 44.8, y: 113.3, behaviour: { type: 'idle', facing: 'up' }, personality: 'wise', categories: ['cop'], languages: MIX },
 ];

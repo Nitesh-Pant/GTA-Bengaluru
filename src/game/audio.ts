@@ -139,6 +139,35 @@ class AudioEngine {
     o.stop(t + 0.27);
   }
 
+  /** A traffic cop's whistle: two sharp trills. */
+  whistle(volume: number, pan = 0) {
+    if (!this.ctx || this.silent || volume < 0.03) return;
+    const c = this.ctx;
+    for (let i = 0; i < 2; i++) {
+      const t = c.currentTime + i * 0.28;
+      const o = c.createOscillator();
+      o.type = 'sine';
+      o.frequency.setValueAtTime(2900, t);
+      const trill = c.createOscillator();
+      trill.frequency.value = 28;
+      const depth = c.createGain();
+      depth.gain.value = 140;
+      trill.connect(depth).connect(o.frequency);
+      const g = c.createGain();
+      g.gain.setValueAtTime(0, t);
+      g.gain.linearRampToValueAtTime(0.09 * volume, t + 0.02);
+      g.gain.setValueAtTime(0.09 * volume, t + 0.18);
+      g.gain.linearRampToValueAtTime(0, t + 0.22);
+      const p = c.createStereoPanner();
+      p.pan.value = Math.max(-1, Math.min(1, pan));
+      o.connect(g).connect(p).connect(this.sfx);
+      o.start(t);
+      trill.start(t);
+      o.stop(t + 0.24);
+      trill.stop(t + 0.24);
+    }
+  }
+
   /** A festival cracker: a sharp pop with a crackling tail. */
   cracker(volume: number, pan = 0) {
     if (!this.ctx || this.silent || volume < 0.03) return;

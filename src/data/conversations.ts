@@ -7,7 +7,8 @@ export type Effect =
   | { type: 'world'; event: 'food_visit' }
   | { type: 'taste'; dish: string }
   | { type: 'job' }
-  | { type: 'destination'; poi: string };
+  | { type: 'destination'; poi: string }
+  | { type: 'challan'; action: 'pay' | 'adjust' | 'plead' };
 
 export interface ConvOption {
   label: string;
@@ -30,12 +31,33 @@ export interface Conversation {
 }
 
 const BYE: ConvOption = { label: 'Sari, bartini! (Leave)' };
+
+/** A traffic stop: pay, try "swalpa adjust maadi", or plead you're new. PoliceSystem decides how it ends. */
+const challan = (id: string, text: string, fine: number): Conversation => ({
+  id,
+  start: 'a',
+  nodes: {
+    a: {
+      text,
+      options: [
+        { label: `Pay the challan (₹${fine})`, next: 'paid', effects: [{ type: 'challan', action: 'pay' }] },
+        { label: 'Swalpa adjust maadi, sir…', next: 'verdict', effects: [{ type: 'challan', action: 'adjust' }] },
+        { label: "Sir, I'm new to Bengaluru…", next: 'verdict', effects: [{ type: 'challan', action: 'plead' }] },
+      ],
+    },
+    paid: { text: 'Receipt thogoli. Next time jaagrathe, saar. Bengaluru roads are not a racetrack.', options: [{ label: 'Sorry, sir.' }] },
+    verdict: { text: '*The constable strokes his moustache and looks at you for a long, long moment…*', options: [{ label: '(Wait)' }] },
+  },
+});
 /** An option with `next: QUIZ` asks a random tech question (see src/data/techQuiz.ts). */
 export const QUIZ = 'quiz';
 const EAT: Effect = { type: 'world', event: 'food_visit' };
 const taste = (dish: string): Effect => ({ type: 'taste', dish });
 
 export const CONVERSATIONS: Record<string, Conversation> = {
+  challan_red: challan('challan_red', '*Whistle!* Saar, red signal kaanistha illva? Signal jump maadidri. Licence, RC thogondu banni.', 500),
+  challan_speed: challan('challan_speed', '*Whistle!* Yenu racing-aa? Speed nodi saar, illi school ide, market ide, cow ide!', 1000),
+  challan_helmet: challan('challan_helmet', '*Whistle!* Helmet elli, saar? "Helmet optimistic" anta scooter mele bareditte, adu helmet alla!', 500),
   teapoint: {
     id: 'teapoint',
     start: 'a',
