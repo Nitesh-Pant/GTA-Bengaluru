@@ -18,6 +18,7 @@ export const CAPTAINS = ['Ramesh', 'Suresh', 'Imran', 'Manjunath', 'Kiran', 'Ani
 const DROP_AT: Record<string, { x: number; y: number }> = {
   nandi: { x: 149, y: 55.5 },
   highway: { x: 157, y: 75 },
+  airport: { x: 186, y: 55.5 },
 };
 
 /** Where a bike taxi can take you: every district, plus your marked destination first if you have one. */

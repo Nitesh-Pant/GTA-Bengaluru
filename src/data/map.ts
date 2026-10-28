@@ -159,6 +159,10 @@ function buildCountryside(
   fill(150, 72, 14, 4, G.Pave);
   fill(X + 8, 114, 12, 6, G.Pave);
   for (let y = 80; y < 102; y += 3) fill(134, y, 52, 1, G.Dirt);
+  // Kempegowda Airport: terminal forecourt north of NH 44, apron and runway to the south.
+  fill(178, 54, 14, 2, G.Plaza);
+  fill(166, 63, 26, 8, G.Plaza);
+  fill(166, 71, 26, 4, G.Road);
   // The hill: forest, then rock, then the summit plateau.
   ellipse(161, 39, 31, 16, G.Forest, G.Grass);
   ellipse(161, 35, 22, 10.5, G.Rock, G.Forest);
@@ -307,10 +311,11 @@ export const BUILDINGS: BuildingDef[] = [
   { id: 'toll_s', x: 135, y: 64, w: 5, h: 3, style: 'kiosk', sign: 'TOLL', wall: '#fff3bf', roof: '#1971c2' },
   { id: 'dhaba', x: 152, y: 65, w: 10, h: 7, style: 'darshini', sign: 'HIGHWAY DHABA', wall: '#ffe8cc', roof: '#a0553a', awning: '#e03131', floors: 1 },
   { id: 'farmhouse1', x: 140, y: 70, w: 6, h: 5, style: 'house', wall: '#f4e1c1', roof: '#b4563e', floors: 1 },
-  { id: 'farmhouse2', x: 172, y: 70, w: 6, h: 5, style: 'house', wall: '#e3f0d0', roof: '#9a4f3b', floors: 1 },
+  { id: 'farmhouse2', x: 178, y: 76, w: 6, h: 5, style: 'house', wall: '#e3f0d0', roof: '#9a4f3b', floors: 1 },
   { id: 'village1', x: 136, y: 115, w: 6, h: 5, style: 'house', wall: '#f8e9a1', roof: '#a14a3a', floors: 1 },
   { id: 'village2', x: 150, y: 115, w: 6, h: 5, style: 'house', wall: '#d0ebff', roof: '#94523e', floors: 1 },
   { id: 'village_shop', x: 160, y: 115, w: 7, h: 5, style: 'shop', sign: 'SRI DEVI STORES', wall: '#fff4e6', roof: '#8a8d91', awning: '#2b8a3e', floors: 1 },
+  { id: 'airport', x: 181, y: 47, w: 11, h: 7, style: 'mall', sign: 'KEMPEGOWDA INTL AIRPORT', wall: '#cfe3f3', roof: '#6c757d', floors: 2 },
   { id: 'hilltop_cafe', x: 151, y: 29, w: 6, h: 4, style: 'cafe', sign: 'HILL TOP CAFE', wall: '#f8f0e3', roof: '#7d6b5d', awning: '#e67700', floors: 1 },
   { id: 'nandi_temple', x: 163, y: 28, w: 8, h: 5, style: 'temple', sign: 'YOGA NANDEESHWARA', wall: '#efe6d2', roof: '#c2410c' },
 ];
@@ -656,7 +661,7 @@ function countrysideProps(): PropDef[] {
   // Eucalyptus lines the roads out of town.
   for (let x = 139; x < MAP_W; x += 6) {
     for (const y of [15.3, 106.4, 114.6, 162.6, 64.7]) {
-      if (y === 64.7 && x > 130 && x < 168) continue; // toll and dhaba
+      if (y === 64.7) continue; // toll, dhaba and the airport apron
       out.push({ kind: 'eucalyptus', x, y });
     }
   }
@@ -670,6 +675,7 @@ function countrysideProps(): PropDef[] {
       const k = g[Math.floor(y) * MAP_W + Math.floor(x)];
       const r = Math.abs(Math.sin(x * 12.9898 + y * 78.233) * 43758.5453) % 1;
       if (near(x, y, 2) || y > 54.5) continue;
+      if (BUILDINGS.some((b) => x > b.x - 1.5 && x < b.x + b.w + 1.5 && y > b.y - 1 && y < b.y + b.h + 2.5)) continue;
       if (k === G.Forest && r < 0.62) out.push({ kind: r < 0.12 ? 'treeRed' : 'tree', x, y });
       else if (k === G.Rock && r < 0.3) out.push({ kind: r < 0.08 ? 'bush' : 'boulder', x, y });
     }
@@ -743,6 +749,7 @@ export const DISTRICTS: District[] = [
   { id: 'vidhana', name: 'Vidhana Soudha', short: 'Vidhana Soudha', tagline: "Government work is God's work", rects: [{ x: 0, y: 144, w: 44, h: 24 }] },
   { id: 'basavanagudi', name: 'Basavanagudi', tagline: 'Bull Temple, pandals and kadlekai', rects: [{ x: 44, y: 144, w: 44, h: 24 }] },
   { id: 'lalbagh', name: 'Lalbagh', tagline: 'Glass House and flower beds', rects: [{ x: 88, y: 144, w: 40, h: 24 }] },
+  { id: 'airport', name: 'Kempegowda Airport', short: 'Airport', tagline: 'Departures, arrivals and a long cab queue', rects: [{ x: 176, y: 46, w: 16, h: 30 }] },
   { id: 'silkboard', name: 'Silk Board Junction', short: 'Silk Board', tagline: 'Where time stands still', rects: [{ x: CITY_W, y: 100, w: 14, h: 20 }] },
   { id: 'nandi', name: 'Nandi Hills', tagline: 'Sunrise, fog and hairpin bends', rects: [{ x: 130, y: 23, w: 62, h: 33 }] },
   { id: 'highway', name: 'Devanahalli Highway', short: 'Highway', tagline: 'Tolls, dhabas and the open road', rects: [{ x: CITY_W, y: 0, w: MAP_W - CITY_W, h: MAP_H }] },

@@ -1,5 +1,23 @@
 /** BMTC bus stops (tiles): `x, y` is where you stand to board; a shelter prop sits behind it. */
-export const BUS_STOPS: Array<{ id: string; name: string; x: number; y: number; shelter: { x: number; y: number } | null }> = [
+/** A special bus service: trips to or from a stop with one use it instead of a city BMTC. */
+export interface BusLine {
+  name: string;
+  texture: string;
+  conductor: string[];
+}
+
+export const KSRTC_NANDI: BusLine = {
+  name: 'KSRTC Nandi Hills Express',
+  texture: 'veh_bus_1',
+  conductor: ['"Nandi Hills! Nandi Hills! Window seat ide, banni!"', '"Hairpin alli vomit beda, plastic cover ide."', '"Sunrise ge bega bandre seat sigutte, saar."'],
+};
+export const VAYU_VAJRA: BusLine = {
+  name: 'BMTC Vayu Vajra KIA-5',
+  texture: 'veh_bus_1',
+  conductor: ['"Airport! Airport! Luggage rack hindhe ide."', '"Flight yaavaga? Relax, two hours ide."', '"Terminal 1 or 2? Ondu stop ashte, saar."'],
+};
+
+export const BUS_STOPS: Array<{ id: string; name: string; x: number; y: number; shelter: { x: number; y: number } | null; line?: BusLine }> = [
   { id: 'indiranagar', name: 'Indiranagar 100 Ft Rd', x: 28, y: 22.7, shelter: { x: 28, y: 23.95 } },
   { id: 'marathahalli', name: 'Marathahalli Bridge', x: 106, y: 22.7, shelter: { x: 106, y: 23.95 } },
   { id: 'thippasandra', name: 'Thippasandra', x: 28, y: 62.6, shelter: { x: 28, y: 63.95 } },
@@ -7,7 +25,8 @@ export const BUS_STOPS: Array<{ id: string; name: string; x: number; y: number; 
   { id: 'mgroad', name: 'MG Road', x: 20, y: 112.6, shelter: { x: 20, y: 113.95 } },
   { id: 'sonysignal', name: 'Koramangala (Sony Signal)', x: 66, y: 112.6, shelter: { x: 66, y: 113.95 } },
   { id: 'udupigarden', name: 'BTM (Udupi Garden)', x: 116, y: 112.6, shelter: { x: 116, y: 113.95 } },
-  { id: 'nandihills', name: 'Nandi Hills Gate (KSRTC)', x: 146, y: 62.7, shelter: { x: 146, y: 63.95 } },
+  { id: 'nandihills', name: 'Nandi Hills Gate (KSRTC)', x: 146, y: 62.7, shelter: { x: 146, y: 63.95 }, line: KSRTC_NANDI },
+  { id: 'airport', name: 'Kempegowda Airport (Vayu Vajra)', x: 176, y: 55.3, shelter: null, line: VAYU_VAJRA },
 ];
 
 export const busStopById = (id: string | null) => BUS_STOPS.find((b) => b.id === id);

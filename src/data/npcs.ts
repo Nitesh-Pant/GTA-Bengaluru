@@ -383,4 +383,10 @@ export const NPCS: NpcDef[] = [
   { id: 'sb_cop', name: 'Constable Gowda', role: 'Traffic police', look: 'cop', x: 129, y: 107.4, behaviour: { type: 'idle', facing: 'right' }, personality: 'grumpy', categories: ['cop', 'silkboard'], languages: MIX },
   { id: 'sb_hawker', name: 'Mahesh', role: 'Signal hawker', look: 'vendor_f', x: 137, y: 113.2, behaviour: { type: 'wander', zone: { x: 136, y: 112.9, w: 8, h: 0.5 } }, personality: 'cheerful', categories: ['sb_hawker', 'vendor'], languages: MIX },
   { id: 'sb_commuter', name: 'Sneha', role: 'Stuck commuter', look: 'commuter_f', x: 122, y: 106.8, behaviour: { type: 'idle', facing: 'right' }, personality: 'anxious', categories: ['silkboard', 'commuter'], languages: MIX },
+  // ── Kempegowda Airport
+  { id: 'ap_cabbie', name: 'Naveen', role: 'Airport cab driver', look: 'auto', x: 179.5, y: 56.6, behaviour: { type: 'idle', facing: 'right' }, personality: 'chatty', categories: ['airport_cab', 'auto'], languages: MIX },
+  { id: 'ap_nri', name: 'Ramesh uncle', role: 'Visiting from New Jersey', look: 'uncle', x: 184, y: 55.2, behaviour: { type: 'wander', zone: { x: 182.5, y: 54.6, w: 5, h: 1 } }, personality: 'chatty', categories: ['airport', 'uncle'], languages: MIX },
+  { id: 'ap_traveller', name: 'Ananya', role: 'Traveller', look: 'commuter_f', x: 188, y: 55.4, behaviour: { type: 'idle', facing: 'left' }, personality: 'anxious', categories: ['airport', 'commuter'], languages: MIX },
+  { id: 'ap_techie', name: 'Siddharth', role: 'Flight delayed', look: 'techie_laptop', x: 190, y: 54.8, behaviour: { type: 'idle', facing: 'left' }, personality: 'grumpy', categories: ['airport', 'techie'], languages: MIX },
+  { id: 'ap_guard', name: 'Prakash', role: 'CISF guard', look: 'guard', x: 186.5, y: 54.4, behaviour: { type: 'idle', facing: 'down' }, personality: 'wise', categories: ['guard'], languages: MIX },
 ];

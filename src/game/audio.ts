@@ -139,6 +139,30 @@ class AudioEngine {
     o.stop(t + 0.27);
   }
 
+  /** A jet taking off: a rising, filtered roar over about four seconds. */
+  jet(volume: number, pan = 0) {
+    if (!this.ctx || this.silent || volume < 0.03) return;
+    const c = this.ctx;
+    const t = c.currentTime;
+    const src = c.createBufferSource();
+    src.buffer = this.noise;
+    src.loop = true;
+    const bp = c.createBiquadFilter();
+    bp.type = 'bandpass';
+    bp.frequency.setValueAtTime(300, t);
+    bp.frequency.exponentialRampToValueAtTime(1400, t + 3.5);
+    bp.Q.value = 0.8;
+    const g = c.createGain();
+    g.gain.setValueAtTime(0, t);
+    g.gain.linearRampToValueAtTime(0.5 * volume, t + 1.5);
+    g.gain.linearRampToValueAtTime(0.0005, t + 4.5);
+    const p = c.createStereoPanner();
+    p.pan.value = Math.max(-1, Math.min(1, pan));
+    src.connect(bp).connect(g).connect(p).connect(this.sfx);
+    src.start(t);
+    src.stop(t + 4.6);
+  }
+
   /** A monkey's quick chatter: three squeaky chirps. */
   chatter(volume: number, pan = 0) {
     if (!this.ctx || this.silent || volume < 0.03) return;

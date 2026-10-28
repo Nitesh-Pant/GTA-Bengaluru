@@ -241,3 +241,38 @@ export function paintBoat(variant: number): HTMLCanvasElement {
   outline(ctx, 0, 0, 18, 12);
   return c;
 }
+
+export const PLANE_W = 64;
+export const PLANE_H = 56;
+
+/** A top-down airliner facing east: swept wings, tailplane, blue cheatline, engines under the wings. */
+export function paintPlane(shadow = false): HTMLCanvasElement {
+  const [c, ctx] = makeCanvas(PLANE_W, PLANE_H);
+  const body = shadow ? 'rgba(0,0,0,0.28)' : '#f1f3f5';
+  const wing = shadow ? 'rgba(0,0,0,0.28)' : '#dee2e6';
+  // Wings: swept back from mid-fuselage.
+  for (let i = 0; i < 22; i++) {
+    rect(ctx, 30 - Math.floor(i * 0.55), 27 - i, 9, 1, wing);
+    rect(ctx, 30 - Math.floor(i * 0.55), 28 + i, 9, 1, wing);
+  }
+  // Tailplane.
+  for (let i = 0; i < 9; i++) {
+    rect(ctx, 6 - Math.floor(i * 0.4), 27 - i, 5, 1, wing);
+    rect(ctx, 6 - Math.floor(i * 0.4), 28 + i, 5, 1, wing);
+  }
+  // Fuselage with a rounded nose.
+  rect(ctx, 2, 25, 56, 6, body);
+  rect(ctx, 58, 26, 3, 4, body);
+  rect(ctx, 61, 27, 2, 2, body);
+  if (!shadow) {
+    rect(ctx, 2, 25, 56, 1, '#ffffff');
+    rect(ctx, 6, 29, 52, 1, '#1c7ed6');
+    rect(ctx, 56, 26, 2, 1, '#343a40'); // cockpit
+    rect(ctx, 56, 29, 2, 1, '#343a40');
+    rect(ctx, 22, 11, 6, 3, '#adb5bd'); // engines
+    rect(ctx, 22, 42, 6, 3, '#adb5bd');
+    rect(ctx, 2, 26, 4, 4, '#1c7ed6'); // tail fin, seen from above
+    outline(ctx, 0, 0, PLANE_W, PLANE_H);
+  }
+  return c;
+}

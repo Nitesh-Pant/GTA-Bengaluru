@@ -1,6 +1,5 @@
 import { busStopById, BUS_STOPS } from '../data/transit';
 import { bridge } from '../game/bridge';
-import { CITY_W } from '../game/constants';
 import { uiStore, useUi } from '../store/uiStore';
 import { PickerPanel } from './PickerPanel';
 
@@ -16,8 +15,8 @@ export function BusPanel() {
       logo="B"
       logoClass="bus-logo"
       title={here.name}
-      subtitle={here.x >= CITY_W ? 'KSRTC stop · the Nandi Hills Express back to the city' : 'BMTC bus stop · buses run "every few minutes"'}
-      items={BUS_STOPS.filter((b) => b.id !== here.id).map((b) => ({ ...b, note: b.x >= CITY_W || here.x >= CITY_W ? 'KSRTC, out of town' : undefined }))}
+      subtitle={here.line ? `${here.line.name} · back to the city` : 'BMTC bus stop · buses run "every few minutes"'}
+      items={BUS_STOPS.filter((b) => b.id !== here.id).map((b) => ({ ...b, note: (b.line ?? here.line)?.name }))}
       verb="board"
       onChoose={(id) => bridge.api?.takeBus(id)}
       onClose={() => uiStore.set({ panel: null, busStop: null })}

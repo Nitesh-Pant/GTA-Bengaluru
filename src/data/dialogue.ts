@@ -373,6 +373,22 @@ const RAW: Record<string, Raw[]> = {
     'Bhaiya, kheera lo, signal lamba hai!',
   ],
 
+  airport: [
+    'Flight two hours late ante. Airport alli dose kooda 400 rupees.',
+    'Bhai, Bengaluru airport to city is longer than Delhi to Bengaluru.',
+    'Bengaluru has changed so much! In 1998 this was all farmland.',
+    'Boarding pass print maadbeka? Phone alli ide, saaku.',
+    'Yaar, cab wale ne 2000 bola. Vayu Vajra le leta hoon.',
+    'I landed an hour ago. Still not home. Classic.',
+    'Departures upstairs, arrivals downstairs, chaos everywhere.',
+  ],
+  airport_cab: [
+    'Airport drop, saar? Fifteen hundred, toll extra.',
+    'Meter? Airport alli meter yaaru haaktaare, saar?',
+    'Bhaiya, city jaana hai? Main le chalta hoon, traffic free nahi.',
+    'Ola cancel aaytha? Naanu iddini, fixed rate.',
+  ],
+
   // ── Reactions
   bump: [
     'Ayyo! Nodkondu nadi, anna!',

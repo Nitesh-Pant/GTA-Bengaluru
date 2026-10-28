@@ -9,6 +9,7 @@ import { guideRoute, pointsAlong } from '../../logic/bikeRide';
 import { JOB_INFO } from '../../data/jobs';
 import { JobSystem } from '../systems/JobSystem';
 import { NandiSystem } from '../systems/NandiSystem';
+import { AirportSystem } from '../systems/AirportSystem';
 import { PARKED } from '../../data/vehicles';
 import { newlyUnlocked } from '../../logic/achievements';
 import { addressOf, type PlayerProfile } from '../../logic/player';
@@ -95,6 +96,7 @@ export class WorldScene extends Phaser.Scene {
   deliveries!: DeliverySystem;
   jobs!: JobSystem;
   nandi!: NandiSystem;
+  airport!: AirportSystem;
   reactions = new ReactionEngine(mulberry32(1234));
   /** Scene clock in ms; stops while paused so every cooldown pauses with it. */
   clock = 0;
@@ -171,6 +173,7 @@ export class WorldScene extends Phaser.Scene {
     this.deliveries = new DeliverySystem(this);
     this.jobs = new JobSystem(this);
     this.nandi = new NandiSystem(this);
+    this.airport = new AirportSystem(this);
     this.traffic.addObstacle({ id: 'cow', kind: 'static', x: COW.x, y: COW.y, radius: 9, squeeze: true });
 
     this.setupColliders();
@@ -745,6 +748,7 @@ export class WorldScene extends Phaser.Scene {
     this.fares.update(now);
     this.match.update(now);
     this.nandi.update(now);
+    this.airport.update(now);
     this.deliveries.update(now);
     this.jobs.update(now);
     this.weather.update(dt, now);
