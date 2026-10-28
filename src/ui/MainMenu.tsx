@@ -10,6 +10,8 @@ import { hasSave, safeStorage } from '../logic/save';
 import { loadGame } from '../game/loadGame';
 import type { PlayerProfile } from '../logic/player';
 import { CharacterSetup } from './CharacterSetup';
+import { InstallPrompt } from './InstallPrompt';
+import { shouldOfferInstall, wasAsked } from '../install';
 
 /** A little animated street at golden hour, painted with the game's own sprite painters. */
 function StreetScene() {
@@ -99,6 +101,8 @@ export function MainMenu() {
   }, []);
   const [confirm, setConfirm] = useState(false);
   const [setup, setSetup] = useState<null | { fresh: boolean; initial?: PlayerProfile }>(null);
+  const [offerApp] = useState(shouldOfferInstall);
+  const [installOpen, setInstallOpen] = useState(() => offerApp && !wasAsked());
   return (
     <div className="menu">
       <StreetScene />
@@ -142,6 +146,11 @@ export function MainMenu() {
                 Start exploring
               </button>
             )}
+            {offerApp && (
+              <button className="btn" onClick={() => setInstallOpen(true)}>
+                Get the app (full screen)
+              </button>
+            )}
           </div>
         )}
         <div className="menu-controls">
@@ -157,6 +166,7 @@ export function MainMenu() {
           browser only.
         </p>
       </div>
+      {installOpen && <InstallPrompt onClose={() => setInstallOpen(false)} />}
     </div>
   );
 }

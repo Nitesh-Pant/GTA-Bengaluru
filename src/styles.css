@@ -746,6 +746,45 @@ kbd {
   color: var(--saffron);
   text-shadow: 1px 1px 0 var(--chilli);
 }
+.install-backdrop {
+  z-index: 20;
+  padding: 16px;
+  background: rgba(10, 8, 16, 0.7);
+}
+.install-card {
+  width: min(380px, 100%);
+  background: var(--panel-solid);
+  padding: 16px 18px;
+  text-align: center;
+}
+.install-card h3 {
+  margin: 0 0 8px;
+  color: var(--saffron);
+}
+.install-card p {
+  margin: 0 0 12px;
+  line-height: 1.4;
+}
+.install-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: stretch;
+}
+.install-actions .btn {
+  padding: 10px 12px;
+  font-size: 16px;
+}
+.install-steps {
+  margin: 0 0 12px;
+  padding-left: 22px;
+  text-align: left;
+  line-height: 1.5;
+}
+.install-note {
+  margin: 10px 0 0 !important;
+  font-size: 12px;
+}
 .menu-tag {
   margin: 4px 0 16px;
   color: #e6ddf5;

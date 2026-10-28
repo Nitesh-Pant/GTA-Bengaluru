@@ -330,8 +330,13 @@ dropped.
 
 - Touch controls, a compact side bar and tappable panels on phones and tablets, in portrait or landscape.
 - The menu loads first (about 120 KB gzipped) while the game engine downloads in the background.
-- The production build is a **Progressive Web App**: browsers offer to install it (*Add to Home Screen*),
-  and after one visit it works offline.
+- The production build is a **Progressive Web App**: it can be installed (*Add to Home Screen*), and
+  after one visit it works offline.
+- **Phone visitors are offered the app** the first time they open the site: *Get the app* opens the
+  browser's install dialog straight away on Android (Chrome, Edge, Samsung Internet) and shows the
+  *Add to Home Screen* steps on iPhone; *Play in browser* just carries on in the tab. It asks once,
+  and the menu keeps a *Get the app* button ([`src/install.ts`](src/install.ts),
+  [`src/ui/InstallPrompt.tsx`](src/ui/InstallPrompt.tsx)).
 
 ---
 
