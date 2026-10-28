@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { districtCentre, DISTRICTS } from '../data/map';
 import { POIS } from '../data/pois';
+import { isTouchDevice } from '../game/touch';
 import { bridge } from '../game/bridge';
 import { visibilityOf } from '../logic/discovery';
 import { MAP_H, MAP_W, TILE } from '../game/constants';
@@ -50,10 +51,23 @@ export function MapPanel() {
   const mode = useUi((s) => s.mode);
   const [query, setQuery] = useState('');
   const [size, setSize] = useState({ w: 900, h: 600 });
+  // Phones and small windows get a full-screen map that fills whatever space is left.
+  const compact = isTouchDevice() || window.innerWidth <= 760 || window.innerHeight <= 560;
+  const viewRef = useRef<HTMLDivElement>(null);
   const cam = useRef<MapCamera>({ zoom: 1, x: MAP_W / 2, y: MAP_H / 2 });
   const pointers = useRef(new Map<number, { x: number; y: number }>());
   const drag = useRef({ moved: 0, pinch: 0 });
   useEffect(() => {
+    if (!compact || panel !== 'map' || !viewRef.current) return;
+    const el = viewRef.current;
+    const measure = () => setSize({ w: Math.max(120, Math.floor(el.clientWidth)), h: Math.max(120, Math.floor(el.clientHeight)) });
+    measure();
+    const ro = new ResizeObserver(measure);
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, [compact, panel]);
+  useEffect(() => {
+    if (compact) return;
     const fit = () => {
       const w = Math.min(window.innerWidth - 64, 1100);
       const h = Math.min(window.innerHeight - 170, Math.round(w * 0.75));
@@ -62,14 +76,15 @@ export function MapPanel() {
     fit();
     window.addEventListener('resize', fit);
     return () => window.removeEventListener('resize', fit);
-  }, []);
+  }, [compact]);
   // Open zoomed in a little on where you are.
   useEffect(() => {
     if (panel !== 'map') return;
     const snap = bridge.api?.snapshot();
-    cam.current = { zoom: 2, x: snap ? snap.x / TILE : MAP_W / 2, y: snap ? snap.y / TILE : MAP_H / 2 };
+    // Phones open closer in (readable labels, no empty bands around the map).
+    cam.current = { zoom: compact ? 4 : 2, x: snap ? snap.x / TILE : MAP_W / 2, y: snap ? snap.y / TILE : MAP_H / 2 };
     setQuery('');
-  }, [panel]);
+  }, [panel, compact]);
   if (panel !== 'map') return null;
 
   /** Zoom by `factor`, keeping the tile under (px, py) in place. */
@@ -115,14 +130,20 @@ export function MapPanel() {
     if (snap) cam.current = { zoom: Math.max(cam.current.zoom, 3), x: snap.x / TILE, y: snap.y / TILE };
   };
   return (
-    <div className="modal-backdrop" onClick={() => uiStore.set({ panel: null })}>
-      <div className="map-panel panel" onClick={(e) => e.stopPropagation()}>
+    <div className={compact ? 'modal-backdrop map-backdrop' : 'modal-backdrop'} onClick={() => uiStore.set({ panel: null })}>
+      <div className={compact ? 'map-panel map-full panel' : 'map-panel panel'} role="dialog" aria-label="City map" onClick={(e) => e.stopPropagation()}>
         <div className="journal-head">
           <h2>City Map</h2>
-          <span className="muted">Drag to move · scroll or pinch to zoom · click a place to mark it</span>
-          <button className="btn" onClick={() => uiStore.set({ panel: null })}>
-            Close <kbd>M</kbd>
-          </button>
+          <span className="muted map-tip">{compact ? 'Drag, pinch to zoom, tap a place to mark it' : 'Drag to move · scroll or pinch to zoom · click a place to mark it'}</span>
+          {compact ? (
+            <button className="btn map-close" aria-label="Close map" onClick={() => uiStore.set({ panel: null })}>
+              ✕
+            </button>
+          ) : (
+            <button className="btn" onClick={() => uiStore.set({ panel: null })}>
+              Close <kbd>M</kbd>
+            </button>
+          )}
         </div>
         <div className="map-search">
           <input
@@ -154,8 +175,9 @@ export function MapPanel() {
           {query.trim() && hits.length === 0 && <div className="muted map-none">No place called that yet. Maybe it's a secret?</div>}
         </div>
         <div
+          ref={viewRef}
           className="map-view"
-          style={{ width: size.w, height: size.h }}
+          style={compact ? undefined : { width: size.w, height: size.h }}
           onWheel={(e) => {
             const p = local(e);
             zoomAt(e.deltaY < 0 ? 1.2 : 1 / 1.2, p.x, p.y);
@@ -197,15 +219,15 @@ export function MapPanel() {
             <button className="btn" aria-label="Zoom out" onClick={() => zoomAt(1 / 1.5)}>
               −
             </button>
-            <button className="btn" onClick={me}>
+            <button className="btn" onClick={me} aria-label="Show me">
               Me
             </button>
-            <button className="btn" onClick={() => (cam.current = { zoom: 1, x: MAP_W / 2, y: MAP_H / 2 })}>
-              Whole city
+            <button className="btn" aria-label="Whole city" onClick={() => (cam.current = { zoom: 1, x: MAP_W / 2, y: MAP_H / 2 })}>
+              {compact ? 'All' : 'Whole city'}
             </button>
           </div>
         </div>
-        <div className="legend">
+        <div className={compact ? 'legend legend-compact' : 'legend'}>
           {Object.entries(KIND_COLOUR).map(([k, c]) => (
             <span key={k}>
               <i style={{ background: c }} /> {k}

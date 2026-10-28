@@ -1274,6 +1274,75 @@ kbd {
   padding: 4px 8px;
 }
 
+/* ── Full-screen map on phones and small windows (above the credit footer) */
+.map-backdrop {
+  z-index: 10;
+}
+.map-panel.map-full {
+  position: fixed;
+  inset: 0;
+  z-index: 10;
+  width: auto;
+  max-height: none;
+  padding: 8px 10px 6px;
+  gap: 6px;
+  border-radius: 0;
+}
+.map-full .journal-head {
+  flex-wrap: nowrap;
+  gap: 8px;
+}
+.map-full .journal-head h2 {
+  margin: 0;
+  font-size: 13px;
+  white-space: nowrap;
+}
+.map-full .map-tip {
+  flex: 1;
+  min-width: 0;
+  font-size: 11px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.map-close {
+  flex: none;
+  width: 40px;
+  height: 36px;
+  padding: 0;
+  font-size: 16px;
+}
+.map-full .map-search {
+  margin: 0;
+}
+.map-full .map-view {
+  flex: 1;
+  min-height: 0;
+  width: 100%;
+  border-radius: 4px;
+}
+.map-full .map-zoom {
+  flex-direction: column;
+  right: 8px;
+  bottom: 8px;
+  gap: 6px;
+}
+.map-full .map-zoom .btn {
+  width: 44px;
+  height: 40px;
+  padding: 0;
+  font-size: 15px;
+}
+.legend-compact {
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  gap: 10px;
+  margin-top: 0;
+  padding-bottom: 2px;
+  font-size: 11px;
+  white-space: nowrap;
+}
+
 .time-choices {
   display: inline-flex;
   gap: 6px;
