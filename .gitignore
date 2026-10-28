@@ -3,3 +3,6 @@ dist
 *.tsbuildinfo
 .DS_Store
 test-artifacts
+
+# Cloudflare wrangler scratch files
+.wrangler
