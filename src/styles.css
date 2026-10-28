@@ -923,7 +923,7 @@ kbd {
 .touch-menu {
   position: fixed;
   right: 12px;
-  bottom: 142px;
+  bottom: 204px;
   display: flex;
   flex-direction: column;
   align-items: flex-end;
@@ -940,17 +940,30 @@ kbd {
   border: 2px solid var(--line);
   border-radius: 6px;
 }
+/* The whole lower-left is touchable; the pad jumps to wherever the thumb lands. */
+.stick-zone {
+  position: fixed;
+  left: 0;
+  bottom: 0;
+  width: 50vw;
+  height: 55vh;
+}
 .stick {
   position: fixed;
-  left: 22px;
-  bottom: 34px;
-  width: 128px;
-  height: 128px;
+  left: 18px;
+  bottom: 44px;
+  width: 132px;
+  height: 132px;
   border-radius: 50%;
   background: rgba(28, 23, 38, 0.45);
   border: 2px solid rgba(255, 255, 255, 0.35);
   display: grid;
   place-items: center;
+  opacity: 0.6;
+  pointer-events: none;
+}
+.stick-active {
+  opacity: 1;
 }
 .stick-knob {
   width: 54px;
@@ -962,11 +975,17 @@ kbd {
 }
 .touch-actions {
   position: fixed;
-  right: 22px;
-  bottom: 40px;
+  right: 16px;
+  bottom: 44px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 16px;
+}
+.touch-pedals {
   display: flex;
   align-items: flex-end;
-  gap: 10px;
+  gap: 12px;
 }
 .touch-btn {
   width: 72px;
@@ -990,24 +1009,38 @@ kbd {
   border-color: #51cf66;
 }
 .touch-horn {
+  width: 64px;
+  height: 64px;
+  margin-bottom: 30px;
+  font-size: 10px;
   background: rgba(252, 196, 25, 0.85);
   color: #1c1726;
 }
 .touch-brake {
+  width: 92px;
+  height: 92px;
   background: rgba(201, 42, 42, 0.85);
 }
+.touch-exit {
+  background: rgba(47, 158, 68, 0.9);
+  border-color: #51cf66;
+}
 .touch-hint {
-  top: 40%;
+  top: 26%;
   bottom: auto;
   left: 50%;
   transform: translateX(-50%);
-  width: min(300px, calc(100vw - 32px));
+  width: min(300px, calc(100vw - 120px));
 }
 @media (pointer: coarse) {
+  /* Left-aligned so the button column on the right stays clear. */
   .toasts {
     top: auto;
     bottom: 186px;
-    width: min(420px, calc(100vw - 32px));
+    left: 12px;
+    transform: none;
+    width: min(420px, calc(100vw - 110px));
+    min-width: 0;
   }
   .menu-controls {
     display: none;
@@ -1029,6 +1062,12 @@ kbd {
     bottom: auto;
     top: 12px;
     right: 210px;
+  }
+  .touch-hint {
+    top: 96px;
+    left: 12px;
+    transform: none;
+    width: min(360px, calc(50vw - 24px));
   }
 }
 
@@ -1124,6 +1163,19 @@ kbd {
     left: auto;
     right: 380px;
     flex-direction: row;
+  }
+  /* Landscape phones: messages sit low in the gap between the stick and the pedals, off the road ahead. */
+  .toasts {
+    bottom: 44px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: min(360px, calc(100vw - 440px));
+  }
+  .toast-body {
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
   }
 }
 .chip-job {

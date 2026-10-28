@@ -3,34 +3,40 @@ import { bridge } from '../game/bridge';
 import { touch } from '../game/touch';
 import { inputLocked, uiStore, useUi } from '../store/uiStore';
 
-const RADIUS = 46;
+const RADIUS = 56;
 /** How far (0–1 of the radius) the stick must move before a direction counts. */
-const DEAD = 0.35;
+const DEAD = 0.3;
 
 function release() {
   touch.up = touch.down = touch.left = touch.right = false;
   touch.brake = false;
+  touch.stick.x = touch.stick.y = 0;
 }
 
-/** Drag anywhere on the pad to walk or steer: an 8-way virtual stick. */
+/**
+ * A floating stick: touch anywhere in the lower-left of the screen and the pad appears under your
+ * thumb, so there is no small circle to hit. Walking reads 8 directions; driving reads the raw angle.
+ */
 function Joystick() {
   const base = useRef<HTMLDivElement>(null);
-  const pointer = useRef<number | null>(null);
   const knob = useRef<HTMLDivElement>(null);
+  const pointer = useRef<number | null>(null);
+  const centre = useRef({ x: 0, y: 0 });
   const setKnob = (x: number, y: number) => {
     if (knob.current) knob.current.style.transform = `translate(${x}px, ${y}px)`;
   };
   const move = (e: React.PointerEvent) => {
     if (pointer.current !== e.pointerId) return;
-    const r = base.current!.getBoundingClientRect();
-    let dx = e.clientX - (r.left + r.width / 2);
-    let dy = e.clientY - (r.top + r.height / 2);
+    let dx = e.clientX - centre.current.x;
+    let dy = e.clientY - centre.current.y;
     const len = Math.hypot(dx, dy);
     if (len > RADIUS) {
       dx = (dx / len) * RADIUS;
       dy = (dy / len) * RADIUS;
     }
     setKnob(dx, dy);
+    touch.stick.x = dx / RADIUS;
+    touch.stick.y = dy / RADIUS;
     touch.left = dx < -RADIUS * DEAD;
     touch.right = dx > RADIUS * DEAD;
     touch.up = dy < -RADIUS * DEAD;
@@ -40,22 +46,36 @@ function Joystick() {
     if (pointer.current !== e.pointerId) return;
     pointer.current = null;
     setKnob(0, 0);
+    base.current?.removeAttribute('style'); // back to its resting spot
+    base.current?.classList.remove('stick-active');
     release();
   };
   return (
     <div
-      ref={base}
-      className="stick"
+      className="stick-zone"
       onPointerDown={(e) => {
+        if (pointer.current !== null) return;
         pointer.current = e.pointerId;
         e.currentTarget.setPointerCapture(e.pointerId);
+        // Centre the pad under the thumb, kept fully on screen.
+        const pad = RADIUS + 10;
+        const x = Math.max(pad, Math.min(window.innerWidth - pad, e.clientX));
+        const y = Math.max(pad, Math.min(window.innerHeight - pad, e.clientY));
+        centre.current = { x, y };
+        const b = base.current!;
+        b.style.left = `${x - pad}px`;
+        b.style.top = `${y - pad}px`;
+        b.style.bottom = 'auto';
+        b.classList.add('stick-active');
         move(e);
       }}
       onPointerMove={move}
       onPointerUp={end}
       onPointerCancel={end}
     >
-      <div ref={knob} className="stick-knob" />
+      <div ref={base} className="stick">
+        <div ref={knob} className="stick-knob" />
+      </div>
     </div>
   );
 }
@@ -104,17 +124,24 @@ export function TouchControls() {
         <>
           <Joystick />
           <div className="touch-actions">
-            {mode === 'drive' && (
+            {mode === 'drive' ? (
               <>
-                <button className="touch-btn touch-horn" onClick={() => bridge.api?.horn()}>
-                  Horn
+                {/* Small and up out of the way, so a resting thumb never gets out by accident. */}
+                <button className="touch-small touch-exit" onClick={() => bridge.api?.interact()}>
+                  Get out
                 </button>
-                <HoldButton label="Brake" className="touch-btn touch-brake" onChange={(down) => (touch.brake = down)} />
+                <div className="touch-pedals">
+                  <button className="touch-btn touch-horn" onClick={() => bridge.api?.horn()}>
+                    Horn
+                  </button>
+                  <HoldButton label="Brake" className="touch-btn touch-brake" onChange={(down) => (touch.brake = down)} />
+                </div>
               </>
+            ) : (
+              <button className="touch-btn touch-e" onClick={() => bridge.api?.interact()}>
+                E
+              </button>
             )}
-            <button className="touch-btn touch-e" onClick={() => bridge.api?.interact()}>
-              {mode === 'drive' ? 'Exit' : 'E'}
-            </button>
           </div>
         </>
       )}

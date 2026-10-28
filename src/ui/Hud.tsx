@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { POIS } from '../data/pois';
 import { bridge } from '../game/bridge';
 import { formatDuration, periodLabel } from '../logic/dayClock';
@@ -23,10 +23,27 @@ function ControlsHint() {
     };
   }, []);
   const mode = useUi((s) => s.mode);
+  // On phones, explain point-to-steer the first time you get into a vehicle.
+  const droveOnce = useRef(false);
+  useEffect(() => {
+    if (mode !== 'drive' || droveOnce.current || !isTouchDevice()) return;
+    droveOnce.current = true;
+    setOpen(true);
+    const id = setTimeout(() => setOpen(false), 9000);
+    return () => clearTimeout(id);
+  }, [mode]);
   if (isTouchDevice())
     return open ? (
       <div className="controls-hint touch-hint panel" onClick={() => setOpen(false)}>
-        <div>Drag the left pad to {mode === 'drive' ? 'drive' : 'walk'} · tap <b>E</b> to talk, drive or ride the metro</div>
+        {mode === 'drive' ? (
+          <div>
+            Drag on the left side the way you want to go: the vehicle steers itself there. Push further to go faster. Hold <b>Brake</b> to stop.
+          </div>
+        ) : (
+          <div>
+            Drag anywhere on the left side to walk · tap <b>E</b> to talk, drive or ride the metro
+          </div>
+        )}
         <div className="muted">Nothing to complete. Just wander, maga.</div>
       </div>
     ) : null;

@@ -71,3 +71,38 @@ export function turnTowards(from: number, to: number, maxStep: number): number {
   if (Math.abs(d) <= maxStep) return to;
   return from + Math.sign(d) * maxStep;
 }
+
+/** Within this angle (radians) the vehicle counts as pointing where the stick points; stops wobbling. */
+const STEER_DEADBAND = 0.06;
+
+/**
+ * Touch driving, point-to-steer: drag the stick the way you want to go (on screen) and the vehicle turns
+ * that way and drives there. How far the stick is pushed sets the cruising speed. Pointing back from a
+ * near-stop reverses, swinging the tail towards the stick, so dead ends are easy to back out of.
+ */
+export function stickDrive(stick: { x: number; y: number }, s: DriveState, p: DriveParams): DirInput {
+  const out: DirInput = { up: false, down: false, left: false, right: false };
+  const push = Math.min(1, Math.hypot(stick.x, stick.y));
+  if (push < 0.2) return out;
+  const target = Math.atan2(stick.y, stick.x);
+  const diff = angleDelta(s.heading, target);
+  if (Math.abs(diff) > (Math.PI * 3) / 4 && s.speed < 25) {
+    // Reversing flips steering, so steer the opposite way to bring the tail round.
+    const tail = angleDelta(s.heading + Math.PI, target);
+    out.down = true;
+    if (Math.abs(tail) > STEER_DEADBAND) {
+      if (tail > 0) out.left = true;
+      else out.right = true;
+    }
+    return out;
+  }
+  if (Math.abs(diff) > STEER_DEADBAND) {
+    // Steering also flips while still rolling backwards.
+    if (diff > 0 === s.speed >= 0) out.right = true;
+    else out.left = true;
+  }
+  // Sharp turn at speed: brake into it. Otherwise cruise at the pushed speed.
+  if (Math.abs(diff) > Math.PI / 2 && s.speed > 60) out.down = true;
+  else if (s.speed < p.maxSpeed * push) out.up = true;
+  return out;
+}

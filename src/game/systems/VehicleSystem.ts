@@ -145,6 +145,13 @@ export class VehicleSystem {
     v.heading = next.heading;
     body.setVelocity(Math.cos(v.heading) * v.speed, Math.sin(v.heading) * v.speed);
     v.sprite.setRotation(v.heading);
+    // The camera leads the vehicle so the road ahead is on screen (most needed on small phones).
+    const cam = this.scene.cameras.main;
+    // Each axis leads by a share of the view along it, so a tall phone sees far up and down the road.
+    const lead = (v.speed / v.def.params.maxSpeed) * 0.3;
+    const ease = Math.min(1, dt * 3);
+    cam.followOffset.x += (-Math.cos(v.heading) * lead * (cam.width / cam.zoom) - cam.followOffset.x) * ease;
+    cam.followOffset.y += (-Math.sin(v.heading) * lead * (cam.height / cam.zoom) - cam.followOffset.y) * ease;
     audio.engine(Math.min(1, Math.abs(v.speed) / v.def.params.maxSpeed), v.def.type);
     // Potholes: a proper Bengaluru welcome.
     if (Math.abs(v.speed) > 60 && now > this.bumpCd) {

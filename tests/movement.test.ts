@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { facingFrom, stepDrive, walkVelocity, type DriveParams } from '../src/logic/movement';
+import { facingFrom, stepDrive, stickDrive, walkVelocity, type DriveParams } from '../src/logic/movement';
 
 const none = { up: false, down: false, left: false, right: false };
 const P: DriveParams = { maxSpeed: 200, reverseSpeed: 70, accel: 150, brake: 340, drag: 90, turnRate: 2.8 };
@@ -47,5 +47,41 @@ describe('driving', () => {
   it('cannot turn on the spot', () => {
     const s = stepDrive({ speed: 0, heading: 1 }, { ...none, left: true }, P, 1 / 60);
     expect(s.heading).toBe(1);
+  });
+});
+
+describe('touch driving (point-to-steer)', () => {
+  const drive = (s: { speed: number; heading: number }, stick: { x: number; y: number }, seconds: number) => {
+    for (let i = 0; i < seconds * 60; i++) s = stepDrive(s, stickDrive(stick, s, P), P, 1 / 60);
+    return s;
+  };
+  it('ignores a resting thumb', () => {
+    expect(stickDrive({ x: 0.1, y: 0.05 }, { speed: 0, heading: 0 }, P)).toEqual(none);
+  });
+  it('drives straight where the stick points', () => {
+    expect(stickDrive({ x: 1, y: 0 }, { speed: 0, heading: 0 }, P)).toEqual({ ...none, up: true });
+  });
+  it('turns towards the stick, whichever way the vehicle faces', () => {
+    // Facing right (east), stick points up the screen (north): ends up heading north and moving.
+    const s = drive({ speed: 0, heading: 0 }, { x: 0, y: -1 }, 3);
+    expect(Math.abs(s.heading + Math.PI / 2)).toBeLessThan(0.1);
+    expect(s.speed).toBeGreaterThan(100);
+    // Facing down the screen, stick points left: ends up heading left, not right.
+    const t = drive({ speed: 0, heading: Math.PI / 2 }, { x: -1, y: 0 }, 3);
+    expect(Math.abs(Math.abs(t.heading) - Math.PI)).toBeLessThan(0.1);
+  });
+  it('a light push cruises slowly', () => {
+    const s = drive({ speed: 0, heading: 0 }, { x: 0.4, y: 0 }, 5);
+    expect(s.speed).toBeGreaterThan(P.maxSpeed * 0.3);
+    expect(s.speed).toBeLessThan(P.maxSpeed * 0.45);
+  });
+  it('reverses when pointing behind from a stop', () => {
+    const s = drive({ speed: 0, heading: 0 }, { x: -1, y: 0 }, 1);
+    expect(s.speed).toBeLessThan(0);
+  });
+  it('brakes into a U-turn at speed instead of reversing', () => {
+    const first = stickDrive({ x: -1, y: 0.1 }, { speed: 180, heading: 0 }, P);
+    expect(first.down).toBe(true);
+    expect(first.left || first.right).toBe(true);
   });
 });

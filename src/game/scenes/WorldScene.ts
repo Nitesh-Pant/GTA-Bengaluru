@@ -13,7 +13,7 @@ import { boxHitsSolids, dist, type Rect } from '../../logic/geometry';
 import { darkness } from '../../logic/dayClock';
 import { CHAR_DIRS, CHAR_FRAMES } from '../art/characters';
 import { pickInteraction, type InteractionCandidate } from '../../logic/interaction';
-import { facingFrom, walkVelocity, type DirInput, type Facing } from '../../logic/movement';
+import { facingFrom, stickDrive, walkVelocity, type DirInput, type Facing } from '../../logic/movement';
 import { ReactionEngine, type Reactor, type WorldEvent } from '../../logic/reactionEngine';
 import { mulberry32 } from '../../logic/rng';
 import { safeStorage, STAT_KEYS, writeSave, type Settings, type Stats } from '../../logic/save';
@@ -23,7 +23,7 @@ import { inputLocked, uiStore } from '../../store/uiStore';
 import { audio } from '../audio';
 import { bridge, type GuideKind } from '../bridge';
 import { PLAYER_BODY, t, WALK_SPEED, WORLD_H, WORLD_W } from '../constants';
-import { touch } from '../touch';
+import { isTouchDevice, touch } from '../touch';
 import { DECAL_PROPS, propKey } from '../art/props';
 import { BubbleLayer } from '../systems/BubbleLayer';
 import { AnimalSystem } from '../systems/AnimalSystem';
@@ -605,6 +605,8 @@ export class WorldScene extends Phaser.Scene {
     }
   }
 
+  private readonly touchUi = isTouchDevice();
+
   private readInput(): DirInput {
     const k = this.keys;
     return {
@@ -648,7 +650,9 @@ export class WorldScene extends Phaser.Scene {
 
     this.npcs.update(dt, now);
     this.traffic.update(dt, now);
-    this.vehicles.update(dt, now, input, this.locked, this.keys.space.isDown || touch.brake);
+    const car = this.vehicles.driving();
+    const steer = car && (touch.stick.x || touch.stick.y) ? stickDrive(touch.stick, car, car.def.params) : input;
+    this.vehicles.update(dt, now, steer, this.locked, this.keys.space.isDown || touch.brake);
     this.talk.update(now, dt);
     this.dayNight.update(dt);
     this.ride.update(now);
@@ -664,7 +668,8 @@ export class WorldScene extends Phaser.Scene {
     const p = this.playerFeet();
     this.candidate = this.locked || this.travelling ? null : pickInteraction(this.candidates(), p.x, p.y, false);
     if (this.candidate && this.candidate.kind !== 'exitVehicle') this.bubbles.setPrompt({ x: this.candidate.x, y: this.candidate.y }, this.candidate.label);
-    else if (this.candidate) this.bubbles.setPrompt({ x: p.x, y: p.y + 6 }, 'Get out');
+    // Phones have their own Get out button, so the floating E prompt would only mislead there.
+    else if (this.candidate && !this.touchUi) this.bubbles.setPrompt({ x: p.x, y: p.y + 6 }, 'Get out');
     else this.bubbles.setPrompt(null);
 
     // Viaduct fades when you're underneath it.
