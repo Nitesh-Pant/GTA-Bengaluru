@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useMenuKeys } from './useMenuKeys';
 
 export interface PickerItem {
@@ -7,7 +7,7 @@ export interface PickerItem {
   note?: string;
 }
 
-/** A "where to?" list (metro, bus, Rapido): keyboard 1–9 / arrows / Enter, mouse or touch. */
+/** A "where to?" list (metro, bus, Rapido): keyboard numbers / arrows / Enter, mouse or touch. */
 export function PickerPanel({
   label,
   logo,
@@ -38,10 +38,22 @@ export function PickerPanel({
   const [sel, setSel] = useState(0);
   const choose = (i: number) => (i >= items.length ? onClose() : onChoose(items[i].id));
   useMenuKeys(items.length + 1, sel, setSel, choose, true);
+  // Keep the highlighted row in sight as the keys move it through a long list (not when the mouse moves it).
+  const selRef = useRef<HTMLButtonElement | null>(null);
+  const byMouse = useRef(false);
+  useEffect(() => {
+    if (!byMouse.current) selRef.current?.scrollIntoView({ block: 'nearest' });
+    byMouse.current = false;
+  }, [sel]);
+  const hover = (i: number) => {
+    if (i === sel) return;
+    byMouse.current = true;
+    setSel(i);
+  };
   const row = (i: number, body: React.ReactNode) => (
     <li key={i}>
-      <button className={i === sel ? 'option selected' : 'option'} onMouseEnter={() => setSel(i)} onClick={() => choose(i)}>
-        {i < 9 && <kbd>{i + 1}</kbd>} {body}
+      <button ref={i === sel ? selRef : undefined} className={i === sel ? 'option selected' : 'option'} onMouseEnter={() => hover(i)} onClick={() => choose(i)}>
+        <kbd>{i + 1}</kbd> {body}
       </button>
     </li>
   );

@@ -82,6 +82,8 @@ export interface SaveData {
   timeOfDay: number;
   /** Game days since you arrived (festivals follow it). */
   day: number;
+  /** Which festival this game started on (-1 until one is picked at random). */
+  festivalStart: number;
   settings: Settings;
   stats: Stats;
   /** Last safe on-foot position. Transient states (vehicle, dialogue, metro) are never saved. */
@@ -119,6 +121,7 @@ export const defaultSave = (): SaveData => ({
   player: { ...DEFAULT_PROFILE },
   timeOfDay: START_MINUTES,
   day: 0,
+  festivalStart: -1,
   settings: { ...DEFAULT_SETTINGS },
   stats: defaultStats(),
   lastPosition: null,
@@ -184,6 +187,7 @@ export function sanitize(raw: unknown, validPoiIds: ReadonlySet<string>, valid: 
   }
   d.timeOfDay = num(raw.timeOfDay, START_MINUTES, 0, 1439);
   d.day = Math.floor(num(raw.day, 0, 0, 1e6));
+  d.festivalStart = Math.floor(num(raw.festivalStart, -1, -1, 1e6));
   d.savedAt = num(raw.savedAt, 0);
   return d;
 }

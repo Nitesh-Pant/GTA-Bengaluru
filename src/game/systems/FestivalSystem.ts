@@ -43,7 +43,7 @@ const KITE_MS = 45000;
 
 /**
  * Festivals by season (see src/data/festivals.ts): bunting across the main roads in the festival's
- * colours, Deepavali diyas and crackers after dark, the Kadlekai Parishe groundnut fair, monsoon rain,
+ * colours, Deepavali diyas and crackers after dark, the Kadlekai Parishe groundnut fair,
  * a HUD chip, a morning greeting, and festival lines in people's mouths.
  */
 export class FestivalSystem {
@@ -52,7 +52,6 @@ export class FestivalSystem {
   private decor: Phaser.GameObjects.GameObject[] = [];
   private diyas: Phaser.GameObjects.Image[] = [];
   private nextCracker = 0;
-  private rainChecked = false;
   /** On the first load the greeting waits, so the welcome message is read first. */
   private greetAt = -1;
   /** Waving flags put up for the day (Rajyotsava), animated with the frames. */
@@ -91,10 +90,6 @@ export class FestivalSystem {
         this.cracker();
       }
     }
-    if (f.rainy && !this.rainChecked && s.dayNight.minutes > 9 * 60) {
-      this.rainChecked = true;
-      s.weather.start(120000, now);
-    }
   }
 
   /** A new day: take down yesterday's decorations and put up today's. */
@@ -108,11 +103,9 @@ export class FestivalSystem {
     this.diyas = [];
     this.waving = [];
     this.kites = [];
-    this.rainChecked = false;
-    const f = festivalFromUrl(location.search) ?? festivalOn(day);
+    const f = festivalFromUrl(location.search) ?? festivalOn(day, s.festivalStart);
     this.current = f;
-    uiStore.set({ festival: f?.name ?? null, festivalInfo: f ? { greeting: f.greeting, todo: f.host?.todo ?? null } : null });
-    if (!f) return;
+    uiStore.set({ festival: f.name, festivalInfo: { greeting: f.greeting, todo: f.host?.todo ?? null, next: festivalOn(day + 1, s.festivalStart).name } });
     for (const d of f.decor ?? []) this.decorate(d);
     if (f.colours.length) this.bunting(f.colours);
     if (f.lights) this.lightDiyas();

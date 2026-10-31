@@ -155,7 +155,7 @@ not real distances (the real Nandi Hills is 60 km away).
 | **KR Puram** | Purple and Blue line interchange, auto stand (Raju's auto), bus stop, flower and coconut sellers, food court |
 | **MG Road** | Higginbothams, Koshy's, Blossom Book House, Pecos |
 | **Cubbon Park** | Running track, State Central Library, lawns and bamboo |
-| **Chinnaswamy Stadium** | Ticket counter, fans chanting "Ee sala cup namde!", IPL nights; next door **UB City** (valet, luxury shoppers, a ₹600 coffee) and **Kingfisher Towers** with its white "sky mansion" on the roof |
+| **Chinnaswamy Stadium** | Ticket counter, fans chanting "Ee sala cup namde!", IPL nights; across CMH Road **UB City** (valet, luxury shoppers, a ₹600 coffee) and **Kingfisher Towers** with its white "sky mansion" on the roof, beside a little lawn |
 | **Koramangala** | 80 Feet Road: Flipkart, Swiggy, Razorpay, CRED, SOCIAL; behind it Infosys, Wipro, Accenture, IBM, Truffles, Nexus Mall and Startup Street (Zerodha, Zepto, 91springboard) |
 | **BTM Layout** | Gents PG, Ladies PG, Comfort PG and more, a strict PG aunty, the Andhra Mess, BTM Lake |
 | **Vidhana Soudha** | The granite legislature with *"Government Work is God's Work"*, floodlit at night |
@@ -177,12 +177,13 @@ wait at the gate, the dhaba and the summit.
 
 ### Festivals by season
 
-The city keeps a two-week festival calendar (in game days): **Ugadi** on the day you arrive, then
-**Bengaluru Karaga**, two **monsoon** days (rain rolls in), **Ganesha Chaturthi**, **Kannada
-Rajyotsava** (red and yellow flags), **Deepavali** (diyas on every building after dark and crackers
-over the city), **Kadlekai Parishe** (groundnut stalls by Bull Temple) and **Sankranti**, with ordinary
-days between. Each hangs bunting across the main roads, shows a chip on the area card, greets you in
-the morning and gets people talking. Jumping the clock from night to morning moves on a day.
+Every game day (about 16 real minutes) is a festival, one after another, starting from a random one
+for each new game: **Ugadi**, **Bengaluru Karaga**, **Ganesha Chaturthi**, **Kannada Rajyotsava**
+(red and yellow flags), **Deepavali** (diyas on every building after dark and crackers over the
+city), **Kadlekai Parishe** (groundnut stalls by Bull Temple) and **Sankranti**, then round again. Each hangs bunting across the main roads, shows a chip on the area
+card, greets you in the morning and gets people talking. Jumping the clock from night to morning
+moves on a day. To try one straight away, add `?festival=deepavali` (or `ugadi`, `ganesha`,
+`rajyotsava`, `sankranti`…) to the address.
 
 Five festivals also have their own decorations and a **host** (a local with an orange **!** over them).
 Tap the festival chip to see what's on, with **Show me**:
@@ -317,7 +318,7 @@ One at a time, with cooldowns, all ignorable:
 | **Cricket ball** | Rolls out of the maidan; throw it back |
 | **Food invitation** | Someone insists you try a place |
 | **Local tip** | Someone points you to a secret spot |
-| **Monsoon rain** | Rain sound and streaks; people run for shelter; autos ask double |
+| **Rain showers** (any day) | Rain sound and streaks; people run for shelter; autos ask double |
 
 ### Traffic
 
@@ -443,7 +444,7 @@ dropped.
 | Dialogue lines / exchanges / conversations | 535 / 62 / 45 |
 | Dishes | 28 |
 | Bucket list | 62 things to try (plus the food book and places) |
-| Festivals | 8 on a two-week calendar |
+| Festivals | 7, one a day in rotation |
 | Tech questions | 20 |
 | Street events | 10 |
 | Metro stations / bus stops | 3 / 9 (plus KSRTC to Nandi Hills and Vayu Vajra to the airport) |

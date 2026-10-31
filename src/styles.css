@@ -283,6 +283,7 @@ kbd {
   left: 12px;
   padding: 8px 12px 10px;
   min-width: 220px;
+  max-width: min(380px, calc(50vw - 240px));
 }
 .area-name {
   font-family: var(--title);
@@ -1263,12 +1264,12 @@ kbd {
   .touch-menu {
     flex-direction: row;
     bottom: auto;
-    top: 84px;
+    top: calc(var(--card-bottom, 94px) + 8px);
     left: 12px;
     right: auto;
   }
   .touch-hint {
-    top: 128px;
+    top: calc(var(--card-bottom, 94px) + 52px);
     left: 12px;
     transform: none;
     width: min(360px, calc(50vw - 24px));
@@ -1374,12 +1375,12 @@ kbd {
   justify-content: flex-end;
 }
 
-/* ── Side quick bar: character, time of day, bike taxi */
+/* ── Side quick bar: character, time of day, bike taxi. Always just under the area card
+   (--card-bottom is kept up to date by the HUD). */
 .quickbar {
   position: fixed;
   left: 12px;
-  top: 50%;
-  transform: translateY(-50%);
+  top: calc(var(--card-bottom, 121px) + 10px);
   display: flex;
   flex-direction: column;
   gap: 6px;
@@ -1414,10 +1415,6 @@ kbd {
 }
 /* Phones: icon-only, tucked under the area card (a row along the top in landscape). */
 @media (max-width: 760px), (pointer: coarse) {
-  .quickbar {
-    top: 138px;
-    transform: none;
-  }
   .quick {
     padding: 6px;
   }
@@ -1434,12 +1431,6 @@ kbd {
     width: 24px;
     height: 24px;
     font-size: 14px;
-  }
-}
-/* Phones: the side bar sits right under the compact area card. */
-@media (pointer: coarse) {
-  .quickbar {
-    top: 84px;
   }
 }
 @media (max-height: 560px) and (pointer: coarse) {

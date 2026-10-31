@@ -5,19 +5,17 @@ import { festivalFromUrl, festivalOn, FESTIVALS } from '../src/data/festivals';
 import { NPCS } from '../src/data/npcs';
 
 describe('festival calendar', () => {
-  it('starts the game on a festival so players meet one straight away', () => {
-    expect(festivalOn(0)?.id).toBe('ugadi');
+  it('every day is a festival, one after another, then round again', () => {
+    expect(festivalOn(0).id).toBe(FESTIVALS[0].id);
+    expect(festivalOn(1).id).toBe(FESTIVALS[1].id);
+    expect(festivalOn(FESTIVALS.length).id).toBe(FESTIVALS[0].id);
   });
-  it('repeats every two weeks and has ordinary days in between', () => {
-    expect(festivalOn(14)?.id).toBe(festivalOn(0)?.id);
-    expect(festivalOn(1)).toBeNull();
-    expect(festivalOn(10)?.id).toBe('deepavali');
+  it('a game can start on any festival and carries on in order from there', () => {
+    expect(festivalOn(0, 3).id).toBe(FESTIVALS[3].id);
+    expect(festivalOn(1, FESTIVALS.length - 1).id).toBe(FESTIVALS[0].id);
   });
-  it('every festival has lines for people to say and is on the calendar', () => {
-    for (const f of FESTIVALS) {
-      expect(LINE_POOLS[f.pool]?.length, f.pool).toBeGreaterThan(2);
-      expect(Array.from({ length: 14 }, (_, d) => festivalOn(d)?.id), f.id).toContain(f.id);
-    }
+  it('every festival has lines for people to say', () => {
+    for (const f of FESTIVALS) expect(LINE_POOLS[f.pool]?.length, f.pool).toBeGreaterThan(2);
   });
   it('festival hosts are real people with a festival conversation', () => {
     for (const f of FESTIVALS)

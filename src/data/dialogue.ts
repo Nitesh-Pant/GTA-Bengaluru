@@ -401,13 +401,6 @@ const RAW: Record<string, Raw[]> = {
     'Mallige hoovu ella kade, Karaga vaasane.',
     'Bhai, Karaga dekha hai kabhi? Raat bhar chalta hai.',
   ],
-  fest_monsoon: [
-    'Male bandre Bengaluru Venice aagutte.',
-    'Underpass full of water. Again. Every year, same surprise.',
-    'Monsoon mein chai aur bajji, bas aur kuch nahi chahiye.',
-    'I love the rain. I hate the rain. Both, at once.',
-    'Rain coat haaki, bike alli hogi. Helmet olage neeru.',
-  ],
   fest_ganesha: [
     'Ganapati Bappa Morya! Pandal alli prasada thogoli.',
     'Kadubu tinde? Amma maadidru, sakkath ide.',
@@ -560,6 +553,9 @@ const RAW: Record<string, Raw[]> = {
     'Mann vaasane bantu… aadre nanna shoes!',
     'Arre yaar, baarish aa gayi!',
     'Oh no, I just washed my car.',
+    'Male bandre Bengaluru Venice aagutte.',
+    'Underpass full of water. Again. Every year, same surprise.',
+    'Baarish mein chai aur bajji, bas aur kuch nahi chahiye.',
   ],
   rain_stop: [
     'Male nintu, ivaga traffic jaasti aagutte.',

@@ -99,8 +99,9 @@ export function buildGround(): Uint8Array {
   fill(6, 133, 10, 3, G.Garden);
   // Chinnaswamy Stadium forecourt
   fill(22, 114, 16, 30, G.Plaza);
-  // Koramangala office lawns
+  // Koramangala office lawns, and the lawn beside UB City
   fill(46, 125, 40, 2, G.Garden);
+  fill(62, 140, 15, 6, G.Grass);
   // BTM Lake
   fill(96, 126, 30, 17, G.Grass);
   ellipse(111, 134, 9, 6, G.Dirt, G.Grass);
@@ -306,9 +307,9 @@ export const BUILDINGS: BuildingDef[] = [
   { id: 'bulltemple', x: 47, y: 151, w: 10, h: 10, style: 'temple', sign: 'DODDA BASAVANA GUDI', wall: '#f4ecd8', roof: '#e8590c' },
   { id: 'pandal', x: 62, y: 152, w: 14, h: 9, style: 'pandal', sign: 'SRI VINAYAKA SEVA SAMITHI', wall: '#ffd43b', roof: '#e64980' },
   { id: 'glasshouse', x: 100, y: 148, w: 16, h: 11, style: 'glasshouse', sign: 'LALBAGH GLASS HOUSE', wall: '#d0ebff', roof: '#a5d8ff' },
-  // ── UB City and Kingfisher Towers, between Chinnaswamy and Cubbon Park
-  { id: 'ubcity', x: 29, y: 133, w: 5, h: 7, style: 'mall', sign: 'UB CITY', wall: '#d9d2c3', roof: '#7d6b5d', floors: 3 },
-  { id: 'kingfisher', x: 34, y: 131.5, w: 4, h: 9, style: 'office', sign: 'KINGFISHER', wall: '#cfe3f3', roof: '#e9ecef', awning: '#c92a2a', floors: 5 },
+  // ── UB City and Kingfisher Towers, across CMH Road from Chinnaswamy, with a lawn beside them
+  { id: 'ubcity', x: 47, y: 140, w: 8, h: 6, style: 'mall', sign: 'UB CITY', wall: '#d9d2c3', roof: '#7d6b5d', floors: 3 },
+  { id: 'kingfisher', x: 56, y: 138.5, w: 5, h: 7.5, style: 'office', sign: 'KINGFISHER', wall: '#cfe3f3', roof: '#e9ecef', awning: '#c92a2a', floors: 5 },
   // ── East of the city: NH 44, villages and Nandi Hills
   { id: 'toll_n', x: 135, y: 53, w: 5, h: 3, style: 'kiosk', sign: 'TOLL', wall: '#fff3bf', roof: '#1971c2' },
   { id: 'toll_s', x: 135, y: 64, w: 5, h: 3, style: 'kiosk', sign: 'TOLL', wall: '#fff3bf', roof: '#1971c2' },
@@ -600,16 +601,20 @@ export const PROPS: PropDef[] = [
   { kind: 'lamp', x: 17.4, y: 128 },
   { kind: 'hoarding', x: 30, y: 113.8, text: 'CUBBON PARK' },
   // Chinnaswamy forecourt
-  { kind: 'hoarding', x: 31.5, y: 132.7, text: 'EE SALA CUP NAMDE' },
+  { kind: 'hoarding', x: 34, y: 134.2, text: 'EE SALA CUP NAMDE' },
   ...row('flowerCart', 141.4, [26]),
   { kind: 'bin', x: 36.5, y: 138 },
+  // The lawn beside UB City
+  ...row('tree', 141, [64, 70, 75.5]),
+  ...row('bench', 144.4, [67, 73]),
+  { kind: 'lamp', x: 62.6, y: 145.6 },
   // Koramangala
   ...row('bench', 126.6, [50, 60, 72, 82]),
   { kind: 'table', x: 47.4, y: 138.6 },
   { kind: 'table', x: 52.6, y: 138.6 },
   { kind: 'bike', x: 57, y: 106.6 },
   { kind: 'bike', x: 58.5, y: 106.6 },
-  { kind: 'hoarding', x: 60.5, y: 142.8, text: 'STARTUP STREET' },
+  { kind: 'hoarding', x: 76, y: 142.8, text: 'STARTUP STREET' },
   // BTM Layout
   { kind: 'bike', x: 96, y: 106.6 },
   { kind: 'bike', x: 97.5, y: 106.6 },

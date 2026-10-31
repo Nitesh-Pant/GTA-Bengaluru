@@ -50,7 +50,7 @@ export const BUCKET: BucketItem[] = [
   { id: 'vidhana', group: 'See the city', title: 'See Vidhana Soudha', hint: 'The granite legislature, flags flying out front.', done: (p) => p.discovered.includes('vidhana'), show: { poi: 'vidhana' } },
   { id: 'stadium', group: 'See the city', title: 'Visit Chinnaswamy Stadium', hint: 'Ee sala cup namde!', done: (p) => p.discovered.includes('stadium'), show: { poi: 'stadium' } },
   { id: 'silkboard', group: 'See the city', title: 'Survive Silk Board', hint: 'Drive through the junction just outside the city. Bring patience.', done: (p) => p.stats.silkboard >= 1, show: { poi: 'silkboard' } },
-  { id: 'ubcity', group: 'See the city', title: 'Window-shop at UB City', hint: 'Next to Chinnaswamy Stadium. Look up at the mansion on Kingfisher Towers.', done: (p) => p.discovered.includes('ubcity'), show: { poi: 'ubcity' } },
+  { id: 'ubcity', group: 'See the city', title: 'Window-shop at UB City', hint: 'Across CMH Road from Chinnaswamy Stadium. Look up at the mansion on Kingfisher Towers.', done: (p) => p.discovered.includes('ubcity'), show: { poi: 'ubcity' } },
   { id: 'social', group: 'See the city', title: 'Visit SOCIAL', hint: 'The cafe-bar on 80 Feet Road, Koramangala.', done: (p) => p.discovered.includes('social'), show: { poi: 'social' } },
   { id: 'flipkart', group: 'See the city', title: 'Visit the Flipkart office', hint: 'On 80 Feet Road, Koramangala, with the other startups.', done: (p) => p.discovered.includes('flipkart'), show: { poi: 'flipkart' } },
   { id: 'airport', group: 'See the city', title: 'Reach the airport', hint: 'Drive out on NH 44, or take the Vayu Vajra bus.', done: (p) => p.discovered.includes('airport'), show: { poi: 'airport' } },
@@ -62,7 +62,7 @@ export const BUCKET: BucketItem[] = [
   { id: 'talk', group: 'Only in Bengaluru', title: 'Talk to anyone', hint: 'Walk up to anyone and press E. Most people have something to say.', done: (p) => p.marks.includes('talk') },
   { id: 'cricket', group: 'Only in Bengaluru', title: 'Throw the cricket ball back', hint: 'Gully cricket at the Thippasandra maidan. Press E when the ball rolls out.', done: (p) => p.stats.throws >= 1, show: { poi: 'maidan' } },
   { id: 'kasa', group: 'Only in Bengaluru', title: 'Spot the kasa gaadi', hint: 'The BBMP garbage van drives through now and then, its jingle blaring.', done: (p) => p.marks.includes('kasa') },
-  { id: 'rain', group: 'Only in Bengaluru', title: 'Get caught in the rain', hint: 'It comes when it comes. Monsoon days are a safe bet.', done: (p) => p.marks.includes('rain') },
+  { id: 'rain', group: 'Only in Bengaluru', title: 'Get caught in the rain', hint: 'It comes when it comes, any day. Keep wandering and listen for the thunder.', done: (p) => p.marks.includes('rain') },
   { id: 'powercut', group: 'Only in Bengaluru', title: 'Live through a power cut', hint: 'They happen now and then, mostly at night.', done: (p) => p.marks.includes('powercut') },
   { id: 'ipl', group: 'Only in Bengaluru', title: 'Feel an IPL night', hint: 'Be near Chinnaswamy Stadium on a match evening.', done: (p) => p.marks.includes('ipl'), show: { poi: 'stadium' } },
   // Festivals (each on its own day; the area card's chip says what's on)

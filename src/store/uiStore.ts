@@ -80,7 +80,7 @@ export interface UiState {
   /** Today's festival, if any. */
   festival: string | null;
   /** What it's about and what to do today (the festival card). */
-  festivalInfo: { greeting: string; todo: string | null } | null;
+  festivalInfo: { greeting: string; todo: string | null; next: string } | null;
   ready: boolean;
 }
 

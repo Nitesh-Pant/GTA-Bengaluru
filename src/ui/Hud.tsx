@@ -8,6 +8,27 @@ import { BUCKET } from '../data/bucket';
 import { bucketDone } from '../logic/bucket';
 import { Minimap } from './Minimap';
 
+/**
+ * Keeps `--card-bottom` on the page set to where the area card ends. The card grows and shrinks
+ * with its chips, and the side buttons sit under it (see styles.css), so they never overlap.
+ */
+function useCardBottom() {
+  const ref = useRef<HTMLDivElement | null>(null);
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const update = () => document.documentElement.style.setProperty('--card-bottom', `${Math.ceil(el.getBoundingClientRect().bottom)}px`);
+    const ro = new ResizeObserver(update);
+    ro.observe(el);
+    addEventListener('resize', update);
+    return () => {
+      ro.disconnect();
+      removeEventListener('resize', update);
+    };
+  });
+  return ref;
+}
+
 function ControlsHint() {
   const [open, setOpen] = useState(true);
   useEffect(() => {
@@ -141,12 +162,13 @@ export function Hud() {
   const discovered = useUi((s) => s.discovered.length);
   const ready = useUi((s) => s.ready);
   const panel = useUi((s) => s.panel);
+  const card = useCardBottom();
   if (!ready) return <div className="loading">Painting the city… swalpa wait maadi</div>;
   // Phones get a smaller minimap so it doesn't eat the screen (and no keyboard hints).
   const phone = isTouchDevice();
   return (
     <div className="hud" style={{ visibility: panel === 'pause' || panel === 'photo' ? 'hidden' : 'visible' }}>
-      <div className="area-card panel">
+      <div className="area-card panel" ref={card}>
         <div className="area-name">{area.name}</div>
         <div className="area-tag">{area.tagline}</div>
         <BucketButton />

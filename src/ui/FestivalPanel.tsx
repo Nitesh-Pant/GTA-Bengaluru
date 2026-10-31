@@ -1,7 +1,7 @@
 import { bridge } from '../game/bridge';
 import { uiStore, useUi } from '../store/uiStore';
 
-/** Tap the festival chip: what today is about and what to do, with "Show me" for the host. */
+/** Tap the festival chip: what today is about and what to do, with "Show me" for the host and a skip to the next one. */
 export function FestivalPanel() {
   const panel = useUi((s) => s.panel);
   const name = useUi((s) => s.festival);
@@ -30,6 +30,16 @@ export function FestivalPanel() {
               Show me
             </button>
           )}
+          <button
+            className="btn"
+            title="Skip to tomorrow's festival"
+            onClick={() => {
+              close();
+              bridge.api?.nextFestival();
+            }}
+          >
+            Next: {info.next} →
+          </button>
           <button className="btn" onClick={close}>
             Close
           </button>
