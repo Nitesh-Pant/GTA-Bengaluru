@@ -186,6 +186,19 @@ over the city), **Kadlekai Parishe** (groundnut stalls by Bull Temple) and **San
 days between. Each hangs bunting across the main roads, shows a chip on the area card, greets you in
 the morning and gets people talking. Jumping the clock from night to morning moves on a day.
 
+Five festivals also have their own decorations and a **host** (a local with an orange **!** over them).
+Tap the festival chip to see what's on, with **Show me**:
+
+| Festival | Decorations | Do |
+| --- | --- | --- |
+| **Ugadi** | Mango-leaf torans over shop doors, rangoli outside houses | Bevu-bella from Saroja Ajji, Indiranagar |
+| **Ganesha Chaturthi** | Little Ganesha idols at street corners | Kadubu from Ganesh at the pandal |
+| **Kannada Rajyotsava** | Extra waving flags along the main roads | "Siri gannadam gelge!" with the crowd at Vidhana Soudha |
+| **Deepavali** | Star lanterns at houses, diyas, crackers | A sparkler and Mysore pak from Pinky, Indiranagar |
+| **Sankranti** | Sugarcane at doors, rangoli, kites over Cubbon Park | Ellu-bella and a kite to fly from Subbaiah uncle |
+
+Each is on the bucket list, and the four festival foods go in the food book.
+
 **The Kannada flag, all year:** red-and-yellow flags wave on poles at Vidhana Soudha (with bunting
 between them and a "Siri gannadam gelge" banner), Marathahalli circle, Silk Board, the KR Puram auto
 stand and Nandi Hills, and about half the city's autos fly a little one streaming behind them.
@@ -438,7 +451,7 @@ dropped.
 | Places to discover | 74 (7 secret) |
 | People | 170 |
 | Dialogue lines / exchanges / conversations | 535 / 62 / 45 |
-| Dishes | 24 |
+| Dishes | 28 |
 | Achievements | 36 |
 | Festivals | 8 on a two-week calendar |
 | Tech questions | 20 |

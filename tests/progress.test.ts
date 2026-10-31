@@ -1,3 +1,4 @@
+import { FESTIVALS } from '../src/data/festivals';
 import { describe, expect, it } from 'vitest';
 import { ACHIEVEMENT_IDS, ACHIEVEMENTS } from '../src/data/achievements';
 import { CONVERSATIONS, type Effect } from '../src/data/conversations';
@@ -15,8 +16,9 @@ describe('food book', () => {
     for (const id of Object.keys(CONVERSATIONS))
       for (const e of effectsOf(id)) if (e.type === 'taste') expect(DISH_IDS.has(e.dish), `${id}: ${e.dish}`).toBe(true);
   });
-  it('every dish can be ordered from some NPC', () => {
-    const orderable = new Set(NPCS.flatMap((n) => (n.conversation ? effectsOf(n.conversation) : [])).flatMap((e) => (e.type === 'taste' ? [e.dish] : [])));
+  it('every dish can be ordered from some NPC (festival foods from that festival\'s host)', () => {
+    const convs = [...NPCS.flatMap((n) => (n.conversation ? [n.conversation] : [])), ...FESTIVALS.flatMap((f) => (f.host ? [f.host.conversation] : []))];
+    const orderable = new Set(convs.flatMap((c) => effectsOf(c)).flatMap((e) => (e.type === 'taste' ? [e.dish] : [])));
     for (const d of DISHES) expect(orderable.has(d.id), d.id).toBe(true);
   });
 });

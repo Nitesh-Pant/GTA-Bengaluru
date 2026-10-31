@@ -409,6 +409,7 @@ export class WorldScene extends Phaser.Scene {
       setPaused: (paused) => {
         audio.suspend(paused);
         if (paused) {
+          this.mark('settings');
           this.persist();
           this.scene.pause();
         } else this.scene.resume();
@@ -472,6 +473,7 @@ export class WorldScene extends Phaser.Scene {
       nearestJobs: () => this.jobs.nearest().map(({ kind, label, distance }) => ({ kind, label, distance })),
       showJob: (kind) => this.showJob(kind),
       showBucket: (id) => this.showBucket(id),
+      showFestival: () => this.festivals.showHost(),
       nearestRides: () =>
         GUIDE_KINDS.flatMap((kind) => {
           const n = this.nearestOf(kind);
@@ -712,6 +714,9 @@ export class WorldScene extends Phaser.Scene {
     if ('poi' in show) {
       const poi = poiById(show.poi);
       if (poi) at = { x: poi.x, y: poi.y, label: poi.name };
+    } else if ('npc' in show) {
+      const n = this.npcs.byId(show.npc);
+      if (n) at = { x: n.x, y: n.y, label: n.name };
     } else {
       const spots =
         show.animal === 'dog'

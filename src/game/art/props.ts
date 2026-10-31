@@ -400,3 +400,55 @@ export function paintKannadaFlag(clothW: number, clothH: number, poleH: number):
   }
   return c;
 }
+
+/** Festival decorations (drawn at boot, placed by FestivalSystem on the day). */
+export function paintFestivalDecor(kind: 'sugarcane' | 'akash' | 'ganeshaIdol' | 'kite'): HTMLCanvasElement {
+  switch (kind) {
+    case 'sugarcane':
+      // Two sugarcane stalks tied by a door, leaves flaring at the top.
+      return draw(12, 30, (c) => {
+        for (const x of [3, 7]) {
+          rect(c, x, 8, 2, 22, '#6a3d6b');
+          rect(c, x, 8, 1, 22, '#8e5a8f');
+          for (let y = 12; y < 30; y += 5) rect(c, x, y, 2, 1, '#4a2a4b');
+        }
+        for (const [x, y] of [[1, 2], [5, 0], [9, 3], [3, 5], [8, 6]]) rect(c, x, y, 2, 6, '#5c940d');
+        rect(c, 2, 18, 8, 1, '#fab005');
+      });
+    case 'akash':
+      // A paper star lantern (akash kandil) hanging from its string.
+      return draw(12, 20, (c) => {
+        rect(c, 5, 0, 1, 6, '#495057');
+        rect(c, 3, 7, 6, 6, '#ff922b');
+        rect(c, 4, 6, 4, 8, '#ff922b');
+        rect(c, 1, 9, 10, 2, '#ffa94d');
+        rect(c, 5, 9, 2, 2, '#fff3bf');
+        for (let x = 3; x < 9; x += 2) rect(c, x, 14, 1, 5, '#e8590c');
+      });
+    case 'ganeshaIdol':
+      // A small street-corner Ganesha under a yellow umbrella, on a draped table.
+      return draw(18, 26, (c) => {
+        rect(c, 8, 0, 2, 8, '#868e96');
+        ellipse(c, 9, 5, 8, 3, '#fcc419');
+        rect(c, 2, 18, 14, 7, '#e64980');
+        rect(c, 2, 18, 14, 1, '#f783ac');
+        ellipse(c, 9, 15, 5, 4, '#ff922b');
+        ellipse(c, 9, 10, 3.5, 3, '#ff922b');
+        rect(c, 7, 11, 2, 5, '#e8590c');
+        rect(c, 6, 15, 6, 2, '#c92a2a');
+        px(c, 8, 9, '#1c1726');
+        px(c, 10, 9, '#1c1726');
+        rect(c, 8, 6, 2, 2, '#fab005');
+      });
+    case 'kite':
+      // A diamond kite in red and yellow with a ribboned tail.
+      return draw(14, 22, (c) => {
+        for (let i = 0; i < 6; i++) {
+          rect(c, 7 - i, 1 + i, i * 2 + 1, 1, i < 3 ? '#fcc419' : '#e03131');
+          rect(c, 7 - (5 - i), 7 + i, (5 - i) * 2 + 1, 1, i < 3 ? '#e03131' : '#fcc419');
+        }
+        rect(c, 7, 1, 1, 12, '#5c3a1e');
+        for (let y = 13; y < 22; y += 3) rect(c, 6 + (y % 2), y, 2, 1, '#228be6');
+      });
+  }
+}

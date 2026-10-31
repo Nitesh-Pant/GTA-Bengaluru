@@ -46,7 +46,7 @@ export interface JobOffer {
   alt?: string;
 }
 
-export type Panel = null | 'pause' | 'journal' | 'map' | 'ride' | 'character' | 'bus' | 'tour' | 'find' | 'photo' | 'bucket';
+export type Panel = null | 'pause' | 'journal' | 'map' | 'ride' | 'character' | 'bus' | 'tour' | 'find' | 'photo' | 'bucket' | 'festival';
 
 export interface UiState {
   phase: 'menu' | 'playing';
@@ -80,6 +80,8 @@ export interface UiState {
   eventTitle: string | null;
   /** Today's festival, if any. */
   festival: string | null;
+  /** What it's about and what to do today (the festival card). */
+  festivalInfo: { greeting: string; todo: string | null } | null;
   ready: boolean;
 }
 
@@ -110,6 +112,7 @@ const initial = (): UiState => ({
   raining: false,
   eventTitle: null,
   festival: null,
+  festivalInfo: null,
   ready: false,
 });
 

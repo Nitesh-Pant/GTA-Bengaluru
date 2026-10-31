@@ -8,7 +8,8 @@ export type Effect =
   | { type: 'taste'; dish: string }
   | { type: 'job' }
   | { type: 'destination'; poi: string }
-  | { type: 'challan'; action: 'pay' | 'adjust' | 'plead' };
+  | { type: 'challan'; action: 'pay' | 'adjust' | 'plead' }
+  | { type: 'fest'; act: 'sparkler' | 'kite' | 'cheer' };
 
 export interface ConvOption {
   label: string;
@@ -55,6 +56,77 @@ const EAT: Effect = { type: 'world', event: 'food_visit' };
 const taste = (dish: string): Effect => ({ type: 'taste', dish });
 
 export const CONVERSATIONS: Record<string, Conversation> = {
+  // ── Festival hosts (see FESTIVALS[].host): these replace the host's usual chat on the day.
+  fest_ugadi: {
+    id: 'fest_ugadi',
+    start: 'a',
+    nodes: {
+      a: {
+        text: 'Ugadi habbada shubhashayagalu, {name}! Bevu-bella thogo: kahi bevu, sihi bella. Varsha poorti eradoo barutte, magu.',
+        options: [{ label: 'Thank you, ajji! (Take bevu-bella)', next: 'eat', effects: [EAT, taste('bevu_bella')] }, BYE],
+      },
+      eat: { speaker: '', text: 'Bitter neem flowers, then sweet jaggery. Ajji watches you make a face and laughs. "That\'s life, magu."', options: [{ label: 'Hosa varshada shubhashayagalu!' }] },
+    },
+  },
+  fest_ganesha: {
+    id: 'fest_ganesha',
+    start: 'a',
+    nodes: {
+      a: {
+        text: 'Ganapati Bappa Morya! Ivattu Chaturthi, kadubu maadidivi. Ganesha ge first, aamele nimge!',
+        options: [
+          { label: 'Kadubu kodi, please', next: 'kadubu', effects: [EAT, taste('kadubu')] },
+          { label: 'Prasada (kesari bath)', next: 'kesari', effects: [EAT, taste('kesari_prasada')] },
+          BYE,
+        ],
+      },
+      kadubu: { speaker: '', text: 'A warm kadubu, sweet coconut and jaggery inside. The dhol speeds up; somebody starts dancing.', options: [{ label: 'Ganapati Bappa Morya!' }] },
+      kesari: { speaker: '', text: 'Kesari bath in a leaf cup, glistening with ghee. A marigold for your ear, too.', options: [{ label: 'Morya re!' }] },
+    },
+  },
+  fest_rajyotsava: {
+    id: 'fest_rajyotsava',
+    start: 'a',
+    nodes: {
+      a: {
+        text: 'Kannada Rajyotsavada shubhashayagalu! Ellaru ottige heli, joraagi…',
+        options: [{ label: '"Siri gannadam gelge!"', next: 'cheer', effects: [{ type: 'fest', act: 'cheer' }] }, BYE],
+      },
+      cheer: { speaker: '', text: 'The whole crowd outside Vidhana Soudha roars it back. Flags wave, someone starts "Huttidare Kannada naadalli huttabeku" and everyone joins in.', options: [{ label: 'Jai Karnataka!' }] },
+    },
+  },
+  fest_deepavali: {
+    id: 'fest_deepavali',
+    start: 'a',
+    nodes: {
+      a: {
+        text: 'Happy Deepavali! Amma kotta sparkler box ide, ondu hacchona? Mysore pak kooda ide!',
+        options: [
+          { label: 'Light a sparkler', next: 'sparkler', effects: [{ type: 'fest', act: 'sparkler' }] },
+          { label: 'Mysore pak, please', next: 'sweet', effects: [EAT, taste('mysore_pak')] },
+          BYE,
+        ],
+      },
+      sparkler: { speaker: '', text: 'Pinky lights it from her diya. It fizzes and spits golden sparks; you draw circles in the air.', options: [{ label: 'Happy Deepavali!' }] },
+      sweet: { speaker: '', text: 'A square of Mysore pak, still warm, crumbling into ghee. Pinky watches to make sure you finish it.', options: [{ label: 'Sakkath!' }] },
+    },
+  },
+  fest_sankranti: {
+    id: 'fest_sankranti',
+    start: 'a',
+    nodes: {
+      a: {
+        text: 'Sankranti shubhashayagalu! Ellu-bella thindu olle maathaadi. Gaalipata haaradsona? Cubbon Park alli gaali sakkath ide.',
+        options: [
+          { label: 'Ellu-bella, please', next: 'ellu', effects: [EAT, taste('ellu_bella')] },
+          { label: 'Fly a kite', next: 'kite', effects: [{ type: 'fest', act: 'kite' }] },
+          BYE,
+        ],
+      },
+      ellu: { speaker: '', text: 'Sesame, jaggery, dry coconut and a sugar figure shaped like a little parrot. Uncle insists you take two.', options: [{ label: 'Thank you, uncle!' }] },
+      kite: { speaker: '', text: 'Uncle hands you a red and yellow kite and the string. A gust takes it straight up over the trees.', options: [{ label: 'Wheee!' }] },
+    },
+  },
   challan_red: challan('challan_red', '*Whistle!* Saar, red signal kaanistha illva? Signal jump maadidri. Licence, RC thogondu banni.', 500),
   challan_speed: challan('challan_speed', '*Whistle!* Yenu racing-aa? Speed nodi saar, illi school ide, market ide, cow ide!', 1000),
   challan_helmet: challan('challan_helmet', '*Whistle!* Helmet elli, saar? "Helmet optimistic" anta scooter mele bareditte, adu helmet alla!', 500),

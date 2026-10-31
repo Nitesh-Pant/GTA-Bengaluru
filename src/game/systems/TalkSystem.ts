@@ -217,7 +217,9 @@ export class TalkSystem {
 
   /** Talk to `npc`, or have them start a particular conversation (a traffic stop). */
   open(npc: Npc, conversation?: string) {
-    const id = conversation ?? npc.def.conversation;
+    // On their festival day a host has a festival conversation instead of their usual one.
+    const host = this.scene.festivals?.current?.host;
+    const id = conversation ?? (host?.npc === npc.id ? host.conversation : npc.def.conversation);
     this.scene.mark('talk');
     const conv = id ? CONVERSATIONS[id] : this.genericConversation(npc);
     npc.state = 'talk';
@@ -305,6 +307,7 @@ export class TalkSystem {
       else if (e.type === 'taste') s.taste(e.dish);
       else if (e.type === 'job') s.deliveries.start();
       else if (e.type === 'challan') s.police.resolve(e.action);
+      else if (e.type === 'fest') s.festivals.act(e.act);
       else if (e.type === 'stat') {
         s.stats[e.stat]++;
         s.persist();

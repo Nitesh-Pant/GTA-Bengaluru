@@ -174,6 +174,7 @@ export class EventSystem {
       if (Math.abs(y - p.y) > 320) return null;
       const cam = s.cameras.main.worldView;
       const van = s.add.image(cam.x - 60, y, 'bbmp_van').setDepth(y + 8);
+      s.mark('kasa');
       const block: Obstacle = { id: 'bbmp_van', kind: 'vehicle', x: van.x, y, radius: 18 };
       s.traffic.addObstacle(block);
       s.tweens.add({ targets: van, x: cam.right + 80, duration: 18000, onUpdate: () => (block.x = van.x) });

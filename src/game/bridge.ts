@@ -68,6 +68,8 @@ export interface GameApi {
   endPhoto(): void;
   /** Count a postcard made (for the achievement). */
   notePostcard(): void;
+  /** Festival card "Show me": mark today's festival host. */
+  showFestival(): void;
   /** Bucket list "Show me": mark where to do that item. */
   showBucket(id: string): void;
   snoozeJob(id: string): void;

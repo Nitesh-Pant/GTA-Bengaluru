@@ -23,7 +23,8 @@ export type BucketTarget =
   | { guide: 'yulu' | 'auto' | 'bus' | 'metro' | 'car' }
   | { job: 'delivery' | 'fares' | 'quiz' }
   | { poi: string }
-  | { animal: 'dog' | 'crows' | 'monkey' };
+  | { animal: 'dog' | 'crows' | 'monkey' }
+  | { npc: string };
 
 /** Ids of the items done, in list order. */
 export const bucketDone = (items: readonly BucketItem[], p: BucketProgress) => items.filter((i) => i.done(p)).map((i) => i.id);

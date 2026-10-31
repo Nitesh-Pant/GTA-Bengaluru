@@ -19,6 +19,7 @@ import { FindPanel } from './ui/FindPanel';
 import { JobOffer } from './ui/JobOffer';
 import { PhotoMode } from './ui/PhotoMode';
 import { BucketPanel } from './ui/BucketPanel';
+import { FestivalPanel } from './ui/FestivalPanel';
 import { BusPanel } from './ui/BusPanel';
 import { Tour } from './ui/Tour';
 import { TouchControls } from './ui/TouchControls';
@@ -87,6 +88,7 @@ export function App() {
       <JobOffer />
       <PhotoMode />
       <BucketPanel />
+      <FestivalPanel />
       <BusPanel />
       <Tour />
       <CharacterPanel />

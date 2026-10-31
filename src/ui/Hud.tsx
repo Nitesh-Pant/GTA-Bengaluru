@@ -111,7 +111,11 @@ function StatusChips() {
           )}
         </span>
       ))}
-      {festival && <span className="chip chip-fest">{festival}</span>}
+      {festival && (
+        <button className="chip chip-fest" onClick={() => uiStore.set({ panel: 'festival' })} title="What's on today">
+          {festival} ›
+        </button>
+      )}
       {eventTitle && <span className="chip chip-event">{eventTitle}</span>}
     </>
   );
