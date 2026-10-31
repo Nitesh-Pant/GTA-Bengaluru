@@ -32,7 +32,8 @@ export function PhotoMode() {
     setTimeout(() => setFlash(false), 350);
     try {
       const { image, focus } = await bridge.api.takePhoto();
-      if (!image.complete) await new Promise((r) => (image.onload = r));
+      // A snapshot that fails to load must not leave the button stuck on busy.
+      if (!image.complete) await new Promise((r) => (image.onload = image.onerror = r));
       const s = uiStore.get();
       const canvas = await composePostcard(image, { area: s.area.name, time: s.clock?.label ?? '', name: s.player.name, festival: s.festival }, focus);
       const blob = await new Promise<Blob | null>((r) => canvas.toBlob(r, 'image/png'));

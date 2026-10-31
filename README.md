@@ -470,6 +470,7 @@ Everything visual is painted in code at startup: there are no image files beside
 | `npm run typecheck` | TypeScript only |
 | `npm run lint` | ESLint |
 | `npm run e2e` | Browser playtest in your installed Chrome. Start `npm run dev -- --port 5199` first |
+| `npm run e2e:events` | Starts every street event in the browser and checks each one cleans up |
 
 Stack: **TypeScript**, **React 19** (UI), **Phaser 3** (world, physics, rendering), **Vite** (build),
 **Vitest** (tests) and **Playwright** (browser checks). There is no backend.
@@ -580,7 +581,7 @@ stay off walking routes, and that every area has something to ride within a shor
 npm test                          # unit and data tests
 npm run typecheck && npm run lint
 npm run dev -- --port 5199        # in one terminal
-npm run e2e                       # in another: drives the real game in Chrome (37 checks)
+npm run e2e                       # in another: drives the real game in Chrome (38 checks)
 ```
 
 The playtest walks, talks, drives, rides the metro, and checks collisions, the character screen, saves,

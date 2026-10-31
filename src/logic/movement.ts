@@ -65,13 +65,6 @@ export function stepDrive(s: DriveState, input: DirInput, p: DriveParams, dt: nu
   return { speed, heading };
 }
 
-/** Rotate `from` towards `to` by at most maxStep radians. */
-export function turnTowards(from: number, to: number, maxStep: number): number {
-  const d = angleDelta(from, to);
-  if (Math.abs(d) <= maxStep) return to;
-  return from + Math.sign(d) * maxStep;
-}
-
 /** Within this angle (radians) the vehicle counts as pointing where the stick points; stops wobbling. */
 export const STEER_DEADBAND = 0.06;
 /** A stick within this angle (radians, about 20°) of a road direction means that road direction. */

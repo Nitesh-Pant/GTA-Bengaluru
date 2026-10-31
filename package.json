@@ -10,7 +10,8 @@
     "typecheck": "node ./node_modules/typescript/bin/tsc -b",
     "lint": "node ./node_modules/eslint/bin/eslint.js .",
     "test": "node ./node_modules/vitest/vitest.mjs run",
-    "e2e": "node scripts/playtest.mjs"
+    "e2e": "node scripts/playtest.mjs",
+    "e2e:events": "node scripts/events.mjs"
   },
   "dependencies": {
     "@fontsource/pixelify-sans": "^5.3.0",

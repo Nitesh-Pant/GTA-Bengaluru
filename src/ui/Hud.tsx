@@ -12,7 +12,7 @@ import { Minimap } from './Minimap';
  * Keeps `--card-bottom` on the page set to where the area card ends. The card grows and shrinks
  * with its chips, and the side buttons sit under it (see styles.css), so they never overlap.
  */
-function useCardBottom() {
+function useCardBottom(shown: boolean) {
   const ref = useRef<HTMLDivElement | null>(null);
   useEffect(() => {
     const el = ref.current;
@@ -25,7 +25,7 @@ function useCardBottom() {
       ro.disconnect();
       removeEventListener('resize', update);
     };
-  });
+  }, [shown]);
   return ref;
 }
 
@@ -162,7 +162,7 @@ export function Hud() {
   const discovered = useUi((s) => s.discovered.length);
   const ready = useUi((s) => s.ready);
   const panel = useUi((s) => s.panel);
-  const card = useCardBottom();
+  const card = useCardBottom(ready);
   if (!ready) return <div className="loading">Painting the city… swalpa wait maadi</div>;
   // Phones get a smaller minimap so it doesn't eat the screen (and no keyboard hints).
   const phone = isTouchDevice();
