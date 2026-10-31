@@ -183,6 +183,11 @@ over the city), **Kadlekai Parishe** (groundnut stalls by Bull Temple) and **San
 days between. Each hangs bunting across the main roads, shows a chip on the area card, greets you in
 the morning and gets people talking. Jumping the clock from night to morning moves on a day.
 
+**Kannada Rajyotsava follows the real calendar too:** on 1 November the game celebrates it whatever
+its own day, with waving red-and-yellow flags on poles at Vidhana Soudha and the big junction circles,
+a "70th Kannada Rajyotsava" banner (the number follows the year: Karnataka was formed in 1956), and a
+little flag on every auto. Autos keep their flags all through November, as they do in Bengaluru.
+
 Green road-name boards stand on every main road, and the big map labels areas, roads and lakes.
 
 ---

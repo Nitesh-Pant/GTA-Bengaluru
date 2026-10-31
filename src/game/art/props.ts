@@ -370,3 +370,33 @@ export function paintViaduct(): HTMLCanvasElement {
   for (let x = 0; x < 16; x += 4) rect(ctx, x, 7, 2, 8, '#8f8a83');
   return c;
 }
+
+export const FLAG_FRAMES = 4;
+
+/** Size of one frame of the Kannada flag texture (pole on the left, base at the bottom). */
+export const flagFrame = (clothW: number, poleH: number) => ({ w: clothW + 4, h: poleH + 2 });
+
+/**
+ * The red-and-yellow Kannada flag on a pole, FLAG_FRAMES frames side by side: the cloth ripples, more
+ * towards its free end, with light and shade following the folds.
+ */
+export function paintKannadaFlag(clothW: number, clothH: number, poleH: number): HTMLCanvasElement {
+  const { w: fw, h: fh } = flagFrame(clothW, poleH);
+  const [c, ctx] = makeCanvas(fw * FLAG_FRAMES, fh);
+  const half = Math.floor(clothH / 2);
+  for (let f = 0; f < FLAG_FRAMES; f++) {
+    const ox = f * fw;
+    rect(ctx, ox + 1, 1, 2, poleH + 1, '#868e96');
+    rect(ctx, ox + 1, 1, 1, poleH + 1, '#ced4da');
+    rect(ctx, ox + 1, 0, 2, 1, '#fab005');
+    for (let x = 0; x < clothW; x++) {
+      const k = x / clothW;
+      const phase = k * Math.PI * 1.8 - f * (Math.PI / 2);
+      const dy = Math.round(Math.sin(phase) * clothH * 0.2 * k);
+      const light = Math.cos(phase) * 0.14;
+      rect(ctx, ox + 3 + x, 2 + dy, 1, half, shade('#fcc419', light));
+      rect(ctx, ox + 3 + x, 2 + dy + half, 1, clothH - half, shade('#e03131', light));
+    }
+  }
+  return c;
+}
