@@ -343,6 +343,13 @@ kbd {
 .festival-todo {
   color: var(--saffron);
 }
+/* Long festival names ("Next: Kannada Rajyotsava") wrap the buttons onto a second row. */
+.festival-card .job-offer-actions {
+  flex-wrap: wrap;
+}
+.festival-card .job-offer-actions .btn {
+  flex: 1 1 auto;
+}
 .chip-event {
   background: #2b8a3e;
 }
