@@ -177,13 +177,15 @@ wait at the gate, the dhaba and the summit.
 
 ### Festivals by season
 
-Every game day (about 16 real minutes) is a festival, one after another, starting from a random one
-for each new game: **Ugadi**, **Bengaluru Karaga**, **Ganesha Chaturthi**, **Kannada Rajyotsava**
-(red and yellow flags), **Deepavali** (diyas on every building after dark and crackers over the
-city), **Kadlekai Parishe** (groundnut stalls by Bull Temple) and **Sankranti**, then round again. Each hangs bunting across the main roads, shows a chip on the area
-card, greets you in the morning and gets people talking. Jumping the clock from night to morning
-moves on a day. To try one straight away, add `?festival=deepavali` (or `ugadi`, `ganesha`,
-`rajyotsava`, `sankranti`…) to the address.
+A new festival comes every morning and evening (6 AM and 6 PM, about every 8 real minutes), one
+after another, starting from a random one for each new game: **Ugadi**, **Bengaluru Karaga**,
+**Ganesha Chaturthi**, **Kannada Rajyotsava** (red and yellow flags), **Deepavali** (diyas on every
+building after dark and crackers over the city), **Kadlekai Parishe** (groundnut stalls by Bull
+Temple) and **Sankranti**, then round again. Each hangs bunting across the main roads, shows a chip
+on the area card, greets you and gets people talking. Tap the chip and **Next** skips to the next
+festival (the clock stays put); the bucket list counts each different festival once. To try one
+straight away, add `?festival=deepavali` (or `ugadi`, `ganesha`, `rajyotsava`, `sankranti`…) to
+the address.
 
 Five festivals also have their own decorations and a **host** (a local with an orange **!** over them).
 Tap the festival chip to see what's on, with **Show me**:

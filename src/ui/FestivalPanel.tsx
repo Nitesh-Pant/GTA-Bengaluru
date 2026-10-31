@@ -32,7 +32,7 @@ export function FestivalPanel() {
           )}
           <button
             className="btn"
-            title="Skip to tomorrow's festival"
+            title="Skip to the next festival"
             onClick={() => {
               close();
               bridge.api?.nextFestival();

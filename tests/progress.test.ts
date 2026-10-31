@@ -31,6 +31,13 @@ describe('progress saves', () => {
     expect(d.marks).toEqual(['yulu']);
     expect(d.stats).toEqual({ ...defaultStats(), chai: 3 });
   });
+  it('remembers each festival celebrated once, and which festival the game is on', () => {
+    const festivals = new Set(FESTIVALS.map((f) => f.id));
+    const d = sanitize({ festivalsSeen: ['ugadi', 'ugadi', 'monsoon', 'deepavali'], festivalStart: 9 }, new Set(), { festivals });
+    expect(d.festivalsSeen).toEqual(['ugadi', 'deepavali']);
+    expect(d.festivalStart).toBe(9);
+    expect(sanitize({}, new Set()).festivalStart).toBe(-1); // a new game picks one at random
+  });
   it('old saves without the new fields still load', () => {
     const d = sanitize({ version: 2, discovered: [], stats: { chai: 2, dosa: 1, metroRides: 0, drives: 4 } }, new Set());
     expect(d.tasted).toEqual([]);

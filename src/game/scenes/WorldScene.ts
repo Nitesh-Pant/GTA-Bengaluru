@@ -77,8 +77,9 @@ export class WorldScene extends Phaser.Scene {
   /** Bucket-list moments (see src/data/bucket.ts) and "Did you know?" tips already shown. */
   marks: string[] = [];
   tipsSeen: string[] = [];
-  /** Which festival this game started on; one a day follows from it. */
+  /** Which festival this game started on; one every half day follows from it. */
   festivalStart = 0;
+  festivalsSeen: string[] = [];
   private bucketSeen: string[] = [];
   /** Who the player is: name, gender (how NPCs address them) and outfit. */
   profile!: PlayerProfile;
@@ -183,6 +184,7 @@ export class WorldScene extends Phaser.Scene {
     this.dayNight = new DayNightSystem(this, save.timeOfDay);
     this.dayNight.day = save.day;
     this.festivalStart = save.festivalStart >= 0 ? save.festivalStart : Math.floor(Math.random() * FESTIVALS.length);
+    this.festivalsSeen = save.festivalsSeen;
     this.ride = new RideSystem(this);
     this.animals = new AnimalSystem(this);
     this.buses = new BusSystem(this);
@@ -476,7 +478,10 @@ export class WorldScene extends Phaser.Scene {
       showJob: (kind) => this.showJob(kind),
       showBucket: (id) => this.showBucket(id),
       showFestival: () => this.festivals.showHost(),
-      nextFestival: () => this.dayNight.day++,
+      nextFestival: () => {
+        this.festivalStart++;
+        this.persist();
+      },
       nearestRides: () =>
         GUIDE_KINDS.flatMap((kind) => {
           const n = this.nearestOf(kind);
@@ -615,6 +620,7 @@ export class WorldScene extends Phaser.Scene {
       timeOfDay: Math.floor(this.dayNight.minutes),
       day: this.dayNight.day,
       festivalStart: this.festivalStart,
+      festivalsSeen: this.festivalsSeen,
       settings: this.settings,
       stats: this.stats,
       lastPosition,

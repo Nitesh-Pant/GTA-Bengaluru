@@ -70,7 +70,7 @@ export interface GameApi {
   notePostcard(): void;
   /** Festival card "Show me": mark today's festival host. */
   showFestival(): void;
-  /** Festival card "Next festival": skip ahead to tomorrow's festival. */
+  /** Festival card "Next festival": skip ahead to the next festival (the clock stays put). */
   nextFestival(): void;
   /** Bucket list "Show me": mark where to do that item. */
   showBucket(id: string): void;

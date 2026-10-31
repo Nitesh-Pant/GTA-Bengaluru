@@ -1,5 +1,5 @@
 import Phaser from 'phaser';
-import { festivalFromUrl, festivalOn, type Festival } from '../../data/festivals';
+import { festivalFromUrl, festivalOn, festivalSlot, type Festival } from '../../data/festivals';
 import { BUILDINGS, districtAt, type BuildingDef } from '../../data/map';
 import { FLAG_FRAMES } from '../art/props';
 import { darkness } from '../../logic/dayClock';
@@ -48,7 +48,8 @@ const KITE_MS = 45000;
  */
 export class FestivalSystem {
   current: Festival | null = null;
-  private day = -1;
+  /** Which festival is up (half-day slot plus the game's start), null before the first. */
+  private key: number | null = null;
   private decor: Phaser.GameObjects.GameObject[] = [];
   private diyas: Phaser.GameObjects.Image[] = [];
   private nextCracker = 0;
@@ -73,7 +74,8 @@ export class FestivalSystem {
 
   update(now: number) {
     const s = this.scene;
-    if (s.dayNight.day !== this.day) this.begin(s.dayNight.day, now);
+    const key = festivalSlot(s.dayNight.day, s.dayNight.minutes) + s.festivalStart;
+    if (key !== this.key) this.begin(key, now);
     this.animate(now);
     const f = this.current;
     if (!f) return;
@@ -92,27 +94,30 @@ export class FestivalSystem {
     }
   }
 
-  /** A new day: take down yesterday's decorations and put up today's. */
-  private begin(day: number, now: number) {
+  /** A new festival: take down the last one's decorations and put up this one's. */
+  private begin(key: number, now: number) {
     const s = this.scene;
-    const first = this.day < 0;
-    this.day = day;
+    const first = this.key === null;
+    this.key = key;
     for (const o of [...this.decor, ...this.diyas, ...this.waving]) o.destroy();
     for (const k of this.kites) k.img.destroy();
     this.decor = [];
     this.diyas = [];
     this.waving = [];
     this.kites = [];
-    const f = festivalFromUrl(location.search) ?? festivalOn(day, s.festivalStart);
+    const f = festivalFromUrl(location.search) ?? festivalOn(key);
     this.current = f;
-    uiStore.set({ festival: f.name, festivalInfo: { greeting: f.greeting, todo: f.host?.todo ?? null, next: festivalOn(day + 1, s.festivalStart).name } });
+    uiStore.set({ festival: f.name, festivalInfo: { greeting: f.greeting, todo: f.host?.todo ?? null, next: festivalOn(key + 1).name } });
     for (const d of f.decor ?? []) this.decorate(d);
     if (f.colours.length) this.bunting(f.colours);
     if (f.lights) this.lightDiyas();
     if (f.fair) this.groundnutFair();
     this.greetAt = first ? now + 7000 : now;
-    // Count festival days you live through (not the same day again after a reload).
-    if (!first || (day === 0 && s.stats.festivals === 0)) s.bump('festivals');
+    // Each festival counts once, however often it comes round (or gets skipped to).
+    if (!s.festivalsSeen.includes(f.id)) {
+      s.festivalsSeen.push(f.id);
+      s.bump('festivals');
+    }
   }
 
   /** Strings of little triangular flags hung across the main roads, every few blocks. */

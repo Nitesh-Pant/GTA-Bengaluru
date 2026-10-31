@@ -1,7 +1,8 @@
 /**
- * Bengaluru's festivals, one a day: every game day (about 16 real minutes) is the next one in
- * the list, starting from a random one for each new game. Each festival dresses the main roads in its colours, gives people things to say, and
- * may change the night (Deepavali). Rain needs no festival: showers come any day.
+ * Bengaluru's festivals, one every half day: they change at 6 AM and 6 PM (about every 8 real
+ * minutes), each the next in the list, starting from a random one for each new game. Each festival
+ * dresses the main roads in its colours, gives people things to say, and may change the night
+ * (Deepavali). Rain needs no festival: showers come any day.
  */
 export interface Festival {
   id: string;
@@ -41,8 +42,13 @@ export function festivalFromUrl(search: string): Festival | undefined {
   return id ? FESTIVALS.find((f) => f.id === id) : undefined;
 }
 
-/** The festival on game day `day` of a game that started on festival number `start`. */
-export function festivalOn(day: number, start = 0): Festival {
+/** Which half day it is: 6 AM to 6 PM of game day `day` is slot day×2, the night after it the next. */
+export function festivalSlot(day: number, minutes: number): number {
+  return day * 2 + (minutes >= 18 * 60 ? 1 : minutes < 6 * 60 ? -1 : 0);
+}
+
+/** The festival in half-day slot `slot` of a game that started on festival number `start`. */
+export function festivalOn(slot: number, start = 0): Festival {
   const n = FESTIVALS.length;
-  return FESTIVALS[(((day + start) % n) + n) % n];
+  return FESTIVALS[(((slot + start) % n) + n) % n];
 }

@@ -1,11 +1,18 @@
 import { describe, expect, it } from 'vitest';
 import { LINE_POOLS } from '../src/data/dialogue';
 import { CONVERSATIONS } from '../src/data/conversations';
-import { festivalFromUrl, festivalOn, FESTIVALS } from '../src/data/festivals';
+import { festivalFromUrl, festivalOn, festivalSlot, FESTIVALS } from '../src/data/festivals';
 import { NPCS } from '../src/data/npcs';
 
 describe('festival calendar', () => {
-  it('every day is a festival, one after another, then round again', () => {
+  it('a new festival comes at 6 AM and 6 PM', () => {
+    expect(festivalSlot(0, 8 * 60)).toBe(0); // the morning you arrive
+    expect(festivalSlot(0, 17 * 60 + 59)).toBe(0);
+    expect(festivalSlot(0, 18 * 60)).toBe(1); // that evening
+    expect(festivalSlot(1, 2 * 60)).toBe(1); // still that night, after midnight
+    expect(festivalSlot(1, 6 * 60)).toBe(2); // next morning
+  });
+  it('each half day is a festival, one after another, then round again', () => {
     expect(festivalOn(0).id).toBe(FESTIVALS[0].id);
     expect(festivalOn(1).id).toBe(FESTIVALS[1].id);
     expect(festivalOn(FESTIVALS.length).id).toBe(FESTIVALS[0].id);
