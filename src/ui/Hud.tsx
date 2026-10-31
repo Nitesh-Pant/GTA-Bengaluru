@@ -3,7 +3,9 @@ import { POIS } from '../data/pois';
 import { bridge } from '../game/bridge';
 import { formatDuration, periodLabel } from '../logic/dayClock';
 import { isTouchDevice } from '../game/touch';
-import { useUi } from '../store/uiStore';
+import { uiStore, useUi } from '../store/uiStore';
+import { BUCKET } from '../data/bucket';
+import { bucketDone } from '../logic/bucket';
 import { Minimap } from './Minimap';
 
 function ControlsHint() {
@@ -115,6 +117,20 @@ function StatusChips() {
   );
 }
 
+/** "Bucket list 5/37" on the area card: always in view, one tap to see what's left to try. */
+function BucketButton() {
+  const stats = useUi((s) => s.stats);
+  const discovered = useUi((s) => s.discovered);
+  const tasted = useUi((s) => s.tasted);
+  const marks = useUi((s) => s.marks);
+  const done = bucketDone(BUCKET, { stats, discovered, tasted, marks }).length;
+  return (
+    <button className="bucket-btn" onClick={() => uiStore.set({ panel: 'bucket' })} title="Things to try in Bengaluru (B)">
+      ✓ Bucket list {done}/{BUCKET.length}
+    </button>
+  );
+}
+
 export function Hud() {
   const area = useUi((s) => s.area);
   const mode = useUi((s) => s.mode);
@@ -131,6 +147,7 @@ export function Hud() {
       <div className="area-card panel">
         <div className="area-name">{area.name}</div>
         <div className="area-tag">{area.tagline}</div>
+        <BucketButton />
         <div className="chips">
           <span className={`chip chip-${mode}`}>{mode === 'drive' ? `Driving · ${vehicle}` : mode === 'metro' ? 'On the metro' : mode === 'ride' ? `On ${vehicle ?? 'a ride'}` : 'On foot'}</span>
           <StatusChips />

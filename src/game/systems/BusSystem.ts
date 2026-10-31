@@ -35,6 +35,7 @@ export class BusSystem {
         uiStore.toast({ kind: 'arrive', title: `${route} is here`, body: `Conductor: ${pick(line?.conductor ?? CONDUCTOR, this.rng)}` });
         s.ride.travel(s.ride.route(stand), { texture: line?.texture ?? 'veh_bus_0', sound: 'bus', speed: outstation ? 200 : 170, label: route, drop: s.ride.freeSpot(stand.x, stand.y) }, () => {
           s.stats.busRides++;
+          if (line?.name.startsWith('KSRTC')) s.mark('ksrtc');
           uiStore.toast({ kind: 'arrive', title: `${to.name}`, body: 'Conductor: "Stop bantu, ilee! Bega, bega!"' }, 3200);
         });
       },

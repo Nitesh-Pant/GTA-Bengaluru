@@ -154,6 +154,7 @@ export class EventSystem {
       const s = this.scene;
       if (darkness(s.dayNight.minutes) < 0.4) return null;
       s.dayNight.setPowerCut(true);
+      s.mark('powercut');
       const voices = this.freeNear(260, 3);
       for (const n of voices) s.talk.say(n, pick(LINE_POOLS.power_cut, this.rng).text, now, 'event');
       return {

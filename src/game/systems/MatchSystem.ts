@@ -62,6 +62,7 @@ export class MatchSystem {
     for (const l of this.lights) l.setVisible(d > 0.05).setAlpha(0.35 + d * 0.5);
     const p = s.playerFeet();
     const far = Math.hypot(p.x - this.stadium.x, p.y - this.stadium.y);
+    if (far < 600) s.mark('ipl');
     if (now >= this.nextRoar) {
       this.nextRoar = now + 5000 + this.rng() * 8000;
       const vol = Math.max(0, 1 - far / 1400);

@@ -70,6 +70,7 @@ guided tour starts the first time; skip it or follow along.
 | `R` | Book a Rapido bike taxi | – |
 | `M` | City map: zoom, drag, search, mark places, ride there | same |
 | `P` | Photo mode: hide the HUD, zoom to frame the shot, make a postcard | same |
+| `B` | Bengaluru Bucket List: everything to try, with hints and Show me | same |
 | `J` | Journal: places, food book, achievements (switch on **Show Journal** in the pause menu first) | same |
 | `Esc` | Pause and settings, or close whatever is open | same |
 | `?` / `F1` | Show or hide the controls hint | same |
@@ -332,6 +333,18 @@ scatter with a caw when you walk up, and cows wandering the maidan and BTM Lake.
 A five-floor building site in Thippasandra (scaffolding, green net, sand and bricks, workers in helmets,
 and a site engineer who promises "six months"), a road crew at the Marathahalli roadworks, and a worker
 minding every surprise roadworks.
+
+### Bengaluru Bucket List
+
+Everything there is to try, in one list: **✓ Bucket list 5/38** sits on the area card (or press `B`).
+It covers riding a Yulu, finding your cousin's car, petting a street dog, making the crows fly away,
+talking to anyone, the tech interview, food delivery, Rapido, getting caught by the traffic police,
+Nandi Hills and plenty more, grouped by kind. Each unticked item has a hint and a **Show me** that marks
+where to do it; items tick off by themselves as you play, with a toast.
+
+**"Did you know?"** tips nudge you the first time you're near something worth trying: a dog, a flock of
+crows, a Yulu, a metro entrance, a bus stop, Gowri the cow, the cricket maidan, the monkeys, a traffic
+cop, a good view for a postcard. Each shows once.
 
 ### Photo mode and postcards
 

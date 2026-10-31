@@ -1,4 +1,6 @@
 import { ACHIEVEMENT_IDS } from './data/achievements';
+import { MARKS } from './data/bucket';
+import { TIP_IDS } from './data/tips';
 import { DISH_IDS } from './data/food';
 import { POI_IDS } from './data/pois';
 import { audio } from './game/audio';
@@ -9,7 +11,7 @@ import { clearSave, loadSave, safeStorage, writeSave, type StorageLike } from '.
 import { uiStore } from './store/uiStore';
 
 /** The save with every id checked against current content (places, dishes, achievements). */
-export const loadGameSave = (storage: StorageLike | null = safeStorage()) => loadSave(storage, POI_IDS, { dishes: DISH_IDS, achievements: ACHIEVEMENT_IDS });
+export const loadGameSave = (storage: StorageLike | null = safeStorage()) => loadSave(storage, POI_IDS, { dishes: DISH_IDS, achievements: ACHIEVEMENT_IDS, marks: new Set<string>(MARKS), tips: new Set<string>(TIP_IDS) });
 
 /** Starts play. A new game passes the profile from the character screen; Continue keeps the saved one. */
 export function startGame(fresh: boolean, profile?: PlayerProfile) {

@@ -113,6 +113,11 @@ export class AnimalSystem {
     return true;
   }
 
+  /** Where the crow flocks sit (for the bucket list's "Show me"). */
+  crowSpots() {
+    return CROW_SPOTS.map((c) => ({ x: t(c.x), y: t(c.y) }));
+  }
+
   /** Dogs within reach of the player that could take a biscuit. */
   feedable(x: number, y: number) {
     return this.dogs.filter((d) => d.followUntil < this.scene.clock && Math.hypot(d.sprite.x - x, d.sprite.y - y) < 28);
@@ -178,7 +183,9 @@ export class AnimalSystem {
         }
         continue;
       }
-      if (sense && (Math.hypot(p.x - c.home.x, p.y - c.home.y) < 46 || s.traffic.anyCarWithin(c.home.x, c.home.y, 30))) {
+      const scared = sense && Math.hypot(p.x - c.home.x, p.y - c.home.y) < 46;
+      if (scared) s.mark('crows');
+      if (scared || (sense && s.traffic.anyCarWithin(c.home.x, c.home.y, 30))) {
         c.away = true;
         c.backAt = now + 20000 + this.rng() * 20000;
         c.sprite.setFrame(1);

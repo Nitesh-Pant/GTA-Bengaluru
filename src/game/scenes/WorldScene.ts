@@ -6,13 +6,16 @@ import { STATIONS } from '../../data/metro';
 import { POIS, poiById } from '../../data/pois';
 import { METRO_TRACK, ROAD_GRID } from '../../data/roads';
 import { guideRoute, pointsAlong } from '../../logic/bikeRide';
-import { JOB_INFO } from '../../data/jobs';
+import { JOB_INFO, type JobKind } from '../../data/jobs';
+import { BUCKET, type Mark } from '../../data/bucket';
+import { bucketDone, newlyDone } from '../../logic/bucket';
 import { JobSystem } from '../systems/JobSystem';
 import { NandiSystem } from '../systems/NandiSystem';
 import { AirportSystem } from '../systems/AirportSystem';
 import { FestivalSystem } from '../systems/FestivalSystem';
 import { PoliceSystem } from '../systems/PoliceSystem';
 import { FlagSystem } from '../systems/FlagSystem';
+import { TipSystem } from '../systems/TipSystem';
 import { PARKED } from '../../data/vehicles';
 import { newlyUnlocked } from '../../logic/achievements';
 import { addressOf, type PlayerProfile } from '../../logic/player';
@@ -73,6 +76,10 @@ export class WorldScene extends Phaser.Scene {
   hinted: string[] = [];
   tasted: string[] = [];
   achievements: string[] = [];
+  /** Bucket-list moments (see src/data/bucket.ts) and "Did you know?" tips already shown. */
+  marks: string[] = [];
+  tipsSeen: string[] = [];
+  private bucketSeen: string[] = [];
   /** Who the player is: name, gender (how NPCs address them) and outfit. */
   profile!: PlayerProfile;
   settings!: Settings;
@@ -103,6 +110,7 @@ export class WorldScene extends Phaser.Scene {
   festivals!: FestivalSystem;
   police!: PoliceSystem;
   flags!: FlagSystem;
+  tips!: TipSystem;
   reactions = new ReactionEngine(mulberry32(1234));
   /** Scene clock in ms; stops while paused so every cooldown pauses with it. */
   clock = 0;
@@ -144,9 +152,12 @@ export class WorldScene extends Phaser.Scene {
     this.hinted = save.hinted;
     this.tasted = save.tasted;
     this.achievements = save.achievements;
+    this.marks = save.marks;
+    this.tipsSeen = save.tips;
     this.profile = uiStore.get().player;
     this.settings = save.settings;
     this.stats = save.stats;
+    this.bucketSeen = bucketDone(BUCKET, this.progress());
 
     this.ground = buildGround();
     this.solids = buildSolids(this.ground);
@@ -184,6 +195,7 @@ export class WorldScene extends Phaser.Scene {
     this.festivals = new FestivalSystem(this);
     this.police = new PoliceSystem(this);
     this.flags = new FlagSystem(this);
+    this.tips = new TipSystem(this);
     this.traffic.addObstacle({ id: 'cow', kind: 'static', x: COW.x, y: COW.y, radius: 9, squeeze: true });
 
     this.setupColliders();
@@ -197,6 +209,7 @@ export class WorldScene extends Phaser.Scene {
       hinted: this.hinted,
       tasted: this.tasted,
       achievements: this.achievements,
+      marks: this.marks,
       settings: this.settings,
       stats: { ...this.stats },
       area: { name: this.district.name, tagline: this.district.tagline },
@@ -457,12 +470,8 @@ export class WorldScene extends Phaser.Scene {
       notePostcard: () => this.bump('postcards'),
       snoozeJob: (id) => this.jobs.snooze(id),
       nearestJobs: () => this.jobs.nearest().map(({ kind, label, distance }) => ({ kind, label, distance })),
-      showJob: (kind) => {
-        const best = this.jobs.nearest().find((j) => j.kind === kind);
-        if (!best) return;
-        this.guides.set('tour', { ...best.at, label: `${JOB_INFO[kind].name}: ${best.label}` });
-        uiStore.toast({ kind: 'hint', title: `Marked: ${JOB_INFO[kind].name}`, body: `${best.label}. Follow the arrow beside you.` }, 3600);
-      },
+      showJob: (kind) => this.showJob(kind),
+      showBucket: (id) => this.showBucket(id),
       nearestRides: () =>
         GUIDE_KINDS.flatMap((kind) => {
           const n = this.nearestOf(kind);
@@ -558,7 +567,29 @@ export class WorldScene extends Phaser.Scene {
     this.persist();
   }
 
+  private progress() {
+    return { stats: this.stats, discovered: this.discovered, tasted: this.tasted, marks: this.marks };
+  }
+
+  /** Remember a one-off moment for the bucket list (a Yulu ride, the rain…). */
+  mark(id: Mark) {
+    if (this.marks.includes(id)) return;
+    this.marks = [...this.marks, id];
+    uiStore.set({ marks: this.marks });
+    this.persist();
+  }
+
+  /** Tick things off the bucket list as they happen. */
+  private checkBucket() {
+    const fresh = newlyDone(BUCKET, this.progress(), this.bucketSeen);
+    if (!fresh.length) return;
+    this.bucketSeen = [...this.bucketSeen, ...fresh.map((b) => b.id)];
+    for (const b of fresh) uiStore.toast({ kind: 'achievement', title: `Bucket list ✓ ${b.title}`, body: `${this.bucketSeen.length}/${BUCKET.length} done. Tap the bucket list for more to try.` }, 4800);
+    audio.chime('arrive');
+  }
+
   private checkAchievements() {
+    this.checkBucket();
     const fresh = newlyUnlocked(ACHIEVEMENTS, { stats: this.stats, discovered: this.discovered, tasted: this.tasted }, this.achievements);
     if (!fresh.length) return;
     this.achievements = [...this.achievements, ...fresh.map((a) => a.id)];
@@ -584,6 +615,8 @@ export class WorldScene extends Phaser.Scene {
       hinted: this.hinted,
       tasted: this.tasted,
       achievements: this.achievements,
+      marks: this.marks,
+      tips: this.tipsSeen,
       player: this.profile,
       timeOfDay: Math.floor(this.dayNight.minutes),
       day: this.dayNight.day,
@@ -659,6 +692,38 @@ export class WorldScene extends Phaser.Scene {
           ? STATIONS.map((st) => ({ x: st.entrance.x, y: st.entrance.y, label: `${st.name} Metro` }))
           : this.vehicles.list.filter((v) => !v.occupied && v.def.type === vehicleType[kind]).map((v) => ({ x: v.sprite.x, y: v.sprite.y, label: v.def.name }));
     return closest(spots, p);
+  }
+
+  private showJob(kind: JobKind) {
+    const best = this.jobs.nearest().find((j) => j.kind === kind);
+    if (!best) return;
+    this.guides.set('tour', { ...best.at, label: `${JOB_INFO[kind].name}: ${best.label}` });
+    uiStore.toast({ kind: 'hint', title: `Marked: ${JOB_INFO[kind].name}`, body: `${best.label}. Follow the arrow beside you.` }, 3600);
+  }
+
+  /** Bucket list "Show me": a vehicle or stop, a job, a place, or the nearest animal of a kind. */
+  private showBucket(id: string) {
+    const show = BUCKET.find((b) => b.id === id)?.show;
+    if (!show) return;
+    if ('guide' in show) return this.showNearest(show.guide);
+    if ('job' in show) return this.showJob(show.job);
+    const p = this.playerFeet();
+    let at: { x: number; y: number; label: string } | null = null;
+    if ('poi' in show) {
+      const poi = poiById(show.poi);
+      if (poi) at = { x: poi.x, y: poi.y, label: poi.name };
+    } else {
+      const spots =
+        show.animal === 'dog'
+          ? this.animals.dogs.map((d) => ({ x: d.sprite.x, y: d.sprite.y, label: `${d.name} the dog` }))
+          : show.animal === 'monkey'
+            ? this.animals.monkeys.map((m) => ({ x: m.sprite.x, y: m.sprite.y, label: `${m.name} the monkey` }))
+            : this.animals.crowSpots().map((c) => ({ ...c, label: 'Crows' }));
+      at = closest(spots, p)?.item ?? null;
+    }
+    if (!at) return;
+    this.guides.set('tour', at);
+    uiStore.toast({ kind: 'hint', title: `Marked: ${at.label}`, body: 'Follow the arrow beside you.' }, 3600);
   }
 
   /** "Show me" / Find a ride: mark the nearest one; the marker clears when you get there. */
@@ -778,6 +843,7 @@ export class WorldScene extends Phaser.Scene {
     this.festivals.update(now);
     this.police.update(now);
     this.flags.update(now);
+    this.tips.update(now);
     this.deliveries.update(now);
     this.jobs.update(now);
     this.weather.update(dt, now);

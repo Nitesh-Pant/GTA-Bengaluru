@@ -218,6 +218,7 @@ export class TalkSystem {
   /** Talk to `npc`, or have them start a particular conversation (a traffic stop). */
   open(npc: Npc, conversation?: string) {
     const id = conversation ?? npc.def.conversation;
+    this.scene.mark('talk');
     const conv = id ? CONVERSATIONS[id] : this.genericConversation(npc);
     npc.state = 'talk';
     npc.faceTowards(this.scene.playerFeet().x, this.scene.playerFeet().y);

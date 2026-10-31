@@ -41,6 +41,7 @@ export class WeatherSystem {
     audio.setRain(true);
     const p = this.scene.playerFeet();
     this.scene.react({ type: 'rain_start', x: p.x, y: p.y });
+    this.scene.mark('rain');
   }
 
   stop() {

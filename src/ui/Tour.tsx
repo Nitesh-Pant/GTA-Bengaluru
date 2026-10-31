@@ -53,6 +53,16 @@ function steps(name: string, touch: boolean): Step[] {
       body: <>Your area, the time of day, rush hour, rain, live events (power cuts, accidents, arguments) and your jobs with their timers show here.</>,
     },
     {
+      title: 'Your bucket list',
+      target: '.bucket-btn',
+      body: (
+        <>
+          Dozens of things to try in Bengaluru, from feeding a street dog to surviving Silk Board. Tap the <b>Bucket list</b> to see them, with a
+          hint and a <b>Show me</b> for each. They tick off as you play{touch ? '' : <> (or press <kbd>B</kbd>)</>}.
+        </>
+      ),
+    },
+    {
       title: 'Minimap and city map',
       target: '.minimap',
       body: (

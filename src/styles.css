@@ -1698,3 +1698,119 @@ kbd {
   gap: 8px;
   justify-content: center;
 }
+
+/* ── Bengaluru Bucket List (above the credit footer) */
+.bucket-backdrop {
+  z-index: 10;
+}
+.bucket-btn {
+  display: block;
+  margin-top: 5px;
+  padding: 2px 8px;
+  font: inherit;
+  font-size: 12px;
+  font-weight: 700;
+  color: #1c1726;
+  background: var(--saffron);
+  border: 2px solid #fff3bf;
+  border-radius: 3px;
+  cursor: pointer;
+  pointer-events: auto;
+}
+.bucket {
+  width: min(640px, calc(100vw - 24px));
+  max-height: calc(100vh - 32px);
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.bucket .journal-head {
+  flex-wrap: nowrap;
+}
+.bucket .journal-head h2 {
+  margin: 0;
+  font-size: 14px;
+  flex: 1;
+}
+.bucket-close {
+  width: 38px;
+  height: 34px;
+  padding: 0;
+}
+.bucket-bar {
+  height: 8px;
+  background: rgba(255, 255, 255, 0.12);
+  border-radius: 4px;
+  overflow: hidden;
+}
+.bucket-bar i {
+  display: block;
+  height: 100%;
+  background: var(--saffron);
+}
+.bucket-body {
+  overflow-y: auto;
+  min-height: 0;
+}
+.bucket-body h3 {
+  margin: 10px 0 4px;
+  font-size: 12px;
+  color: var(--saffron);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+.bucket-item {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  padding: 6px 2px;
+  border-bottom: 1px dashed rgba(255, 255, 255, 0.1);
+}
+.bucket-check {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 20px;
+  height: 20px;
+  border: 2px solid var(--line);
+  border-radius: 3px;
+  font-weight: 700;
+  color: #1c1726;
+}
+.bucket-item.done .bucket-check {
+  background: #51cf66;
+  border-color: #51cf66;
+}
+.bucket-item.done .bucket-title {
+  color: var(--muted);
+  text-decoration: line-through;
+}
+.bucket-text {
+  flex: 1;
+  min-width: 0;
+}
+.bucket-title {
+  font-size: 14px;
+}
+.bucket-hint {
+  font-size: 12px;
+  color: var(--muted);
+}
+.bucket-show {
+  flex: none;
+  padding: 4px 8px;
+  font-size: 12px;
+}
+.menu-teaser {
+  margin: -6px 0 14px;
+  font-size: 13px;
+  color: var(--saffron);
+}
+@media (pointer: coarse) {
+  .bucket-btn {
+    font-size: 10px;
+    padding: 1px 6px;
+    margin-top: 3px;
+  }
+}

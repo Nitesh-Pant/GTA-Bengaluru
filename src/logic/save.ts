@@ -77,6 +77,10 @@ export interface SaveData {
   tasted: string[];
   /** Unlocked achievement ids. */
   achievements: string[];
+  /** One-off moments for the bucket list (a Yulu ride, the rain…). */
+  marks: string[];
+  /** "Did you know?" tips already shown. */
+  tips: string[];
   player: PlayerProfile;
   /** Time of day in game minutes since midnight. */
   timeOfDay: number;
@@ -116,6 +120,8 @@ export const defaultSave = (): SaveData => ({
   hinted: [],
   tasted: [],
   achievements: [],
+  marks: [],
+  tips: [],
   player: { ...DEFAULT_PROFILE },
   timeOfDay: START_MINUTES,
   day: 0,
@@ -135,6 +141,8 @@ const ids = (v: unknown, valid: ReadonlySet<string>) =>
 export interface ValidIds {
   dishes?: ReadonlySet<string>;
   achievements?: ReadonlySet<string>;
+  marks?: ReadonlySet<string>;
+  tips?: ReadonlySet<string>;
 }
 
 /** Accepts anything (corrupt JSON, old versions, hand-edited data) and returns a valid save. */
@@ -147,6 +155,8 @@ export function sanitize(raw: unknown, validPoiIds: ReadonlySet<string>, valid: 
   d.hinted = ids(raw.hinted, validPoiIds).filter((id) => !d.discovered.includes(id));
   d.tasted = ids(raw.tasted, valid.dishes ?? new Set());
   d.achievements = ids(raw.achievements, valid.achievements ?? new Set());
+  d.marks = ids(raw.marks, valid.marks ?? new Set());
+  d.tips = ids(raw.tips, valid.tips ?? new Set());
   if (isObj(raw.player)) {
     const p = raw.player;
     d.player = {

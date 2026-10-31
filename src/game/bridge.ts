@@ -68,6 +68,8 @@ export interface GameApi {
   endPhoto(): void;
   /** Count a postcard made (for the achievement). */
   notePostcard(): void;
+  /** Bucket list "Show me": mark where to do that item. */
+  showBucket(id: string): void;
   snoozeJob(id: string): void;
   /** Board a BMTC bus from the open stop to another stop. */
   takeBus(toStopId: string): void;

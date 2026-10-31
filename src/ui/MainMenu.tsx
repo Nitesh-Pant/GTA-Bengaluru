@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { loadGameSave, startGame } from '../session';
 import { LOOKS } from '../data/looks';
+import { BUCKET } from '../data/bucket';
 import { BUILDINGS } from '../data/map';
 import { paintBuilding } from '../game/art/buildings';
 import { paintCharacterSheet } from '../game/art/characters';
@@ -113,6 +114,10 @@ export function MainMenu() {
           <span>Swalpa Adjust Maadi</span>
         </h1>
         <p className="menu-tag">A top-down wander through traffic, darshinis, metro rides and street gossip. No missions. Just the city.</p>
+        <p className="menu-teaser">
+          {BUCKET.length} things to try: feed a street dog, ride Yulu and the metro, earn auto fares, catch the Nandi Hills sunrise, lose your
+          corn to a monkey, survive Silk Board…
+        </p>
         {setup ? (
           <CharacterSetup initial={setup.initial} submitLabel="Let's go!" onSubmit={(p) => startGame(setup.fresh, p)} onBack={() => setSetup(null)} />
         ) : (

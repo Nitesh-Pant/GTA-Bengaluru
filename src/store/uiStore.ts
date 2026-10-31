@@ -46,7 +46,7 @@ export interface JobOffer {
   alt?: string;
 }
 
-export type Panel = null | 'pause' | 'journal' | 'map' | 'ride' | 'character' | 'bus' | 'tour' | 'find' | 'photo';
+export type Panel = null | 'pause' | 'journal' | 'map' | 'ride' | 'character' | 'bus' | 'tour' | 'find' | 'photo' | 'bucket';
 
 export interface UiState {
   phase: 'menu' | 'playing';
@@ -61,6 +61,8 @@ export interface UiState {
   hinted: string[];
   tasted: string[];
   achievements: string[];
+  /** One-off moments for the bucket list. */
+  marks: string[];
   destination: string | null;
   toasts: Toast[];
   settings: Settings;
@@ -94,6 +96,7 @@ const initial = (): UiState => ({
   hinted: [],
   tasted: [],
   achievements: [],
+  marks: [],
   destination: null,
   toasts: [],
   settings: { ...DEFAULT_SETTINGS },
@@ -111,6 +114,16 @@ const initial = (): UiState => ({
 });
 
 let state = initial();
+const queue: Array<{ toast: Toast; ms: number }> = [];
+
+function showToast(t: Toast, ms: number) {
+  uiStore.set({ toasts: [...state.toasts, t] });
+  setTimeout(() => {
+    uiStore.set({ toasts: state.toasts.filter((x) => x.id !== t.id) });
+    const next = queue.shift();
+    if (next) showToast(next.toast, Math.min(next.ms, 3500));
+  }, ms);
+}
 const listeners = new Set<() => void>();
 let toastId = 1;
 
@@ -125,6 +138,7 @@ export const uiStore = {
     return () => listeners.delete(fn);
   },
   reset() {
+    queue.length = 0;
     state = { ...initial(), settings: state.settings };
     listeners.forEach((l) => l());
   },
@@ -135,11 +149,15 @@ export const uiStore = {
     else delete jobs[id];
     uiStore.set({ jobs });
   },
+  /** At most two on screen so toasts never bury the street; the rest wait their turn (newest few only). */
   toast(t: Omit<Toast, 'id'>, ms = 4200) {
     const id = toastId++;
-    // At most two on screen so toasts never bury the street.
-    uiStore.set({ toasts: [...state.toasts.slice(-1), { ...t, id }] });
-    setTimeout(() => uiStore.set({ toasts: state.toasts.filter((x) => x.id !== id) }), ms);
+    if (state.toasts.length >= 2) {
+      queue.push({ toast: { ...t, id }, ms });
+      if (queue.length > 4) queue.shift();
+      return;
+    }
+    showToast({ ...t, id }, ms);
   },
 };
 

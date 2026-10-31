@@ -18,6 +18,7 @@ import { RidePanel } from './ui/RidePanel';
 import { FindPanel } from './ui/FindPanel';
 import { JobOffer } from './ui/JobOffer';
 import { PhotoMode } from './ui/PhotoMode';
+import { BucketPanel } from './ui/BucketPanel';
 import { BusPanel } from './ui/BusPanel';
 import { Tour } from './ui/Tour';
 import { TouchControls } from './ui/TouchControls';
@@ -51,6 +52,7 @@ function useGlobalKeys() {
       if (k === 'j' && s.settings.showJournal) uiStore.set({ panel: s.panel === 'journal' ? null : 'journal' });
       if (k === 'm') uiStore.set({ panel: s.panel === 'map' ? null : 'map' });
       if (k === 'p' && (!s.panel || s.panel === 'photo')) uiStore.set({ panel: s.panel === 'photo' ? null : 'photo' });
+      if (k === 'b' && (!s.panel || s.panel === 'bucket')) uiStore.set({ panel: s.panel === 'bucket' ? null : 'bucket' });
     };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
@@ -84,6 +86,7 @@ export function App() {
       <FindPanel />
       <JobOffer />
       <PhotoMode />
+      <BucketPanel />
       <BusPanel />
       <Tour />
       <CharacterPanel />

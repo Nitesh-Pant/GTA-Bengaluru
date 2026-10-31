@@ -82,6 +82,9 @@ export class VehicleSystem {
     if (!mode) return;
     s.mode = mode;
     v.occupied = true;
+    if (v.def.id.startsWith('yulu')) s.mark('yulu');
+    else if (v.def.type === 'car') s.mark('car');
+    else if (v.def.type === 'auto') s.mark('auto');
     v.speed = 0;
     const body = v.sprite.body as Phaser.Physics.Arcade.Body;
     body.setImmovable(false);
