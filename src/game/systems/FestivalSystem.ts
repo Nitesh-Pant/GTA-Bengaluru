@@ -1,10 +1,8 @@
 import Phaser from 'phaser';
-import { festivalFor, isRajyotsavaMonth, rajyotsavaNumber, type Festival } from '../../data/festivals';
+import { festivalOn, type Festival } from '../../data/festivals';
 import { BUILDINGS } from '../../data/map';
-import { PARKED } from '../../data/vehicles';
 import { darkness } from '../../logic/dayClock';
 import { uiStore } from '../../store/uiStore';
-import { FLAG_FRAMES, paintProp } from '../art/props';
 import { audio } from '../audio';
 import { CITY_W, t } from '../constants';
 import type { WorldScene } from '../scenes/WorldScene';
@@ -12,15 +10,6 @@ import type { WorldScene } from '../scenes/WorldScene';
 /** Main roads (tile row of the road's top edge) that get bunting strung across them. */
 const BUNTING_ROADS = [18, 108, 164];
 
-/** Rajyotsava flagpoles (tiles, pole base): Vidhana Soudha and the big junction circles. */
-const FLAGPOLES: Array<[number, number]> = [
-  [12, 161.7],
-  [28, 161.7],
-  [45, 17.5],
-  [93, 17.4],
-  [38.6, 107.4],
-  [126.6, 106.9],
-];
 
 /**
  * Festivals by season (see src/data/festivals.ts): bunting across the main roads in the festival's
@@ -32,10 +21,6 @@ export class FestivalSystem {
   private day = -1;
   private decor: Phaser.GameObjects.GameObject[] = [];
   private diyas: Phaser.GameObjects.Image[] = [];
-  /** Waving Kannada flags: on poles, and riding on autos (which follow their vehicle). */
-  private flags: Phaser.GameObjects.Image[] = [];
-  private autoFlags: Array<{ img: Phaser.GameObjects.Image; ride: Phaser.GameObjects.Components.Transform & Phaser.GameObjects.Components.Visible; on: () => boolean }> = [];
-  private greeting = '';
   private nextCracker = 0;
   private rainChecked = false;
   /** On the first load the greeting waits, so the welcome message is read first. */
@@ -46,12 +31,11 @@ export class FestivalSystem {
   update(now: number) {
     const s = this.scene;
     if (s.dayNight.day !== this.day) this.begin(s.dayNight.day, now);
-    this.waveFlags(now);
     const f = this.current;
     if (!f) return;
     if (this.greetAt >= 0 && now >= this.greetAt) {
       this.greetAt = -1;
-      uiStore.toast({ kind: 'hint', title: `Today: ${f.name}`, body: this.greeting }, 7000);
+      uiStore.toast({ kind: 'hint', title: `Today: ${f.name}`, body: f.greeting }, 6500);
     }
     const dark = darkness(s.dayNight.minutes);
     if (f.lights) {
@@ -73,24 +57,14 @@ export class FestivalSystem {
     const s = this.scene;
     const first = this.day < 0;
     this.day = day;
-    for (const o of [...this.decor, ...this.diyas, ...this.flags]) o.destroy();
-    for (const a of this.autoFlags) a.img.destroy();
+    for (const o of [...this.decor, ...this.diyas]) o.destroy();
     this.decor = [];
     this.diyas = [];
-    this.flags = [];
-    this.autoFlags = [];
     this.rainChecked = false;
-    const today = new Date();
-    const { festival: f, real } = festivalFor(day, today);
+    const f = festivalOn(day);
     this.current = f;
     uiStore.set({ festival: f?.name ?? null });
-    if (f?.id === 'rajyotsava' || isRajyotsavaMonth(today)) this.flagAutos();
     if (!f) return;
-    this.greeting =
-      real && f.id === 'rajyotsava'
-        ? `Karnataka turns ${rajyotsavaNumber(today).replace(/\D+$/, '')} today! On 1 November 1956 the Kannada-speaking regions became one state. Red and yellow flags fly everywhere. Siri gannadam gelge!`
-        : f.greeting;
-    if (f.id === 'rajyotsava') this.hoistFlags(today);
     if (f.colours.length) this.bunting(f.colours);
     if (f.lights) this.lightDiyas();
     if (f.fair) this.groundnutFair();
@@ -118,53 +92,6 @@ export class FestivalSystem {
         }
         this.decor.push(g);
       }
-  }
-
-  /** Rajyotsava: big flags on poles at Vidhana Soudha and the junction circles, and a banner. */
-  private hoistFlags(today: Date) {
-    const s = this.scene;
-    for (const [x, y] of FLAGPOLES) this.flags.push(s.add.image(t(x), t(y), 'kflag', 0).setOrigin(2 / 30, 1).setDepth(t(y)));
-    const text = `${rajyotsavaNumber(today).toUpperCase()} KANNADA RAJYOTSAVA`;
-    const key = `banner_${text}`;
-    if (!s.textures.exists(key)) s.textures.addCanvas(key, paintProp('hoarding', text));
-    this.decor.push(s.add.image(t(20), t(163.2), key).setOrigin(0.5, 1).setDepth(t(163.2)));
-  }
-
-  /** Every auto, traffic or borrowable, flies a little Kannada flag at the back. */
-  private flagAutos() {
-    const s = this.scene;
-    const add = (ride: Phaser.GameObjects.Image, on: () => boolean) => this.autoFlags.push({ img: s.add.image(0, 0, 'kflag_s', 0).setVisible(false), ride, on });
-    for (const c of s.traffic.cars) if (c.spawn.type === 'auto') add(c.sprite, () => c.active);
-    for (const v of s.vehicles.list) if (v.def.type === 'auto') add(v.sprite, () => true);
-    // Parked autos (the KR Puram stand) get one too; they never move, so the flag just waves.
-    for (const p of PARKED)
-      if (p.type === 'auto') {
-        const back = Math.cos(p.heading) > 0;
-        this.flags.push(s.add.image(t(p.x) - Math.cos(p.heading) * 7, t(p.y) + 2, 'kflag_s', 0).setFlipX(back).setOrigin(back ? 1 - 2 / 13 : 2 / 13, 1).setDepth(t(p.y) + 12));
-      }
-  }
-
-  /** Flags flutter (a frame every 140 ms) and ride along at the back of their auto. */
-  private waveFlags(now: number) {
-    const frame = Math.floor(now / 140) % FLAG_FRAMES;
-    for (const f of this.flags) f.setFrame(frame);
-    const view = this.scene.cameras.main.worldView;
-    for (const a of this.autoFlags) {
-      const r = a.ride;
-      const show = a.on() && r.visible && view.contains(r.x, r.y);
-      a.img.setVisible(show);
-      if (!show) continue;
-      const cos = Math.cos(r.rotation);
-      const sin = Math.sin(r.rotation);
-      // The pole stands at the back of the auto; the cloth streams away from the direction of travel.
-      const trailing = cos > 0;
-      a.img
-        .setFrame(frame)
-        .setPosition(r.x - cos * 7, r.y - sin * 7 + 2)
-        .setFlipX(trailing)
-        .setOrigin(trailing ? 1 - 2 / 13 : 2 / 13, 1)
-        .setDepth(r.y + 12);
-    }
   }
 
   /** A pair of diyas glowing at the foot of every building in the city, after dark. */

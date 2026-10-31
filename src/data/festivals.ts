@@ -40,26 +40,3 @@ export function festivalOn(day: number): Festival | null {
   return id ? (FESTIVALS.find((f) => f.id === id) ?? null) : null;
 }
 
-/** Festivals pinned to the real calendar (MM-DD): on these dates the game celebrates them whatever its own day. */
-const REAL_DATES: Record<string, string> = {
-  '11-01': 'rajyotsava',
-};
-
-const mmdd = (d: Date) => `${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
-
-/** The festival today: the real date wins (1 November is always Kannada Rajyotsava), else the game calendar. */
-export function festivalFor(day: number, now: Date): { festival: Festival | null; real: boolean } {
-  const id = REAL_DATES[mmdd(now)];
-  const real = id ? (FESTIVALS.find((f) => f.id === id) ?? null) : null;
-  return real ? { festival: real, real: true } : { festival: festivalOn(day), real: false };
-}
-
-/** All through November autos fly the red-and-yellow flag, as they do in Bengaluru. */
-export const isRajyotsavaMonth = (now: Date) => now.getMonth() === 10;
-
-/** Karnataka was formed on 1 November 1956: "70th Kannada Rajyotsava" in 2026. */
-export function rajyotsavaNumber(now: Date) {
-  const n = now.getFullYear() - 1956;
-  const suffix = n % 100 >= 11 && n % 100 <= 13 ? 'th' : ['th', 'st', 'nd', 'rd'][n % 10] ?? 'th';
-  return `${n}${suffix}`;
-}
