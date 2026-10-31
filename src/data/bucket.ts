@@ -1,4 +1,5 @@
 import type { BucketItem } from '../logic/bucket';
+import { DISHES } from './food';
 import { POIS } from './pois';
 
 /** One-off moments the game remembers for the bucket list (see WorldScene.mark). */
@@ -6,6 +7,12 @@ export const MARKS = ['yulu', 'car', 'auto', 'ksrtc', 'crows', 'talk', 'rain', '
 export type Mark = (typeof MARKS)[number];
 
 const HIDDEN = POIS.filter((p) => p.hidden).map((p) => p.id);
+const METRO = POIS.filter((p) => p.kind === 'metro').map((p) => p.id);
+const has = (ids: readonly string[], want: readonly string[]) => want.every((id) => ids.includes(id));
+// Google, Amazon, EY, Microsoft. The ids are older save keys; renaming them would drop saved discoveries.
+const TECH_PARK = ['goggle', 'amazoom', 'ewhy', 'microsloth'];
+const KORAMANGALA = ['flipkart', 'swiggy', 'razorpay', 'cred', 'infosys', 'wipro', 'accenture', 'ibm'];
+const DARSHANA = ['vidhana', 'kerepark', 'lalbagh', 'bulltemple', 'pandal'];
 
 /**
  * The Bengaluru Bucket List: everything there is to try, with a hint for each. It turns the game's
@@ -13,7 +20,7 @@ const HIDDEN = POIS.filter((p) => p.hidden).map((p) => p.id);
  */
 export const BUCKET: BucketItem[] = [
   // Start here
-  { id: 'settings', group: 'Start here', title: 'Open the settings', hint: 'Pause (Esc, or II on phones): switch the Journal, word meanings, route dots, music, voices and more on or off.', done: (p) => p.marks.includes('settings') },
+  { id: 'settings', group: 'Start here', title: 'Open the settings', hint: 'Pause (Esc, or II on phones): switch word meanings, route dots, markers, music, voices and more on or off.', done: (p) => p.marks.includes('settings') },
   // Getting around
   { id: 'yulu', group: 'Get around', title: 'Ride a Yulu e-bike', hint: 'Blue bikes are parked in every area. Walk up and press E.', done: (p) => p.marks.includes('yulu'), show: { guide: 'yulu' } },
   { id: 'car', group: 'Get around', title: "Find your cousin's car and drive it", hint: 'Parked on 12th Main, Indiranagar. Walk up and press E. Full tank illa.', done: (p) => p.marks.includes('car'), show: { guide: 'car' } },
@@ -68,4 +75,19 @@ export const BUCKET: BucketItem[] = [
   { id: 'challan', group: 'Only in Bengaluru', title: 'Talk your way out of a challan', hint: 'Speed past a traffic cop, then "Swalpa adjust maadi, sir…"', done: (p) => p.stats.letOff >= 1 },
   { id: 'honk', group: 'Only in Bengaluru', title: 'Honk 20 times', hint: 'Drive anything and press H (or Horn).', done: (p) => p.stats.honks >= 20 },
   { id: 'postcard', group: 'Only in Bengaluru', title: 'Send a postcard', hint: 'Press P (or Photo), frame a shot, take a postcard.', done: (p) => p.stats.postcards >= 1 },
+  // Bengaluru Legend: the long game
+  { id: 'l_chai', group: 'Bengaluru Legend', title: 'Drink 10 chais', hint: 'Any chai stall or cart counts. Cutting chai is a lifestyle.', done: (p) => p.stats.chai >= 10 },
+  { id: 'l_metro', group: 'Bengaluru Legend', title: 'Visit every metro station', hint: 'Indiranagar, Halasuru and KR Puram on the purple line.', done: (p) => has(p.discovered, METRO), show: { guide: 'metro' } },
+  { id: 'l_fares', group: 'Bengaluru Legend', title: 'Drop off 5 auto passengers', hint: 'Borrow an auto and choose Earn fares.', done: (p) => p.stats.fares >= 5, show: { job: 'fares' } },
+  { id: 'l_delivery', group: 'Bengaluru Legend', title: 'Make 3 food deliveries on time', hint: 'Delivery riders with a yellow ! have orders.', done: (p) => p.stats.deliveries >= 3, show: { job: 'delivery' } },
+  { id: 'l_quiz', group: 'Bengaluru Legend', title: 'Answer 5 tech questions', hint: 'The recruiter at the walk-in drive keeps asking.', done: (p) => p.stats.quiz >= 5, show: { job: 'quiz' } },
+  { id: 'l_techpark', group: 'Bengaluru Legend', title: 'Find every company in the tech park', hint: 'Google, Amazon, EY and Microsoft at Bagmane Tech Park.', done: (p) => has(p.discovered, TECH_PARK), show: { poi: 'techpark' } },
+  { id: 'l_startups', group: 'Bengaluru Legend', title: 'Find every company in Koramangala', hint: 'Flipkart, Swiggy, Razorpay, CRED and the offices behind them.', done: (p) => has(p.discovered, KORAMANGALA), show: { poi: 'flipkart' } },
+  { id: 'l_pg', group: 'Bengaluru Legend', title: 'Live the PG life', hint: 'Visit BTM PG Lane and the Andhra Mess.', done: (p) => has(p.discovered, ['pglane', 'andhramess']), show: { poi: 'pglane' } },
+  { id: 'l_darshana', group: 'Bengaluru Legend', title: 'Bengaluru Darshana', hint: 'Vidhana Soudha, Ulsoor Lake, Lalbagh, the Bull Temple and the Ganesha pandal.', done: (p) => has(p.discovered, DARSHANA) },
+  { id: 'l_festivals', group: 'Bengaluru Legend', title: 'Celebrate three festival days', hint: 'Festivals come round every few game days.', done: (p) => p.stats.festivals >= 3 },
+  { id: 'l_food', group: 'Bengaluru Legend', title: 'Fill the whole food book', hint: 'Every dish, from benne dose to festival sweets. See the Food book tab.', done: (p) => has(p.tasted, DISHES.map((d) => d.id)) },
+  { id: 'l_secrets', group: 'Bengaluru Legend', title: 'Find every secret spot', hint: 'Locals drop tips. See the Places tab for how many are left.', done: (p) => has(p.discovered, HIDDEN) },
+  { id: 'l_half', group: 'Bengaluru Legend', title: 'Discover half the places', hint: 'Just wander. Every place you pass counts.', done: (p) => p.discovered.length >= Math.ceil(POIS.length / 2) },
+  { id: 'l_all', group: 'Bengaluru Legend', title: 'Discover every place: Namma Ooru Expert', hint: 'The Places tab shows what you have found.', done: (p) => p.discovered.length >= POIS.length },
 ];

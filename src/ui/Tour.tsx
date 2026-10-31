@@ -135,8 +135,8 @@ function steps(name: string, touch: boolean): Step[] {
       title: 'Settings',
       body: (
         <>
-          {press('Esc', 'II')} pauses: volume, mute, character, time of day, word meanings, and save &amp; quit. Switch on <b>Show Journal</b>{' '}
-          there to keep a journal of places found, the food book and achievements. Progress saves by itself.
+          {press('Esc', 'II')} pauses: volume, mute, character, time of day, word meanings, route dots and more, and save &amp; quit. Your
+          food book and the places you've found are in the <b>Bucket list</b>. Progress saves by itself.
         </>
       ),
     },

@@ -28,7 +28,7 @@ export function PauseMenu() {
     uiStore.set({ panel: null });
     bridge.api?.setPaused(false);
   };
-  const open = (p: 'journal' | 'map' | 'character' | 'tour') => {
+  const open = (p: 'bucket' | 'map' | 'character' | 'tour') => {
     bridge.api?.setPaused(false);
     uiStore.set({ panel: p });
   };
@@ -40,11 +40,9 @@ export function PauseMenu() {
           <button className="btn btn-primary" onClick={resume} autoFocus>
             Resume <kbd>Esc</kbd>
           </button>
-          {settings.showJournal && (
-            <button className="btn" onClick={() => open('journal')}>
-              Journal <kbd>J</kbd>
-            </button>
-          )}
+          <button className="btn" onClick={() => open('bucket')}>
+            Bucket list <kbd>B</kbd>
+          </button>
           <button className="btn" onClick={() => open('map')}>
             Map <kbd>M</kbd>
           </button>
@@ -94,10 +92,6 @@ export function PauseMenu() {
           <input type="checkbox" checked={settings.showMarkers} onChange={(e) => set({ showMarkers: e.target.checked })} />
         </label>
         <label className="setting">
-          <span>Show Journal (places, food book, achievements)</span>
-          <input type="checkbox" checked={settings.showJournal} onChange={(e) => set({ showJournal: e.target.checked })} />
-        </label>
-        <label className="setting">
           <span>Route dots to markers</span>
           <input type="checkbox" checked={settings.showRoute} onChange={(e) => set({ showRoute: e.target.checked })} />
         </label>
@@ -116,12 +110,7 @@ export function PauseMenu() {
           <li><kbd>Space</kbd> handbrake · <kbd>H</kbd> horn (driving)</li>
           <li><kbd>1</kbd>-<kbd>9</kbd>, <kbd>↑↓</kbd> + <kbd>Enter</kbd>, or mouse to pick options</li>
           <li>
-            {settings.showJournal && (
-              <>
-                <kbd>J</kbd> journal ·{' '}
-              </>
-            )}
-            <kbd>F</kbd> find · <kbd>M</kbd> map · <kbd>?</kbd> controls hint · <kbd>Esc</kbd> pause / close
+            <kbd>F</kbd> find · <kbd>B</kbd> bucket list · <kbd>M</kbd> map · <kbd>P</kbd> photo · <kbd>?</kbd> controls hint · <kbd>Esc</kbd> pause / close
           </li>
         </ul>
         <div className="pause-foot">

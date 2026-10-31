@@ -6,7 +6,6 @@ import { DialoguePanel } from './ui/DialoguePanel';
 import { isTouchDevice } from './game/touch';
 import { Footer } from './ui/Footer';
 import { Hud } from './ui/Hud';
-import { Journal } from './ui/Journal';
 import { MainMenu } from './ui/MainMenu';
 import { MapPanel } from './ui/MapPanel';
 import { MetroPanel } from './ui/MetroPanel';
@@ -26,7 +25,7 @@ import { TouchControls } from './ui/TouchControls';
 
 const PhaserGame = lazy(() => loadGame().then((m) => ({ default: m.PhaserGame })));
 
-/** One owner for global keys: Esc closes the top-most panel or toggles pause; J journal; M map. */
+/** One owner for global keys: Esc closes the top-most panel or toggles pause; M map, P photo, B bucket list. */
 function useGlobalKeys() {
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
@@ -50,7 +49,6 @@ function useGlobalKeys() {
         return;
       }
       if (s.dialogue || s.metro || s.narration || s.panel === 'pause' || e.repeat) return;
-      if (k === 'j' && s.settings.showJournal) uiStore.set({ panel: s.panel === 'journal' ? null : 'journal' });
       if (k === 'm') uiStore.set({ panel: s.panel === 'map' ? null : 'map' });
       if (k === 'p' && (!s.panel || s.panel === 'photo')) uiStore.set({ panel: s.panel === 'photo' ? null : 'photo' });
       if (k === 'b' && (!s.panel || s.panel === 'bucket')) uiStore.set({ panel: s.panel === 'bucket' ? null : 'bucket' });
@@ -79,7 +77,6 @@ export function App() {
       <DialoguePanel />
       <MetroPanel />
       <NarrationPanel />
-      <Journal />
       <MapPanel />
       <PauseMenu />
       <QuickBar />

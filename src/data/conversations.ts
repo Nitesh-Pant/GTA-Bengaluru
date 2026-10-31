@@ -100,15 +100,15 @@ export const CONVERSATIONS: Record<string, Conversation> = {
     start: 'a',
     nodes: {
       a: {
-        text: 'Happy Deepavali! Amma kotta sparkler box ide, ondu hacchona? Mysore pak kooda ide!',
+        text: 'Happy Deepavali! Amma kotta sparkler box ide, ondu hacchona? Kaju katli kooda ide!',
         options: [
           { label: 'Light a sparkler', next: 'sparkler', effects: [{ type: 'fest', act: 'sparkler' }] },
-          { label: 'Mysore pak, please', next: 'sweet', effects: [EAT, taste('mysore_pak')] },
+          { label: 'Kaju katli, please', next: 'sweet', effects: [EAT, taste('kaju_katli')] },
           BYE,
         ],
       },
       sparkler: { speaker: '', text: 'Pinky lights it from her diya. It fizzes and spits golden sparks; you draw circles in the air.', options: [{ label: 'Happy Deepavali!' }] },
-      sweet: { speaker: '', text: 'A square of Mysore pak, still warm, crumbling into ghee. Pinky watches to make sure you finish it.', options: [{ label: 'Sakkath!' }] },
+      sweet: { speaker: '', text: 'A diamond of kaju katli with a sliver of silver. Pinky watches to make sure you finish it.', options: [{ label: 'Sakkath!' }] },
     },
   },
   fest_sankranti: {

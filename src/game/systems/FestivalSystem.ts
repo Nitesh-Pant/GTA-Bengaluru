@@ -1,5 +1,5 @@
 import Phaser from 'phaser';
-import { festivalOn, type Festival } from '../../data/festivals';
+import { festivalFromUrl, festivalOn, type Festival } from '../../data/festivals';
 import { BUILDINGS, districtAt, type BuildingDef } from '../../data/map';
 import { FLAG_FRAMES } from '../art/props';
 import { darkness } from '../../logic/dayClock';
@@ -109,7 +109,7 @@ export class FestivalSystem {
     this.waving = [];
     this.kites = [];
     this.rainChecked = false;
-    const f = festivalOn(day);
+    const f = festivalFromUrl(location.search) ?? festivalOn(day);
     this.current = f;
     uiStore.set({ festival: f?.name ?? null, festivalInfo: f ? { greeting: f.greeting, todo: f.host?.todo ?? null } : null });
     if (!f) return;

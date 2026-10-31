@@ -25,7 +25,6 @@ function ControlsHint() {
     };
   }, []);
   const mode = useUi((s) => s.mode);
-  const showJournal = useUi((s) => s.settings.showJournal);
   // On phones, explain point-to-steer the first time you get into a vehicle.
   const droveOnce = useRef(false);
   useEffect(() => {
@@ -63,7 +62,7 @@ function ControlsHint() {
         <>
           <div><kbd>WASD</kbd>/<kbd>Arrows</kbd> walk · <kbd>E</kbd> talk, drive, metro · <kbd>R</kbd> Rapido</div>
           <div>
-            <kbd>F</kbd> find · {showJournal && <><kbd>J</kbd> journal · </>}<kbd>M</kbd> map · <kbd>Esc</kbd> pause
+            <kbd>F</kbd> find · <kbd>B</kbd> bucket list · <kbd>M</kbd> map · <kbd>Esc</kbd> pause
           </div>
         </>
       )}
@@ -142,7 +141,6 @@ export function Hud() {
   const discovered = useUi((s) => s.discovered.length);
   const ready = useUi((s) => s.ready);
   const panel = useUi((s) => s.panel);
-  const showJournal = useUi((s) => s.settings.showJournal);
   if (!ready) return <div className="loading">Painting the city… swalpa wait maadi</div>;
   // Phones get a smaller minimap so it doesn't eat the screen (and no keyboard hints).
   const phone = isTouchDevice();
@@ -165,7 +163,7 @@ export function Hud() {
           </span>
           {!phone && (
             <span className="muted">
-              {showJournal && <kbd>J</kbd>} <kbd>M</kbd>
+              <kbd>M</kbd>
             </span>
           )}
         </div>

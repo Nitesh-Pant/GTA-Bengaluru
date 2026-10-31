@@ -194,7 +194,7 @@ Tap the festival chip to see what's on, with **Show me**:
 | **Ugadi** | Mango-leaf torans over shop doors, rangoli outside houses | Bevu-bella from Saroja Ajji, Indiranagar |
 | **Ganesha Chaturthi** | Little Ganesha idols at street corners | Kadubu from Ganesh at the pandal |
 | **Kannada Rajyotsava** | Extra waving flags along the main roads | "Siri gannadam gelge!" with the crowd at Vidhana Soudha |
-| **Deepavali** | Star lanterns at houses, diyas, crackers | A sparkler and Mysore pak from Pinky, Indiranagar |
+| **Deepavali** | Star lanterns at houses, diyas, crackers | A sparkler and kaju katli from Pinky, Indiranagar |
 | **Sankranti** | Sugarcane at doors, rangoli, kites over Cubbon Park | Ellu-bella and a kite to fly from Subbaiah uncle |
 
 Each is on the bucket list, and the four festival foods go in the food book.

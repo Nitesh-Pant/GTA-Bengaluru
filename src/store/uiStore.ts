@@ -46,7 +46,7 @@ export interface JobOffer {
   alt?: string;
 }
 
-export type Panel = null | 'pause' | 'journal' | 'map' | 'ride' | 'character' | 'bus' | 'tour' | 'find' | 'photo' | 'bucket' | 'festival';
+export type Panel = null | 'pause' | 'map' | 'ride' | 'character' | 'bus' | 'tour' | 'find' | 'photo' | 'bucket' | 'festival';
 
 export interface UiState {
   phase: 'menu' | 'playing';
@@ -60,7 +60,6 @@ export interface UiState {
   discovered: string[];
   hinted: string[];
   tasted: string[];
-  achievements: string[];
   /** One-off moments for the bucket list. */
   marks: string[];
   destination: string | null;
@@ -97,7 +96,6 @@ const initial = (): UiState => ({
   discovered: [],
   hinted: [],
   tasted: [],
-  achievements: [],
   marks: [],
   destination: null,
   toasts: [],

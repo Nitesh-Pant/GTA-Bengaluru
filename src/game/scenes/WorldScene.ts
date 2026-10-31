@@ -1,5 +1,4 @@
 import Phaser from 'phaser';
-import { ACHIEVEMENTS } from '../../data/achievements';
 import { DISHES, dishById } from '../../data/food';
 import { BUILDINGS, buildGround, buildSolids, districtAt, PLAYER_SPAWN, PROPS, type District } from '../../data/map';
 import { STATIONS } from '../../data/metro';
@@ -17,7 +16,6 @@ import { PoliceSystem } from '../systems/PoliceSystem';
 import { FlagSystem } from '../systems/FlagSystem';
 import { TipSystem } from '../systems/TipSystem';
 import { PARKED } from '../../data/vehicles';
-import { newlyUnlocked } from '../../logic/achievements';
 import { addressOf, type PlayerProfile } from '../../logic/player';
 import { addHint, checkDiscoveries } from '../../logic/discovery';
 import { boxHitsSolids, closest, dist, type Point, type Rect } from '../../logic/geometry';
@@ -75,7 +73,6 @@ export class WorldScene extends Phaser.Scene {
   discovered: string[] = [];
   hinted: string[] = [];
   tasted: string[] = [];
-  achievements: string[] = [];
   /** Bucket-list moments (see src/data/bucket.ts) and "Did you know?" tips already shown. */
   marks: string[] = [];
   tipsSeen: string[] = [];
@@ -151,7 +148,6 @@ export class WorldScene extends Phaser.Scene {
     this.discovered = save.discovered;
     this.hinted = save.hinted;
     this.tasted = save.tasted;
-    this.achievements = save.achievements;
     this.marks = save.marks;
     this.tipsSeen = save.tips;
     this.profile = uiStore.get().player;
@@ -208,7 +204,6 @@ export class WorldScene extends Phaser.Scene {
       discovered: this.discovered,
       hinted: this.hinted,
       tasted: this.tasted,
-      achievements: this.achievements,
       marks: this.marks,
       settings: this.settings,
       stats: { ...this.stats },
@@ -590,16 +585,6 @@ export class WorldScene extends Phaser.Scene {
     audio.chime('arrive');
   }
 
-  private checkAchievements() {
-    this.checkBucket();
-    const fresh = newlyUnlocked(ACHIEVEMENTS, { stats: this.stats, discovered: this.discovered, tasted: this.tasted }, this.achievements);
-    if (!fresh.length) return;
-    this.achievements = [...this.achievements, ...fresh.map((a) => a.id)];
-    uiStore.set({ achievements: this.achievements });
-    for (const a of fresh) uiStore.toast({ kind: 'achievement', title: `Achievement: ${a.title}`, body: a.description }, 5200);
-    audio.chime('discover');
-  }
-
   setDestination(id: string | null) {
     this.destination = id && poiById(id) ? id : null;
     uiStore.set({ destination: this.destination });
@@ -610,13 +595,12 @@ export class WorldScene extends Phaser.Scene {
     const storage = safeStorage();
     if (this.mode.kind === 'walk' && this.player && this.vehicles?.spotFree(this.player.x, this.player.y)) this.lastSafe = { x: this.player.x, y: this.player.y };
     const lastPosition = this.lastSafe;
-    this.checkAchievements();
+    this.checkBucket();
     writeSave(storage, {
       version: 2,
       discovered: this.discovered,
       hinted: this.hinted,
       tasted: this.tasted,
-      achievements: this.achievements,
       marks: this.marks,
       tips: this.tipsSeen,
       player: this.profile,

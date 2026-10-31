@@ -26,7 +26,6 @@ const ui = () => page.evaluate(() => ({
   dialogue: !!document.querySelector('.dialogue'),
   metro: !!document.querySelector('.metro'),
   pause: !!document.querySelector('.pause'),
-  journal: !!document.querySelector('.journal'),
   map: !!document.querySelector('.map-panel'),
   bubbles: [...document.querySelectorAll('.bubble')].map((b) => b.className + ': ' + b.textContent),
 }));
@@ -221,20 +220,14 @@ await page.screenshot({ path: `${OUT}/19-pause.png` });
 await page.keyboard.press('Escape');
 await page.waitForTimeout(200);
 check('resume', !(await ui()).pause);
-await page.keyboard.press('j');
+await page.keyboard.press('b');
 await page.waitForTimeout(200);
-check('journal hidden by default', !(await ui()).journal);
-// Switch it on the way a player would: pause menu checkbox, then resume.
-await page.keyboard.press('Escape');
-await page.waitForTimeout(200);
-await page.getByLabel(/Show Journal/).check();
-await page.keyboard.press('Escape');
-await page.waitForTimeout(200);
-await page.keyboard.press('j');
-await page.waitForTimeout(200);
-check('journal opens once switched on', (await ui()).journal);
-await page.screenshot({ path: `${OUT}/20-journal.png` });
-await page.keyboard.press('j');
+check('bucket list opens', await page.locator('.bucket').isVisible());
+await page.getByRole('tab', { name: /Food book/ }).click();
+await page.getByRole('tab', { name: /Places/ }).click();
+check('bucket list has food book and places', (await page.locator('.bucket-item').count()) > 10);
+await page.screenshot({ path: `${OUT}/20-bucket.png` });
+await page.keyboard.press('b');
 await page.keyboard.press('m');
 await page.waitForTimeout(300);
 check('map opens', (await ui()).map);

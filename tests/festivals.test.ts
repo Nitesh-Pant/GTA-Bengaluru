@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { LINE_POOLS } from '../src/data/dialogue';
 import { CONVERSATIONS } from '../src/data/conversations';
-import { festivalOn, FESTIVALS } from '../src/data/festivals';
+import { festivalFromUrl, festivalOn, FESTIVALS } from '../src/data/festivals';
 import { NPCS } from '../src/data/npcs';
 
 describe('festival calendar', () => {
@@ -25,5 +25,10 @@ describe('festival calendar', () => {
         expect(NPCS.some((n) => n.id === f.host!.npc), `${f.id} host`).toBe(true);
         expect(CONVERSATIONS[f.host.conversation], `${f.id} conversation`).toBeDefined();
       }
+  });
+  it('a festival can be forced from the address for trying it out', () => {
+    expect(festivalFromUrl('?festival=deepavali')?.name).toBe('Deepavali');
+    expect(festivalFromUrl('?festival=nope')).toBeUndefined();
+    expect(festivalFromUrl('')).toBeUndefined();
   });
 });

@@ -20,8 +20,6 @@ export interface Settings {
   showRoute: boolean;
   /** Meanings of Kannada and Hindi words under speech. */
   glosses: boolean;
-  /** The Journal (places, food book, achievements): hidden unless switched on. */
-  showJournal: boolean;
   screenShake: boolean;
 }
 
@@ -75,8 +73,6 @@ export interface SaveData {
   hinted: string[];
   /** Dish ids from the food book. */
   tasted: string[];
-  /** Unlocked achievement ids. */
-  achievements: string[];
   /** One-off moments for the bucket list (a Yulu ride, the rain…). */
   marks: string[];
   /** "Did you know?" tips already shown. */
@@ -110,7 +106,6 @@ export const DEFAULT_SETTINGS: Settings = {
   showMarkers: true,
   showRoute: true,
   glosses: true,
-  showJournal: false,
   screenShake: true,
 };
 
@@ -119,7 +114,6 @@ export const defaultSave = (): SaveData => ({
   discovered: [],
   hinted: [],
   tasted: [],
-  achievements: [],
   marks: [],
   tips: [],
   player: { ...DEFAULT_PROFILE },
@@ -140,7 +134,6 @@ const ids = (v: unknown, valid: ReadonlySet<string>) =>
 /** Ids the save may hold; anything else is dropped on load. Dishes and achievements default to none. */
 export interface ValidIds {
   dishes?: ReadonlySet<string>;
-  achievements?: ReadonlySet<string>;
   marks?: ReadonlySet<string>;
   tips?: ReadonlySet<string>;
 }
@@ -154,7 +147,6 @@ export function sanitize(raw: unknown, validPoiIds: ReadonlySet<string>, valid: 
   d.discovered = ids(discoveredRaw, validPoiIds);
   d.hinted = ids(raw.hinted, validPoiIds).filter((id) => !d.discovered.includes(id));
   d.tasted = ids(raw.tasted, valid.dishes ?? new Set());
-  d.achievements = ids(raw.achievements, valid.achievements ?? new Set());
   d.marks = ids(raw.marks, valid.marks ?? new Set());
   d.tips = ids(raw.tips, valid.tips ?? new Set());
   if (isObj(raw.player)) {
@@ -178,7 +170,6 @@ export function sanitize(raw: unknown, validPoiIds: ReadonlySet<string>, valid: 
       showMarkers: typeof s.showMarkers === 'boolean' ? s.showMarkers : DEFAULT_SETTINGS.showMarkers,
       showRoute: typeof s.showRoute === 'boolean' ? s.showRoute : DEFAULT_SETTINGS.showRoute,
       glosses: typeof s.glosses === 'boolean' ? s.glosses : DEFAULT_SETTINGS.glosses,
-      showJournal: typeof s.showJournal === 'boolean' ? s.showJournal : DEFAULT_SETTINGS.showJournal,
       screenShake: typeof s.screenShake === 'boolean' ? s.screenShake : DEFAULT_SETTINGS.screenShake,
     };
   }

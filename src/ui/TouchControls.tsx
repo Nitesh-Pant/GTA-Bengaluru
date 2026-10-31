@@ -97,17 +97,16 @@ function HoldButton({ label, onChange, className }: { label: string; onChange: (
   );
 }
 
-/** On-screen controls for phones and tablets. Panels (dialogue, metro, journal) are already tappable. */
+/** On-screen controls for phones and tablets. Panels (dialogue, metro, bucket list) are already tappable. */
 export function TouchControls() {
   const mode = useUi((s) => s.mode);
   const locked = useUi((s) => inputLocked(s));
   const ready = useUi((s) => s.ready);
-  const showJournal = useUi((s) => s.settings.showJournal);
   // A panel opening or the mode changing unmounts the stick mid-drag: never leave a direction held.
   useEffect(release, [locked, mode]);
   useEffect(() => release, []);
   if (!ready) return null;
-  const open = (panel: 'journal' | 'map') => uiStore.set({ panel: uiStore.get().panel === panel ? null : panel });
+  const open = (panel: 'map') => uiStore.set({ panel: uiStore.get().panel === panel ? null : panel });
   const pause = () => {
     uiStore.set({ panel: 'pause' });
     bridge.api?.setPaused(true);
@@ -129,11 +128,6 @@ export function TouchControls() {
           <button className="touch-small" onClick={() => uiStore.set({ panel: 'photo' })}>
             Photo
           </button>
-          {showJournal && (
-            <button className="touch-small" onClick={() => open('journal')}>
-              Journal
-            </button>
-          )}
           <button className="touch-small" onClick={pause} aria-label="Pause">
             II
           </button>

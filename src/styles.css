@@ -1762,6 +1762,19 @@ kbd {
   height: 34px;
   padding: 0;
 }
+.bucket-tabs {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+.bucket-tabs .btn {
+  font-size: 12px;
+  padding: 4px 8px;
+}
+.bucket-secret {
+  margin: 4px 0 0 30px;
+  font-size: 12px;
+}
 .bucket-bar {
   height: 8px;
   background: rgba(255, 255, 255, 0.12);
@@ -1809,6 +1822,14 @@ kbd {
 .bucket-item.done .bucket-title {
   color: var(--muted);
   text-decoration: line-through;
+}
+.bucket-item.done.kept .bucket-title {
+  color: inherit;
+  text-decoration: none;
+}
+.bucket-body p.muted {
+  margin: 6px 0;
+  font-size: 12px;
 }
 .bucket-text {
   flex: 1;

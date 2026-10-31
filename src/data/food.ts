@@ -1,11 +1,11 @@
 /**
  * The food book: every dish you can order somewhere in the city.
- * Ordering one in a conversation (a `taste` effect) stamps it; the journal shows the book.
+ * Ordering one in a conversation (a `taste` effect) stamps it; the bucket list's Food book tab shows it.
  */
 export interface Dish {
   id: string;
   name: string;
-  /** Where to find it, shown in the journal once you know the dish. */
+  /** Where to find it, shown in the food book. */
   where: string;
   blurb: string;
 }
@@ -34,7 +34,7 @@ export const DISHES: Dish[] = [
   { id: 'campus_chai', name: 'Campus Chai', where: 'Tech Park Break Zone', blurb: 'The only thing that actually ships on time.' },
   { id: 'bevu_bella', name: 'Bevu-Bella', where: 'Saroja Ajji, Indiranagar (Ugadi)', blurb: 'Neem flowers and jaggery: bitter and sweet together, like the year ahead.' },
   { id: 'kadubu', name: 'Kadubu', where: 'Ganesha pandal, Basavanagudi (Ganesha Chaturthi)', blurb: "Steamed rice dumplings stuffed with coconut and jaggery. Ganesha's favourite, and now yours." },
-  { id: 'mysore_pak', name: 'Mysore Pak', where: 'Pinky, Indiranagar (Deepavali)', blurb: 'Ghee, gram flour and sugar in a dense, crumbly square. Made by Pinky\'s amma, guarded by Pinky.' },
+  { id: 'kaju_katli', name: 'Kaju Katli', where: 'Pinky, Indiranagar (Deepavali)', blurb: "Cashew diamonds with a sliver of silver on top. Made by Pinky's amma, guarded by Pinky." },
   { id: 'ellu_bella', name: 'Ellu-Bella', where: 'Subbaiah uncle, Cubbon Park (Sankranti)', blurb: '"Ellu bella thindu olle maathaadi": eat sesame and jaggery, speak sweetly.' },
   { id: 'masala_corn', name: 'Masala Corn (Jola)', where: 'Corn seller, Nandi Hills summit', blurb: 'Roasted on coals, rubbed with lime, salt and chilli. Hold it tight: the monkeys are watching.' },
   { id: 'hill_maggi', name: 'Hill-top Maggi', where: 'Hill Top Cafe, Nandi Hills', blurb: 'Two-minute noodles that taste ten times better at the top of a hill in the fog.' },
