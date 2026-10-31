@@ -441,6 +441,15 @@ const RAW: Record<string, Raw[]> = {
     'Bhai, Sankranti pe til-gud. Meetha khao, meetha bolo.',
   ],
 
+  ubcity: [
+    'Ondu coffee 600 rupees. Aadre view free, adjust maadkoli.',
+    'Valet parking, saar? Keys kodi, naanu nodkothini.',
+    'Bhai, yahan sirf window shopping hoti hai. Shopping nahi.',
+    'See that white mansion on top of the tower? Imagine the rent.',
+    'Kingfisher Towers mele mansion ide ante. Lift alli hogbahuda?',
+    'Weekend brunch here costs one month of PG rent.',
+  ],
+
   // ── Reactions
   bump: [
     'Ayyo! Nodkondu nadi, anna!',

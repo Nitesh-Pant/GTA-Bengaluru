@@ -70,8 +70,7 @@ guided tour starts the first time; skip it or follow along.
 | `R` | Book a Rapido bike taxi | – |
 | `M` | City map: zoom, drag, search, mark places, ride there | same |
 | `P` | Photo mode: hide the HUD, zoom to frame the shot, make a postcard | same |
-| `B` | Bengaluru Bucket List: everything to try, with hints and Show me | same |
-| `J` | Journal: places, food book, achievements (switch on **Show Journal** in the pause menu first) | same |
+| `B` | Bucket list: things to try, food book, places found | same |
 | `Esc` | Pause and settings, or close whatever is open | same |
 | `?` / `F1` | Show or hide the controls hint | same |
 | `1`–`9`, `↑ ↓` + `Enter`, mouse | Pick dialogue options and destinations | same |
@@ -91,9 +90,8 @@ On-screen controls appear automatically on touch devices:
   you're driving.
 - **E:** talk, use, get in. While driving: a big hold-to-**Brake** under the right thumb, **Horn**
   beside it, and a small **Get out** above, out of the thumb's way.
-- **Find** and **Rapido** (yellow; Rapido shows on foot), **Map**, **II** (pause), and **Journal** if
-  it's switched on in the pause menu.
-- **Photo** opens photo mode (see below).
+- **Find** and **Rapido** (yellow; Rapido shows on foot), **Map**, **Photo** and **II** (pause). The
+  bucket list is the yellow button on the area card.
 - **City map** (Map or `M`): full screen on phones, sized to the screen in portrait or landscape, with
   big zoom buttons on the side, pinch to zoom, and tap a place to mark it.
 - Every panel, dialogue option and list is tappable. Portrait and landscape both work.
@@ -157,7 +155,7 @@ not real distances (the real Nandi Hills is 60 km away).
 | **KR Puram** | Purple and Blue line interchange, auto stand (Raju's auto), bus stop, flower and coconut sellers, food court |
 | **MG Road** | Higginbothams, Koshy's, Blossom Book House, Pecos |
 | **Cubbon Park** | Running track, State Central Library, lawns and bamboo |
-| **Chinnaswamy Stadium** | Ticket counter, fans chanting "Ee sala cup namde!", IPL nights |
+| **Chinnaswamy Stadium** | Ticket counter, fans chanting "Ee sala cup namde!", IPL nights; next door **UB City** (valet, luxury shoppers, a ₹600 coffee) and **Kingfisher Towers** with its white "sky mansion" on the roof |
 | **Koramangala** | 80 Feet Road: Flipkart, Swiggy, Razorpay, CRED, SOCIAL; behind it Infosys, Wipro, Accenture, IBM, Truffles, Nexus Mall and Startup Street (Zerodha, Zepto, 91springboard) |
 | **BTM Layout** | Gents PG, Ladies PG, Comfort PG and more, a strict PG aunty, the Andhra Mess, BTM Lake |
 | **Vidhana Soudha** | The granite legislature with *"Government Work is God's Work"*, floodlit at night |
@@ -171,8 +169,8 @@ not real distances (the real Nandi Hills is 60 km away).
 ### Nandi Hills mornings
 
 From 4 AM the hill fills with fog, thicker the higher you climb. Reach **Sunrise Point** between about
-5:30 and 7:00 and the summit sits above the clouds while the sun comes up (the *Sunrise Chaser*
-achievement). Got there at the wrong hour? Press `E` at Sunrise Point to sit with a chai and wait: the
+5:30 and 7:00 and the summit sits above the clouds while the sun comes up (it's on the bucket
+list). Got there at the wrong hour? Press `E` at Sunrise Point to sit with a chai and wait: the
 clock moves to 5:25 the next morning. Get there by driving out along NH 44 and up the hairpins, the
 **KSRTC Nandi Hills Express** from any bus stop, or a Rapido to the Nandi Hills gate; rental scooters
 wait at the gate, the dhaba and the summit.
@@ -224,7 +222,7 @@ Green road-name boards stand on every main road, and the big map labels areas, r
 Not sure where any of these are? **Find** (`F`, or the yellow button on phones) lists the
 nearest of each with the walking time and marks the one you pick.
 
-**Following a marker** (a place from the map search or journal, Find, or a job): an arrow beside your
+**Following a marker** (a place from the map search or the bucket list's Places tab, Find, or a job): an arrow beside your
 character shows the direction and distance, the pin carries the place's name with a pulsing ring on
 the spot, and the minimap rings it (or shows an arrow on its edge when it's off the minimap). Turn on
 **Route dots to markers** in the pause menu for red dots along the main roads all the way there.
@@ -243,7 +241,7 @@ that giver quiet for a couple of minutes). **Find** also lists the nearest job o
 
 - **Auto fares.** Borrow any auto and choose **Earn fares** (or **Just drive** to cruise without
   passengers). People wave you down. Slow down beside them, drop them at the
-  marker and collect the meter, rounded down ("change illa"). Earnings show in the journal.
+  marker and collect the meter, rounded down ("change illa"). Earnings count towards the bucket list.
 - **Food delivery.** Ask a delivery rider (Imran in Thippasandra, Mallesh outside Swiggy, Salman at
   Marathahalli or Imtiyaz in BTM) for an order. Pick it up at a restaurant and drop it at an office, PG or landmark before the timer runs out.
   Any way of travelling counts. The ✕ on the HUD chip hands the order back.
@@ -264,26 +262,19 @@ filter kaapi at Hatti Kaapi, cutting chai and bun maska at Anna Chai Point, ging
 honey cake and veg puffs at the Iyengar bakery, donne biryani at Shivaji Military Hotel, ragi mudde,
 meetha paan, kabbina haalu, Mysore pak at Sri Krishna Sweets, masala puri, avocado toast at Third Wave,
 campus chai, appam and stew at Koshy's, a Truffles burger, Andhra meals in BTM, benne dose (secret), and
-kesari bath prasada at the Ganesha pandal. The journal's **Food book** tab shows what you've tried and
+kesari bath prasada at the Ganesha pandal. The bucket list's **Food book** tab shows what you've tried and
 where to find the rest.
 
 ### Discovery
 
 62 places. Unvisited ones show as `?` on the map; 5 are secret and only appear after someone gives
-you a tip. Mark any place from the journal or the map to get a marker and an edge-of-screen arrow.
+you a tip. Mark any place from the bucket list's Places tab or the map to get a marker and an edge-of-screen arrow.
 
 ### Small kindnesses and moments
 
 Throw the cricket ball back to the kids, give a street dog a biscuit (it follows you for a while), say
 hello to Gowri and the other cows, take prasada at the pandal, chat at the walk-in drive, and stand
 outside the stadium on an IPL night.
-
-### Achievements
-
-28 local ones, all unlocked just by playing: *Ondu Chai*, *Cutting Chai Connoisseur*, *Horn OK Please*,
-*Right of Way*, *OTP Heli, Saar*, *Meter Haaki*, *Auto Anna*, *BMTC Pass*, *Five Star Partner*,
-*Biscuit Friend*, *Walk-in Selected*, *Ee Sala Cup Namde*, *Startup Safari*, *PG Life*,
-*Bengaluru Darshana*, *Full Meals*, *Namma Ooru Expert* and more.
 
 ---
 
@@ -349,8 +340,8 @@ minding every surprise roadworks.
 
 ### Bengaluru Bucket List
 
-Everything there is to try, in one list: **✓ Bucket list 5/38** sits on the area card (or press `B`).
-It covers riding a Yulu, finding your cousin's car, petting a street dog, making the crows fly away,
+Everything there is to try, in one list: **✓ Bucket list 5/62** sits on the area card (or press `B`).
+Three tabs: **To try**, the **Food book** and **Places** you've found (with Mark buttons). To try covers riding a Yulu, finding your cousin's car, petting a street dog, making the crows fly away,
 talking to anyone, the tech interview, food delivery, Rapido, getting caught by the traffic police,
 Nandi Hills and plenty more, grouped by kind. Each unticked item has a hint and a **Show me** that marks
 where to do it; items tick off by themselves as you play, with a toast.
@@ -412,16 +403,15 @@ any time from the side bar, the pause menu, or **Change character & continue** o
 
 The pause menu (`Esc` or **II**) has:
 
-- Resume, Map, How to play (and Journal, once switched on)
+- Resume, Bucket list, Map, How to play
 - Character and time of day
 - Mute all sound, plus sliders for master, sound effects, city ambience, voices and music
-- Street chatter (low, normal, high), destination markers, **Show Journal** (off by default), route
-  dots to markers (on by default),
+- Street chatter (low, normal, high), destination markers, route dots to markers (on by default),
   word meanings for Kannada and Hindi (on by default), screen shake
 - Save and quit to the title, and Reset progress (with confirmation)
 
 **Saving** is automatic and local to the browser (`localStorage`, key `bsam.save`): discoveries, tips,
-food book, achievements, stats, settings, your character, the time of day and your last safe position.
+food book, bucket-list moments, stats, settings, your character, the time of day and your last safe position.
 Saves are versioned and sanitised: corrupt or older data falls back safely, and unknown ids are
 dropped.
 
@@ -448,18 +438,18 @@ dropped.
 | Content | Count |
 | --- | --- |
 | Areas | 14 |
-| Places to discover | 74 (7 secret) |
-| People | 170 |
+| Places to discover | 75 (7 secret) |
+| People | 172 |
 | Dialogue lines / exchanges / conversations | 535 / 62 / 45 |
 | Dishes | 28 |
-| Achievements | 36 |
+| Bucket list | 62 things to try (plus the food book and places) |
 | Festivals | 8 on a two-week calendar |
 | Tech questions | 20 |
 | Street events | 10 |
 | Metro stations / bus stops | 3 / 9 (plus KSRTC to Nandi Hills and Vayu Vajra to the airport) |
 | Rideable vehicles | 28 (1 car, 5 autos, 5 scooters, 17 Yulu) |
 | Traffic vehicles | 48 on 23 routes (including the police car and ambulance) |
-| Buildings | 93 |
+| Buildings | 95 |
 | Voice clips | 40 |
 
 Everything visual is painted in code at startup: there are no image files besides the app icons.
@@ -502,7 +492,7 @@ src/
     dialogue.ts       Line pools and two-person exchanges
     conversations.ts  Conversations opened with E (food orders, tips, quizzes, jobs)
     pois.ts           Places to discover
-    food.ts, achievements.ts, techQuiz.ts
+    food.ts, bucket.ts (the bucket list), festivals.ts, tips.ts, techQuiz.ts
     roads.ts          Lanes, junctions, traffic routes and spawns
     metro.ts, transit.ts (bus stops, auto hail spots), rides.ts (Rapido destinations)
     vehicles.ts       Rideables (car, auto, scooter, Yulu) and parked vehicles
@@ -510,7 +500,7 @@ src/
   logic/              Pure, engine-free, unit-tested rules
     movement, interaction, traffic, vehicleState, metro, bikeRide, delivery,
     dialogueDirector, voiceDirector, reactionEngine, eventScheduler,
-    dayClock, discovery, achievements, player, save, geometry, rng
+    dayClock, discovery, bucket, player, save, geometry, rng
   game/
     PhaserGame.tsx, gameHost.ts, loadGame.ts   One game instance, loaded lazily
     bridge.ts         Commands from React to the running world
@@ -522,7 +512,7 @@ src/
                       Bus, Fare (auto), Delivery, Animal, Match (IPL), and the DOM BubbleLayer
   store/uiStore.ts    Tiny external store: the world writes, React reads
   ui/                 HUD, side bar, touch controls, tour, panels (dialogue, metro/bus/Rapido picker,
-                      journal, map, pause, character), main menu, footer
+                      bucket list, map, pause, character, photo mode), main menu, footer
 tests/                Vitest unit and data tests
 scripts/              Browser checks: playtest.mjs, events.mjs, tour.mjs (screenshots), perf.mjs
 ```
@@ -567,7 +557,7 @@ Most content is plain data, and tests catch broken references.
 | **A place** | Add to `src/data/pois.ts`; `hidden: true` plus a `hint` makes it a secret |
 | **A building** | Add to `BUILDINGS` in `src/data/map.ts` (styles include shop, cafe, pub, office, mall, apartment, house, temple, heritage, stadium and construction) |
 | **A dish** | Add to `src/data/food.ts`, plus a `taste` effect on an order in a conversation |
-| **An achievement** | Add to `src/data/achievements.ts` with a `done(progress)` check |
+| **A bucket-list item** | Add to `BUCKET` in `src/data/bucket.ts` with a `done(progress)` check, a hint and an optional `show` target |
 | **A tech question** | Add to `src/data/techQuiz.ts` |
 | **A voice clip** | Put the file in `public/audio/voice/` and add it to a pool in `src/data/voices.ts` with its voice (`m`, `f`, `kid`, or none for crowds). Convert WAV takes with `afconvert -f m4af -d aac -b 64000 in.wav out.m4a` |
 | **A metro station** | Add to `src/data/metro.ts` with two-way `connections`, plus a metro building in `map.ts` |

@@ -245,6 +245,9 @@ export class WorldScene extends Phaser.Scene {
     this.add.image(0, 0, 'groundTex').setOrigin(0).setDepth(-100);
 
     for (const b of BUILDINGS) this.add.image(t(b.x), t(b.y), `bld_${b.id}`).setOrigin(0).setDepth(t(b.y + b.h));
+    // Kingfisher Towers wears its famous white "sky mansion" on the roof.
+    const kf = BUILDINGS.find((b) => b.id === 'kingfisher');
+    if (kf) this.add.image(t(kf.x + kf.w / 2), t(kf.y) + 8, 'skymansion').setOrigin(0.5, 0).setDepth(t(kf.y + kf.h) + 1);
     for (const p of PROPS) {
       const img = this.add.image(t(p.x), t(p.y), propKey(p));
       if (DECAL_PROPS.has(p.kind)) img.setOrigin(0.5).setDepth(-50);

@@ -452,3 +452,24 @@ export function paintFestivalDecor(kind: 'sugarcane' | 'akash' | 'ganeshaIdol' |
       });
   }
 }
+
+/** Top-down view of the white "sky mansion" on Kingfisher Towers' roof: lawn, villa, dome, pool. */
+export function paintSkyMansion(): HTMLCanvasElement {
+  return draw(56, 46, (c) => {
+    rect(c, 1, 1, 54, 44, '#69db7c');
+    rect(c, 1, 1, 54, 2, '#8ce99a');
+    rect(c, 6, 8, 34, 26, '#f8f9fa');
+    rect(c, 6, 8, 34, 2, '#ffffff');
+    rect(c, 6, 32, 34, 2, '#ced4da');
+    for (let x = 9; x < 38; x += 6) rect(c, x, 28, 2, 6, '#dee2e6');
+    ellipse(c, 23, 17, 7, 6, '#e9ecef');
+    ellipse(c, 22, 16, 4, 3, '#ffffff');
+    px(c, 23, 10, '#fab005');
+    rect(c, 43, 10, 9, 16, '#4dabf7');
+    rect(c, 43, 10, 9, 2, '#a5d8ff');
+    rect(c, 44, 30, 2, 10, '#2b8a3e');
+    rect(c, 49, 34, 2, 6, '#2b8a3e');
+    ellipse(c, 45, 30, 3, 3, '#37b24d');
+    ellipse(c, 50, 34, 3, 3, '#37b24d');
+  });
+}

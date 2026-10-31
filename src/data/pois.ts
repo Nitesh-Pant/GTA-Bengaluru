@@ -57,6 +57,7 @@ export const POIS: PoiDef[] = [
   { id: 'cubbon', name: 'Cubbon Park', district: 'cubbon', kind: 'park', x: t(11), y: t(118), radius: 60, description: 'Bamboo groves, giant trees and the running track. The lungs of the city.' },
   { id: 'library', name: 'State Central Library', district: 'cubbon', kind: 'landmark', x: t(11), y: t(132.6), radius: 40, description: 'The red heritage library in the middle of the park. Silence, ceiling fans and exam aspirants.' },
   { id: 'stadium', name: 'M. Chinnaswamy Stadium', district: 'stadium', kind: 'landmark', x: t(30.5), y: t(132), radius: 60, description: 'Match day turns the whole neighbourhood red and gold. Ee sala cup namde!' },
+  { id: 'ubcity', name: 'UB City', district: 'stadium', kind: 'shop', x: t(31.5), y: t(140.6), radius: 48, description: "Luxury brands, valet parking and a ₹600 coffee with a view. Next door, Kingfisher Towers wears a white mansion on its roof." },
   // Koramangala
   { id: 'flipkart', name: 'Flipkart', district: 'koramangala', kind: 'landmark', x: t(50.5), y: t(106.6), radius: 30, description: 'Big blue sign, bigger sale days. Somewhere inside, a team is preparing for the next one.' },
   { id: 'swiggy', name: 'Swiggy', district: 'koramangala', kind: 'landmark', x: t(59), y: t(106.6), radius: 28, description: 'Orange office, orange jackets outside, and the smell of somebody\'s lunch arriving.' },

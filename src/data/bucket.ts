@@ -50,6 +50,7 @@ export const BUCKET: BucketItem[] = [
   { id: 'vidhana', group: 'See the city', title: 'See Vidhana Soudha', hint: 'The granite legislature, flags flying out front.', done: (p) => p.discovered.includes('vidhana'), show: { poi: 'vidhana' } },
   { id: 'stadium', group: 'See the city', title: 'Visit Chinnaswamy Stadium', hint: 'Ee sala cup namde!', done: (p) => p.discovered.includes('stadium'), show: { poi: 'stadium' } },
   { id: 'silkboard', group: 'See the city', title: 'Survive Silk Board', hint: 'Drive through the junction just outside the city. Bring patience.', done: (p) => p.stats.silkboard >= 1, show: { poi: 'silkboard' } },
+  { id: 'ubcity', group: 'See the city', title: 'Window-shop at UB City', hint: 'Next to Chinnaswamy Stadium. Look up at the mansion on Kingfisher Towers.', done: (p) => p.discovered.includes('ubcity'), show: { poi: 'ubcity' } },
   { id: 'social', group: 'See the city', title: 'Visit SOCIAL', hint: 'The cafe-bar on 80 Feet Road, Koramangala.', done: (p) => p.discovered.includes('social'), show: { poi: 'social' } },
   { id: 'flipkart', group: 'See the city', title: 'Visit the Flipkart office', hint: 'On 80 Feet Road, Koramangala, with the other startups.', done: (p) => p.discovered.includes('flipkart'), show: { poi: 'flipkart' } },
   { id: 'airport', group: 'See the city', title: 'Reach the airport', hint: 'Drive out on NH 44, or take the Vayu Vajra bus.', done: (p) => p.discovered.includes('airport'), show: { poi: 'airport' } },

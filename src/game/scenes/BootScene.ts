@@ -8,7 +8,7 @@ import { CHAR_DIRS, CHAR_FRAMES, CHAR_H, CHAR_W, paintCharacterSheet } from '../
 import { drawText, ellipse, makeCanvas, outline, rect } from '../art/pixel';
 import { paintBuilding } from '../art/buildings';
 import { paintGround } from '../art/ground';
-import { FLAG_FRAMES, flagFrame, paintFestivalDecor, paintKannadaFlag, paintProp, paintSignal, paintViaduct, propKey, TEXT_PROPS } from '../art/props';
+import { FLAG_FRAMES, flagFrame, paintFestivalDecor, paintKannadaFlag, paintSkyMansion, paintProp, paintSignal, paintViaduct, propKey, TEXT_PROPS } from '../art/props';
 import { AMBULANCE_VARIANT, paintBoat, paintCow, paintEmergency, paintPlane, paintTrain, paintVehicle, paintYulu, POLICE_VARIANT } from '../art/vehicles';
 import { CROW_H, CROW_W, DOG_H, DOG_W, MONKEY_H, MONKEY_W, paintCrow, paintDog, paintGarbageVan, paintMonkey } from '../art/animals';
 
@@ -62,6 +62,7 @@ export class BootScene extends Phaser.Scene {
     this.addCanvas(`veh_scooter_${YULU_VARIANT}`, paintYulu());
     this.addCanvas('train', paintTrain());
     for (const k of ['sugarcane', 'akash', 'ganeshaIdol', 'kite'] as const) this.addCanvas(`fest_${k}`, paintFestivalDecor(k));
+    this.addCanvas('skymansion', paintSkyMansion());
     // Kannada flags: a big one for flagpoles, a small one for autos (frames for the wave).
     for (const [key, cw, ch, ph] of [
       ['kflag', 26, 16, 44],

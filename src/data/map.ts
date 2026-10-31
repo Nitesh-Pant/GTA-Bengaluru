@@ -306,6 +306,9 @@ export const BUILDINGS: BuildingDef[] = [
   { id: 'bulltemple', x: 47, y: 151, w: 10, h: 10, style: 'temple', sign: 'DODDA BASAVANA GUDI', wall: '#f4ecd8', roof: '#e8590c' },
   { id: 'pandal', x: 62, y: 152, w: 14, h: 9, style: 'pandal', sign: 'SRI VINAYAKA SEVA SAMITHI', wall: '#ffd43b', roof: '#e64980' },
   { id: 'glasshouse', x: 100, y: 148, w: 16, h: 11, style: 'glasshouse', sign: 'LALBAGH GLASS HOUSE', wall: '#d0ebff', roof: '#a5d8ff' },
+  // ── UB City and Kingfisher Towers, between Chinnaswamy and Cubbon Park
+  { id: 'ubcity', x: 29, y: 133, w: 5, h: 7, style: 'mall', sign: 'UB CITY', wall: '#d9d2c3', roof: '#7d6b5d', floors: 3 },
+  { id: 'kingfisher', x: 34, y: 131.5, w: 4, h: 9, style: 'office', sign: 'KINGFISHER', wall: '#cfe3f3', roof: '#e9ecef', awning: '#c92a2a', floors: 5 },
   // ── East of the city: NH 44, villages and Nandi Hills
   { id: 'toll_n', x: 135, y: 53, w: 5, h: 3, style: 'kiosk', sign: 'TOLL', wall: '#fff3bf', roof: '#1971c2' },
   { id: 'toll_s', x: 135, y: 64, w: 5, h: 3, style: 'kiosk', sign: 'TOLL', wall: '#fff3bf', roof: '#1971c2' },
@@ -597,7 +600,7 @@ export const PROPS: PropDef[] = [
   { kind: 'lamp', x: 17.4, y: 128 },
   { kind: 'hoarding', x: 30, y: 113.8, text: 'CUBBON PARK' },
   // Chinnaswamy forecourt
-  { kind: 'hoarding', x: 34, y: 134.2, text: 'EE SALA CUP NAMDE' },
+  { kind: 'hoarding', x: 31.5, y: 132.7, text: 'EE SALA CUP NAMDE' },
   ...row('flowerCart', 141.4, [26]),
   { kind: 'bin', x: 36.5, y: 138 },
   // Koramangala

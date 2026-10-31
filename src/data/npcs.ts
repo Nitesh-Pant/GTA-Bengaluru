@@ -316,11 +316,11 @@ export const NPCS: NpcDef[] = [
   { id: 'cub_b', name: 'Rohan', role: 'Student', look: 'student', x: 8.9, y: 119.4, behaviour: { type: 'chat', group: 'cubbon', facing: 'left' }, personality: 'chill', categories: ['student'], languages: MIX, topics: ['park', 'general'] },
   // Chinnaswamy Stadium: fans and the ticket counter
   { id: 'tickets', name: 'Raghu', role: 'Ticket counter', look: 'fan2', x: 26, y: 139.35, behaviour: { type: 'idle', facing: 'down' }, personality: 'cheerful', categories: ['fan'], languages: KEN, conversation: 'tickets', reach: 36 },
-  { id: 'fan1', name: 'Santosh', role: 'RCB fan', look: 'fan', x: 29.6, y: 133.2, behaviour: { type: 'chat', group: 'fans', facing: 'right' }, personality: 'cheerful', categories: ['fan'], languages: MIX, topics: ['cricket'] },
-  { id: 'fan2', name: 'Bhoomika', role: 'RCB fan', look: 'fan_f', x: 30.9, y: 133.2, behaviour: { type: 'chat', group: 'fans', facing: 'left' }, personality: 'chatty', categories: ['fan'], languages: MIX, topics: ['cricket'] },
-  { id: 'fan3', name: 'Manoj', role: 'RCB fan', look: 'fan2', x: 33.4, y: 137.2, behaviour: { type: 'chat', group: 'fans2', facing: 'right' }, personality: 'chatty', categories: ['fan'], languages: MIX, topics: ['cricket'] },
-  { id: 'fan4', name: 'Chetan', role: 'RCB fan', look: 'fan', x: 34.7, y: 137.2, behaviour: { type: 'chat', group: 'fans2', facing: 'left' }, personality: 'cheerful', categories: ['fan'], languages: MIX, topics: ['cricket'] },
-  { id: 'fan5', name: 'Ananya R', role: 'RCB fan', look: 'fan_f', x: 30, y: 140.6, behaviour: { type: 'wander', zone: { x: 23, y: 140, w: 14, h: 1.4 } }, personality: 'cheerful', categories: ['fan'], languages: MIX },
+  { id: 'fan1', name: 'Santosh', role: 'RCB fan', look: 'fan', x: 25, y: 132.2, behaviour: { type: 'chat', group: 'fans', facing: 'right' }, personality: 'cheerful', categories: ['fan'], languages: MIX, topics: ['cricket'] },
+  { id: 'fan2', name: 'Bhoomika', role: 'RCB fan', look: 'fan_f', x: 26.3, y: 132.2, behaviour: { type: 'chat', group: 'fans', facing: 'left' }, personality: 'chatty', categories: ['fan'], languages: MIX, topics: ['cricket'] },
+  { id: 'fan3', name: 'Manoj', role: 'RCB fan', look: 'fan2', x: 22.6, y: 139.6, behaviour: { type: 'chat', group: 'fans2', facing: 'right' }, personality: 'chatty', categories: ['fan'], languages: MIX, topics: ['cricket'] },
+  { id: 'fan4', name: 'Chetan', role: 'RCB fan', look: 'fan', x: 23.9, y: 139.6, behaviour: { type: 'chat', group: 'fans2', facing: 'left' }, personality: 'cheerful', categories: ['fan'], languages: MIX, topics: ['cricket'] },
+  { id: 'fan5', name: 'Ananya R', role: 'RCB fan', look: 'fan_f', x: 27, y: 140.6, behaviour: { type: 'wander', zone: { x: 23, y: 140, w: 10.5, h: 1.4 } }, personality: 'cheerful', categories: ['fan'], languages: MIX },
   // Koramangala
   { id: 'founder', name: 'Varun', role: 'Startup founder', look: 'hipster', x: 50, y: 107.3, behaviour: { type: 'wander', zone: { x: 46, y: 107, w: 39, h: 0.6 } }, personality: 'chatty', categories: ['founder'], languages: ['en', 'hi'] },
   { id: 'social1', name: 'Tara', role: 'SOCIAL regular', look: 'techie_laptop_f', x: 79.4, y: 106.6, behaviour: { type: 'chat', group: 'social', facing: 'right' }, personality: 'chatty', categories: ['techie'], languages: MIX, topics: ['pub', 'startup'] },
@@ -392,4 +392,7 @@ export const NPCS: NpcDef[] = [
   // ── Traffic police checkpoints (see PoliceSystem)
   { id: 'cop_cmh', name: 'Constable Shivu', role: 'Traffic police', look: 'cop', x: 38.6, y: 23.3, behaviour: { type: 'idle', facing: 'up' }, personality: 'grumpy', categories: ['cop'], languages: MIX },
   { id: 'cop_mg', name: 'Constable Nagaraj', role: 'Traffic police', look: 'cop', x: 44.8, y: 113.3, behaviour: { type: 'idle', facing: 'up' }, personality: 'wise', categories: ['cop'], languages: MIX },
+  // ── UB City
+  { id: 'ub_valet', name: 'Prakash', role: 'UB City valet', look: 'staff', x: 31, y: 140.7, behaviour: { type: 'idle', facing: 'down' }, personality: 'cheerful', categories: ['ubcity', 'staff'], languages: MIX },
+  { id: 'ub_shopper', name: 'Tanya', role: 'Weekend shopper', look: 'hipster', x: 33, y: 141.2, behaviour: { type: 'wander', zone: { x: 29.5, y: 141, w: 7, h: 0.6 } }, personality: 'chatty', categories: ['ubcity', 'hipster'], languages: MIX },
 ];
