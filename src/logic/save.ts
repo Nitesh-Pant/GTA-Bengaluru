@@ -55,6 +55,8 @@ export interface Stats {
   letOff: number;
   /** Rupees paid in fines. */
   fines: number;
+  /** Postcards made in photo mode. */
+  postcards: number;
   /** Street dogs given a biscuit. */
   dogsFed: number;
   /** Auto passengers dropped, and what they paid. */
@@ -63,7 +65,7 @@ export interface Stats {
   busRides: number;
 }
 
-export const STAT_KEYS = ['chai', 'dosa', 'metroRides', 'drives', 'honks', 'throws', 'cow', 'quiz', 'rides', 'deliveries', 'dogsFed', 'fares', 'rupees', 'busRides', 'sunrises', 'monkeyTax', 'silkboard', 'festivals', 'challans', 'letOff', 'fines'] as const satisfies ReadonlyArray<keyof Stats>;
+export const STAT_KEYS = ['chai', 'dosa', 'metroRides', 'drives', 'honks', 'throws', 'cow', 'quiz', 'rides', 'deliveries', 'dogsFed', 'fares', 'rupees', 'busRides', 'sunrises', 'monkeyTax', 'silkboard', 'festivals', 'challans', 'letOff', 'fines', 'postcards'] as const satisfies ReadonlyArray<keyof Stats>;
 
 export const defaultStats = (): Stats => Object.fromEntries(STAT_KEYS.map((k) => [k, 0])) as unknown as Stats;
 

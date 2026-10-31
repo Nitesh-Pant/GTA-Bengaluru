@@ -25,6 +25,7 @@ export const ACHIEVEMENTS: AchievementDef[] = [
   { id: 'cricket', title: 'Sakkath Fielding', description: 'Throw the cricket ball back to the kids.', done: (p) => p.stats.throws >= 1 },
   { id: 'nandi_top', title: 'Above the Clouds', description: 'Reach the top of Nandi Hills.', done: (p) => p.discovered.includes('sunrisepoint') || p.discovered.includes('tipusdrop') },
   { id: 'nandi_sunrise', title: 'Sunrise Chaser', description: 'Watch the sunrise from Nandi Hills.', done: (p) => p.stats.sunrises >= 1 },
+  { id: 'postcard', title: 'Wish You Were Here', description: 'Make a postcard in photo mode.', done: (p) => p.stats.postcards >= 1 },
   { id: 'challan', title: 'Pulled Over', description: 'Get stopped by the traffic police.', done: (p) => p.stats.challans >= 1 },
   { id: 'adjust_sir', title: 'Swalpa Adjust, Sir', description: 'Talk your way out of a challan.', done: (p) => p.stats.letOff >= 1 },
   { id: 'habba', title: 'Habba Hopper', description: 'Celebrate three festival days in Bengaluru.', done: (p) => p.stats.festivals >= 3 },

@@ -46,7 +46,7 @@ export interface JobOffer {
   alt?: string;
 }
 
-export type Panel = null | 'pause' | 'journal' | 'map' | 'ride' | 'character' | 'bus' | 'tour' | 'find';
+export type Panel = null | 'pause' | 'journal' | 'map' | 'ride' | 'character' | 'bus' | 'tour' | 'find' | 'photo';
 
 export interface UiState {
   phase: 'menu' | 'playing';

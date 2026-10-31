@@ -69,6 +69,7 @@ guided tour starts the first time; skip it or follow along.
 | `F` | Find: nearest bike, auto, bus stop, metro, car or job, with a route to it | same |
 | `R` | Book a Rapido bike taxi | – |
 | `M` | City map: zoom, drag, search, mark places, ride there | same |
+| `P` | Photo mode: hide the HUD, zoom to frame the shot, make a postcard | same |
 | `J` | Journal: places, food book, achievements (switch on **Show Journal** in the pause menu first) | same |
 | `Esc` | Pause and settings, or close whatever is open | same |
 | `?` / `F1` | Show or hide the controls hint | same |
@@ -91,6 +92,7 @@ On-screen controls appear automatically on touch devices:
   beside it, and a small **Get out** above, out of the thumb's way.
 - **Find** and **Rapido** (yellow; Rapido shows on foot), **Map**, **II** (pause), and **Journal** if
   it's switched on in the pause menu.
+- **Photo** opens photo mode (see below).
 - **City map** (Map or `M`): full screen on phones, sized to the screen in portrait or landscape, with
   big zoom buttons on the side, pinch to zoom, and tap a place to mark it.
 - Every panel, dialogue option and list is tappable. Portrait and landscape both work.
@@ -330,6 +332,14 @@ scatter with a caw when you walk up, and cows wandering the maidan and BTM Lake.
 A five-floor building site in Thippasandra (scaffolding, green net, sand and bricks, workers in helmets,
 and a site engineer who promises "six months"), a road crew at the Marathahalli roadworks, and a worker
 minding every surprise roadworks.
+
+### Photo mode and postcards
+
+Press `P` (or **Photo**) and the HUD steps aside while the city carries on. Zoom with **−** / **+** to
+frame the shot, then **Take postcard**: a flash, a shutter click, and a *"Greetings from BENGALURU"*
+postcard with an airmail border, your shot (cropped around you), the place, time and festival, "Love,
+<your name>", a Kannada-flag stamp with a postmark, and the game's address. **Share** it straight to
+WhatsApp or Instagram on phones, or **Save** it as a PNG. The first one unlocks *Wish You Were Here*.
 
 ### Ambience
 

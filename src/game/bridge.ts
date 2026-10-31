@@ -62,6 +62,12 @@ export interface GameApi {
   showJob(kind: JobKind): void;
   /** Start the job pitched by uiStore.jobOffer, or quieten that giver for a while. */
   acceptJob(id: string, alt?: boolean): void;
+  /** Photo mode: a clean shot of the world (no HUD), zoom to frame it, and back to normal. */
+  takePhoto(): Promise<{ image: HTMLImageElement; focus: { x: number; y: number } }>;
+  photoZoom(factor: number): void;
+  endPhoto(): void;
+  /** Count a postcard made (for the achievement). */
+  notePostcard(): void;
   snoozeJob(id: string): void;
   /** Board a BMTC bus from the open stop to another stop. */
   takeBus(toStopId: string): void;

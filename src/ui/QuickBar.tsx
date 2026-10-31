@@ -35,6 +35,10 @@ export function QuickBar() {
         <span className="quick-icon">{muted ? '✕' : '♪'}</span>
         <span className="quick-label">{muted ? 'Sound off' : 'Sound on'}</span>
       </button>
+      <button className="quick quick-photo" onClick={() => uiStore.set({ panel: 'photo' })} title="Photo mode: make a postcard (P)" aria-label="Photo">
+        <span className="quick-icon">P</span>
+        <span className="quick-label">Photo</span>
+      </button>
       <button className="quick" onClick={() => uiStore.set({ panel: 'tour' })} title="How to play: a quick tour" aria-label="Hints">
         <span className="quick-icon">?</span>
         <span className="quick-label">Hints</span>

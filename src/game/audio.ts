@@ -139,6 +139,26 @@ class AudioEngine {
     o.stop(t + 0.27);
   }
 
+  /** A camera shutter: two quick clicks. */
+  shutter() {
+    if (!this.ctx || this.silent) return;
+    const c = this.ctx;
+    for (const d of [0, 0.07]) {
+      const src = c.createBufferSource();
+      src.buffer = this.noise;
+      const hp = c.createBiquadFilter();
+      hp.type = 'highpass';
+      hp.frequency.value = 2500;
+      const g = c.createGain();
+      const t = c.currentTime + d;
+      g.gain.setValueAtTime(0.4, t);
+      g.gain.exponentialRampToValueAtTime(0.0005, t + 0.05);
+      src.connect(hp).connect(g).connect(this.sfx);
+      src.start(t, Math.random());
+      src.stop(t + 0.06);
+    }
+  }
+
   /** A traffic cop's whistle: two sharp trills. */
   whistle(volume: number, pan = 0) {
     if (!this.ctx || this.silent || volume < 0.03) return;

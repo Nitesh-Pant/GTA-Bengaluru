@@ -441,6 +441,20 @@ export class WorldScene extends Phaser.Scene {
       takeBus: (id) => this.buses.take(id),
       showNearest: (kind) => this.showNearest(kind),
       acceptJob: (id, alt) => this.jobs.accept(id, alt),
+      takePhoto: () => {
+        audio.shutter();
+        // Where you are on screen (0..1), so the postcard crop keeps you in it.
+        const cam = this.cameras.main;
+        const p = this.playerFeet();
+        const focus = { x: (p.x - cam.worldView.x) / cam.worldView.width, y: (p.y - 12 - cam.worldView.y) / cam.worldView.height };
+        return new Promise((resolve) => this.game.renderer.snapshot((img) => resolve({ image: img as HTMLImageElement, focus })));
+      },
+      photoZoom: (factor) => {
+        const cam = this.cameras.main;
+        cam.setZoom(Phaser.Math.Clamp(cam.zoom * factor, 1, 6));
+      },
+      endPhoto: () => this.setZoomForMode(),
+      notePostcard: () => this.bump('postcards'),
       snoozeJob: (id) => this.jobs.snooze(id),
       nearestJobs: () => this.jobs.nearest().map(({ kind, label, distance }) => ({ kind, label, distance })),
       showJob: (kind) => {
@@ -803,7 +817,7 @@ export class WorldScene extends Phaser.Scene {
       this.tagAt.y = p.y - (this.mode.kind === 'walk' ? 30 : 24);
       this.bubbles.setNameTag(this.tagAt, this.profile.name);
     } else this.bubbles.setNameTag(null);
-    this.bubbles.update(this.cameras.main, now, ui.panel === 'pause' || ui.panel === 'map');
+    this.bubbles.update(this.cameras.main, now, ui.panel === 'pause' || ui.panel === 'map' || ui.panel === 'photo');
 
     this.saveTimer -= dt;
     if (this.saveTimer <= 0) {

@@ -126,6 +126,9 @@ export function TouchControls() {
             </button>
           )}
           <button className="touch-small" onClick={() => open('map')}>Map</button>
+          <button className="touch-small" onClick={() => uiStore.set({ panel: 'photo' })}>
+            Photo
+          </button>
           {showJournal && (
             <button className="touch-small" onClick={() => open('journal')}>
               Journal

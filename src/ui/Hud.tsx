@@ -127,7 +127,7 @@ export function Hud() {
   // Phones get a smaller minimap so it doesn't eat the screen (and no keyboard hints).
   const phone = isTouchDevice();
   return (
-    <div className="hud" style={{ visibility: panel === 'pause' ? 'hidden' : 'visible' }}>
+    <div className="hud" style={{ visibility: panel === 'pause' || panel === 'photo' ? 'hidden' : 'visible' }}>
       <div className="area-card panel">
         <div className="area-name">{area.name}</div>
         <div className="area-tag">{area.tagline}</div>
