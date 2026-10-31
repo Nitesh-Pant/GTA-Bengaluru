@@ -23,7 +23,7 @@ import { boxHitsSolids, closest, dist, type Point, type Rect } from '../../logic
 import { darkness } from '../../logic/dayClock';
 import { CHAR_DIRS, CHAR_FRAMES } from '../art/characters';
 import { pickInteraction, type InteractionCandidate } from '../../logic/interaction';
-import { facingFrom, stickDrive, walkVelocity, type DirInput, type Facing } from '../../logic/movement';
+import { facingFrom, stickAim, stickDrive, walkVelocity, type DirInput, type Facing } from '../../logic/movement';
 import { ReactionEngine, type Reactor, type WorldEvent } from '../../logic/reactionEngine';
 import { mulberry32 } from '../../logic/rng';
 import { safeStorage, STAT_KEYS, writeSave, type Settings, type Stats } from '../../logic/save';
@@ -828,8 +828,9 @@ export class WorldScene extends Phaser.Scene {
     this.npcs.update(dt, now);
     this.traffic.update(dt, now);
     const car = this.vehicles.driving();
-    const steer = car && (touch.stick.x || touch.stick.y) ? stickDrive(touch.stick, car, this.vehicles.paramsFor(car)) : input;
-    this.vehicles.update(dt, now, steer, this.locked, this.keys.space.isDown || touch.brake);
+    const stick = car && (touch.stick.x || touch.stick.y);
+    const steer = stick ? stickDrive(touch.stick, car, this.vehicles.paramsFor(car)) : input;
+    this.vehicles.update(dt, now, steer, this.locked, this.keys.space.isDown || touch.brake, stick ? stickAim(touch.stick) : null);
     this.talk.update(now, dt);
     this.dayNight.update(dt);
     this.ride.update(now);
@@ -855,6 +856,8 @@ export class WorldScene extends Phaser.Scene {
     // Phones have their own Get out button, so the floating E prompt would only mislead there.
     else if (this.candidate && !this.touchUi) this.bubbles.setPrompt({ x: p.x, y: p.y + 6 }, 'Get out');
     else this.bubbles.setPrompt(null);
+    const canUse = !!this.candidate && this.candidate.kind !== 'exitVehicle';
+    if (canUse !== uiStore.get().canUse) uiStore.set({ canUse });
 
     // Viaduct fades when you're underneath it.
     const vy = METRO_TRACK[0].y;

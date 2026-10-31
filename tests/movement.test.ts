@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { facingFrom, scaledForScreen, stepDrive, stickDrive, walkVelocity, type DriveParams } from '../src/logic/movement';
+import { facingFrom, scaledForScreen, stepDrive, stickAim, stickDrive, walkVelocity, type DriveParams } from '../src/logic/movement';
 
 const none = { up: false, down: false, left: false, right: false };
 const P: DriveParams = { maxSpeed: 200, reverseSpeed: 70, accel: 150, brake: 340, drag: 90, turnRate: 2.8 };
@@ -78,6 +78,27 @@ describe('touch driving (point-to-steer)', () => {
   it('reverses when pointing behind from a stop', () => {
     const s = drive({ speed: 0, heading: 0 }, { x: -1, y: 0 }, 1);
     expect(s.speed).toBeLessThan(0);
+  });
+  it('a thumb nearly along a road means along the road, so the vehicle does not weave', () => {
+    expect(stickAim({ x: 1, y: 0.25 })).toBe(0); // about 14° off: straight right
+    expect(stickAim({ x: 0.2, y: -1 })).toBeCloseTo(-Math.PI / 2); // nearly up the screen: straight up
+    expect(stickAim({ x: 1, y: 1 })).toBeCloseTo(Math.PI / 4); // a real diagonal stays diagonal
+    expect(stickAim({ x: 0.05, y: 0.1 })).toBeNull();
+    expect(stickDrive({ x: 1, y: 0.25 }, { speed: 120, heading: 0 }, P)).toEqual({ ...none, up: true });
+  });
+  it('slows into a sharp turn so it turns tightly instead of swinging wide', () => {
+    // Going fast to the right, stick points up the screen: brake while turning.
+    const into = stickDrive({ x: 0, y: -1 }, { speed: 180, heading: 0 }, P);
+    expect(into.down).toBe(true);
+    expect(into.left).toBe(true);
+    // From a stop it covers far less ground before facing the new way than at full throttle.
+    let s = { speed: 0, heading: 0 };
+    let ahead = 0;
+    while (Math.abs(s.heading + Math.PI / 2) > 0.1) {
+      s = stepDrive(s, stickDrive({ x: 0, y: -1 }, s, P), P, 1 / 60);
+      ahead += Math.cos(s.heading) * s.speed * (1 / 60);
+    }
+    expect(ahead).toBeLessThan(40);
   });
   it('brakes into a U-turn at speed instead of reversing', () => {
     const first = stickDrive({ x: -1, y: 0.1 }, { speed: 180, heading: 0 }, P);

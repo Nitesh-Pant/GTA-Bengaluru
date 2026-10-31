@@ -54,6 +54,8 @@ export interface UiState {
   area: { name: string; tagline: string };
   mode: 'walk' | 'drive' | 'metro' | 'ride';
   vehicleName: string | null;
+  /** Something in reach to use (talk, ride, order…): phones show the E button only then. */
+  canUse: boolean;
   dialogue: DialogueView | null;
   metro: MetroView | null;
   narration: { title: string; text: string } | null;
@@ -90,6 +92,7 @@ const initial = (): UiState => ({
   area: { name: '', tagline: '' },
   mode: 'walk',
   vehicleName: null,
+  canUse: false,
   dialogue: null,
   metro: null,
   narration: null,

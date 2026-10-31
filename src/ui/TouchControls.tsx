@@ -102,6 +102,7 @@ export function TouchControls() {
   const mode = useUi((s) => s.mode);
   const locked = useUi((s) => inputLocked(s));
   const ready = useUi((s) => s.ready);
+  const canUse = useUi((s) => s.canUse);
   // A panel opening or the mode changing unmounts the stick mid-drag: never leave a direction held.
   useEffect(release, [locked, mode]);
   useEffect(() => release, []);
@@ -151,9 +152,12 @@ export function TouchControls() {
                 </div>
               </>
             ) : (
-              <button className="touch-btn touch-e" onClick={() => bridge.api?.interact()}>
-                E
-              </button>
+              // Only when there's something in reach, so it doesn't take up the screen the rest of the time.
+              canUse && (
+                <button className="touch-btn touch-e" onClick={() => bridge.api?.interact()}>
+                  E
+                </button>
+              )
             )}
           </div>
         </>

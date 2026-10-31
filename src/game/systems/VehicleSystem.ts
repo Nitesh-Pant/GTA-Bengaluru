@@ -2,7 +2,8 @@ import Phaser from 'phaser';
 import { PROPS } from '../../data/map';
 import { RIDEABLES, type RideableDef } from '../../data/vehicles';
 import { boxHitsSolids } from '../../logic/geometry';
-import { scaledForScreen, stepDrive, type DirInput, type DriveParams } from '../../logic/movement';
+import { scaledForScreen, STEER_DEADBAND, stepDrive, type DirInput, type DriveParams } from '../../logic/movement';
+import { angleDelta } from '../../logic/geometry';
 import { enterVehicle, exitVehicle, type RideableInfo } from '../../logic/vehicleState';
 import { uiStore } from '../../store/uiStore';
 import { audio } from '../audio';
@@ -135,7 +136,8 @@ export class VehicleSystem {
     return this.scene.traffic.nearestCarDistance(x, y) > 18;
   }
 
-  update(dt: number, now: number, input: DirInput, locked: boolean, handbrake = false) {
+  /** `aim` is where the touch stick points (see stickAim): once facing it, the vehicle holds it exactly. */
+  update(dt: number, now: number, input: DirInput, locked: boolean, handbrake = false, aim: number | null = null) {
     for (const v of this.list) v.sprite.setDepth(v.sprite.y + 6);
     const v = this.driving();
     if (!v) return;
@@ -143,6 +145,7 @@ export class VehicleSystem {
     const none: DirInput = { up: false, down: false, left: false, right: false };
     const params = this.paramsFor(v);
     const next = stepDrive({ speed: v.speed, heading: v.heading }, locked ? none : input, params, dt, locked || handbrake);
+    if (aim !== null && !locked && next.speed > 0 && Math.abs(angleDelta(next.heading, aim)) < STEER_DEADBAND * 2) next.heading = aim;
     // Scraping a wall bleeds speed instead of stopping dead.
     if (!body.blocked.none && Math.abs(next.speed) > 30) {
       next.speed *= 0.6;

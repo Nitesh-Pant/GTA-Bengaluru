@@ -1076,6 +1076,13 @@ kbd {
   font-size: 18px;
   background: rgba(47, 158, 68, 0.9);
   border-color: #51cf66;
+  animation: touch-pop 0.18s ease-out;
+}
+@keyframes touch-pop {
+  from {
+    transform: scale(0.6);
+    opacity: 0;
+  }
 }
 .touch-horn {
   width: 64px;
